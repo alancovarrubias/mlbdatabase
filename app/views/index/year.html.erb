@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+  		<title><%= @time%> Matchups</title>
+	</head>
+	<body>
+
+		<div id="header">
+			<h2>Years</h2>
+		</div>
+
+		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%>
+
+		<div id="main">
+			<div id="content">
+				<p>
+					<% @years.each do |year| %>
+						<%= link_to(year, {:controller => "index", :action => "month", :year => year}) %> <br />
+					<% end %>
+				</p>
+			</div>
+		</div>
+
+		<div id="footer">
+			<p id="copyright">&copy; Mike Halioua </p>
+		</div>
+
+	</body>
+</html>

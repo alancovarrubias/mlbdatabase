@@ -1,0 +1,37 @@
+<table class="listing" summary="Attribute list">
+	<tr>
+		<th colspan="7"> <%= @home.stadium + ' ' + @home.zipcode %> </th>
+	</tr>
+	<tr class="header">
+		<th>Weather</th>
+		<th>Temperature</th>
+		<th>Wind</th>
+		<th>Pressure</th>
+		<th>Humidity</th>
+		<th>Precipitation</th>
+	</tr>
+	<tr>
+		<td><%= @game.time[0] + ':00 PM'%></td>
+		<td align="center"><%= @game.temperature_1 %></td>
+		<td align="center"><%= @game.wind_1 %></td>
+		<td align="center"><%= @game.pressure_1 %></td>
+		<td align="center"><%= @game.humidity_1 %></td>
+		<td align="center"><%= @game.precipitation_1 %></td>
+	</tr>
+	<tr>
+		<td><%= (@game.time[0].to_i + 1).to_s + ':00 PM'%></td>
+		<td align="center"><%= @game.temperature_2 %></td>
+		<td align="center"><%= @game.wind_2 %></td>
+		<td align="center"><%= @game.pressure_2 %></td>
+		<td align="center"><%= @game.humidity_2 %></td>
+		<td align="center"><%= @game.precipitation_2 %></td>
+	</tr>
+	<tr>
+		<td><%= (@game.time[0].to_i + 2).to_s + ':00 PM'%></td>
+		<td align="center"><%= @game.temperature_3 %></td>
+		<td align="center"><%= @game.wind_3 %></td>
+		<td align="center"><%= @game.pressure_3 %></td>
+		<td align="center"><%= @game.humidity_3 %></td>
+		<td align="center"><%= @game.precipitation_3 %></td>
+	</tr>
+</table>

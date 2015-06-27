@@ -1,0 +1,20 @@
+<head>
+  		<title>Home Page</title>
+</head>
+
+<h1>Home Page</h1>
+
+<%yesterday = Time.now.yesterday.strftime("%B %d")%>
+<%today = Time.now.strftime("%B %d")%>
+<%tomorrow = Time.now.tomorrow.strftime("%B %d")%>
+
+<%= link_to('Individual Teams', {:controller => 'index', :action => 'teams'})%> </br>
+<%= link_to( yesterday, {:controller => 'index', :action => 'game', :year => Time.now.yesterday.year, :month => Time.now.yesterday.month, :day => Time.now.yesterday.day})%></br>
+<%= link_to( today, {:controller => 'index', :action => 'game', :year => Time.now.year, :month => Time.now.month, :day => Time.now.day})%></br>
+<%= link_to( tomorrow, {:controller => 'index', :action => 'game', :year => Time.now.tomorrow.year, :month => Time.now.tomorrow.month, :day => Time.now.tomorrow.day})%></br>
+<%= link_to('History', {:controller => 'index', :action => 'year'})%></br>	
+<%= link_to('Logout', {:controller => 'access', :action => 'logout'})%>
+
+<div id="footer">
+	<p id="copyright">&copy; Mike Halioua </p>
+</div>

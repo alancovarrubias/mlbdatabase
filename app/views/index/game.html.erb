@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+  		<title><%= @time%> Matchups</title>
+	</head>
+	<body>
+
+		<div id="header">
+			<h1><%= @time %></h1>
+		</div>
+
+		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%>
+
+		<div id="main">
+			<div id="content">
+				<p>
+					<u><b>Home vs Away</b></u><br/>
+					<% @games.each do |game| %>
+						<%= link_to(game.home_team.name + " vs " + game.away_team.name, {:controller => "game", :action => "matchup", :id => game.id, :left => "1", :year => params[:year], :month => params[:month], :day => params[:day]}) %> <br />
+					<% end %>
+				</p>
+			</div>
+		</div>
+
+		<div id="footer">
+			<p id="copyright">&copy; Mike Halioua </p>
+		</div>
+
+	</body>
+</html>

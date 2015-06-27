@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+  		<title><%= @home.name + " vs " + @away.name %></title>
+  		<%= stylesheet_link_tag('application') %>
+	</head>
+
+	<body>
+		<%= image_tag("#{@home.id}.png", :height => '400', :width => '800', :align => 'right') %>
+	</br>
+
+		<h2><%= @home.name  + " vs " + @away.name %></h2>
+		<%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %></br></br>
+		<% if @left %>
+			<%= link_to('RH', {:controller => 'game', :action => 'matchup', :id => params[:id], :left => 0, :year => params[:year], :month => params[:month], :day => params[:day]})%>
+		<% else %>
+			<%= link_to('LH', {:controller => 'game', :action => 'matchup', :id => params[:id], :left => 1, :year => params[:year], :month => params[:month], :day => params[:day]})%>
+		<% end %>
+
+	</br>
+	</br>
+	</br>
+	</br>
+	</br>
+
+	<% if @game.time != nil %>
+	<h2> <%= "Gametime: " + @game.time + ' Local Time' %></h2>
+	<% end %>
+
+	<% if @game.ump != nil %>
+		<h3><%= "Umpire: " + @game.ump %></h3>
+	<% end %>
+
+	<%= render(:partial => "weather")%>
+
+	<table class="listing" summary="Attribute list">
+
+		<tr>
+			<th colspan="39">
+				<%= "Starting Pitchers" %>
+			</th>
+		</tr>
+
+		<%= render(:partial => "pitcherheader") %>
+
+		<% @away_pitchers.each do |pitcher| %>
+			<%= render(:partial => "pitcher", :locals => {:pitcher => pitcher}) %>
+		<% end %>
+
+		<% @home_pitchers.each do |pitcher| %>
+			<%= render(:partial => "pitcher", :locals => {:pitcher => pitcher}) %>
+		<% end %>
+
+		<tr>
+			<th colspan="28">
+				<%= @away.name + " Starting Lineup" %>
+			</th>
+		</tr>
+
+		<% if @left %>
+		<%= render(:partial => "lefthitterheader") %>
+		<% else %>
+		<%= render(:partial => "righthitterheader") %>
+		<% end %>
+
+		<% @away_hitters.each do |hitter| %>
+		<% if @left %>
+		<%= render(:partial => "lefthitter", :locals => {:hitter => hitter}) %>
+		<% else %>
+		<%= render(:partial => "righthitter", :locals => {:hitter => hitter}) %>
+		<% end %>
+		<% end %>
+
+		<tr>
+			<th colspan="28">
+				<%= @home.name + " Starting Lineup"%>
+			</th>
+		</tr>
+		<% if @left %>
+		<%= render(:partial => "lefthitterheader") %>
+		<% else %>
+		<%= render(:partial => "righthitterheader") %>
+		<% end %>
+		<% @home_hitters.each do |hitter| %>
+		<% if @left %>
+		<%= render(:partial => "lefthitter", :locals => {:hitter => hitter}) %>
+		<% else %>
+		<%= render(:partial => "righthitter", :locals => {:hitter => hitter}) %>
+		<% end %>
+		<% end %>
+
+		<table class="listing" summary="Attribute list">
+			<tr>
+				<th colspan="37"><%= @away.name + " Bullpen"%></th>
+			</tr>
+			<%= render(:partial => "bullpenpitchingheader") %>
+			<% @away_bullpen_pitchers.each do |pitcher| %>
+			<%= render(:partial => "bullpenpitching", :locals => {:pitcher => pitcher}) %>
+			<% end %>
+		</table>
+
+		<table class="listing" summary="Attribute list">
+			<tr>
+				<th colspan="37"><%= @home.name + " Bullpen"%></th>
+			</tr>
+			<%= render(:partial => "bullpenpitchingheader") %>
+			<% @home_bullpen_pitchers.each do |pitcher| %>
+			<%= render(:partial => "bullpenpitching", :locals => {:pitcher => pitcher}) %>
+			<% end %>
+		</table>
+	</body>
+</html>

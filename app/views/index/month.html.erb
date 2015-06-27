@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+  		<title><%= @time%> Matchups</title>
+	</head>
+	<body>
+
+		<div id="header">
+			<h2><%= params[:year] %></h2>
+		</div>
+
+		<%= link_to("Years", {:controller => 'index', :action => 'year'})%>
+
+		<div id="main">
+			<div id="content">
+				<p>
+					<% @months.each do |month| %>
+						<%= link_to(Date::MONTHNAMES[month.to_i], {:controller => "index", :action => "day", :year => params[:year], :month => month}) %> <br />
+					<% end %>
+				</p>
+			</div>
+		</div>
+
+		<div id="footer">
+			<p id="copyright">&copy; Mike Halioua </p>
+		</div>
+
+	</body>
+</html>
