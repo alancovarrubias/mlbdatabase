@@ -12,12 +12,12 @@ class GameController < ApplicationController
 		@home = @game.home_team
 		@away = @game.away_team
 		month = Date::MONTHNAMES[@game.month.to_i]
-		@away_hitters = Hitter.where(:team_id => @away.id, :starter => true).order("lineup")
-		@home_hitters = Hitter.where(:team_id => @home.id, :starter => true).order("lineup")
-		@away_pitchers = Pitcher.where(:team_id => @away.id, :starter => true)
-		@home_pitchers = Pitcher.where(:team_id => @home.id, :starter => true)
-		@away_bullpen_pitchers = Pitcher.where(:team_id => @away.id, :bullpen => true)
-		@home_bullpen_pitchers = Pitcher.where(:team_id => @home.id, :bullpen => true)
+		@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away.id, :starter => true).order("lineup")
+		@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home.id, :starter => true).order("lineup")
+		@away_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :starter => true)
+		@home_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :starter => true)
+		@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :bullpen => true)
+		@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :bullpen => true)
 		day = @game.day.to_i.to_s
 		@date = month + ' ' + day
 		day = Date.parse("#{params[:year]}-#{params[:month]}-#{params[:day]}").wday

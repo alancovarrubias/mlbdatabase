@@ -1,11 +1,11 @@
 class CreateTeams < ActiveRecord::Migration
   def change
     create_table :teams do |t|
-    	t.string "name"
-    	t.string "abbr"
-    	t.string "stadium"
-    	t.string "zipcode"
-    	t.integer "timezone"
+    	t.string "name", :default => ""
+    	t.string "abbr", :default => ""
+    	t.string "stadium", :default => ""
+    	t.string "zipcode", :default => ""
+    	t.integer "timezone", :default => 0
       t.timestamps
     end
 

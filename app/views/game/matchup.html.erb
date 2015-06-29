@@ -24,13 +24,9 @@
 	</br>
 	</br>
 
-	<% if @game.time != nil %>
 	<h2> <%= "Gametime: " + @game.time + ' Local Time' %></h2>
-	<% end %>
 
-	<% if @game.ump != nil %>
-		<h3><%= "Umpire: " + @game.ump %></h3>
-	<% end %>
+	<h3><%= "Umpire: " + @game.ump %></h3>
 
 	<%= render(:partial => "weather")%>
 

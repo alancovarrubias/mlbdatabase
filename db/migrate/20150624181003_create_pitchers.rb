@@ -1,18 +1,19 @@
 class CreatePitchers < ActiveRecord::Migration
   def change
     create_table :pitchers do |t|
-    	t.belongs_to :team
-      t.belongs_to :game
-    	t.string "name"
-    	t.string "alias"
-      t.string "bathand"
-      t.string "throwhand"
+    	t.belongs_to :team, :default => nil
+      t.belongs_to :game, :default => nil
+    	t.string "name", :default => ""
+    	t.string "alias", :default => ""
+      t.integer "fangraph_id", :default => 0
+      t.string "bathand", :default => ""
+      t.string "throwhand", :default => ""
       t.boolean "starter", :default => false
       # previous bullpen pitches
       t.boolean "bullpen", :default => false
-      t.integer "one"
-      t.integer "two"
-      t.integer "three"
+      t.integer "one", :default => 0
+      t.integer "two", :default => 0
+      t.integer "three", :default => 0
       # statistics
       t.integer "FIP", :default => 0 # actuall FIP-
       t.float "LD_L", :default => 0
@@ -54,6 +55,7 @@ class CreatePitchers < ActiveRecord::Migration
 
     add_index("pitchers", "name")
     add_index("pitchers", "alias")
+    add_index("pitchers", "fangraph_id")
     
   end
 end

@@ -16,27 +16,27 @@ ActiveRecord::Schema.define(version: 20150624181551) do
   create_table "games", force: true do |t|
     t.integer  "away_team_id"
     t.integer  "home_team_id"
-    t.string   "year"
-    t.string   "month"
-    t.string   "day"
-    t.string   "num"
-    t.string   "time"
-    t.string   "ump"
-    t.string   "wind_1"
-    t.string   "humidity_1"
-    t.string   "pressure_1"
-    t.string   "temperature_1"
-    t.string   "precipitation_1"
-    t.string   "wind_2"
-    t.string   "humidity_2"
-    t.string   "pressure_2"
-    t.string   "temperature_2"
-    t.string   "precipitation_2"
-    t.string   "wind_3"
-    t.string   "humidity_3"
-    t.string   "pressure_3"
-    t.string   "temperature_3"
-    t.string   "precipitation_3"
+    t.string   "year",            default: ""
+    t.string   "month",           default: ""
+    t.string   "day",             default: ""
+    t.string   "num",             default: ""
+    t.string   "time",            default: ""
+    t.string   "ump",             default: ""
+    t.string   "wind_1",          default: ""
+    t.string   "humidity_1",      default: ""
+    t.string   "pressure_1",      default: ""
+    t.string   "temperature_1",   default: ""
+    t.string   "precipitation_1", default: ""
+    t.string   "wind_2",          default: ""
+    t.string   "humidity_2",      default: ""
+    t.string   "pressure_2",      default: ""
+    t.string   "temperature_2",   default: ""
+    t.string   "precipitation_2", default: ""
+    t.string   "wind_3",          default: ""
+    t.string   "humidity_3",      default: ""
+    t.string   "pressure_3",      default: ""
+    t.string   "temperature_3",   default: ""
+    t.string   "precipitation_3", default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -44,10 +44,11 @@ ActiveRecord::Schema.define(version: 20150624181551) do
   create_table "hitters", force: true do |t|
     t.integer  "team_id"
     t.integer  "game_id"
-    t.string   "name"
-    t.string   "alias"
-    t.string   "bathand"
-    t.string   "throwhand"
+    t.string   "name",                       default: ""
+    t.string   "alias",                      default: ""
+    t.integer  "fangraph_id",                default: 0
+    t.string   "bathand",                    default: ""
+    t.string   "throwhand",                  default: ""
     t.integer  "lineup",                     default: 0
     t.boolean  "starter",                    default: false
     t.integer  "SB_L",                       default: 0
@@ -100,20 +101,22 @@ ActiveRecord::Schema.define(version: 20150624181551) do
   end
 
   add_index "hitters", ["alias"], name: "index_hitters_on_alias", using: :btree
+  add_index "hitters", ["fangraph_id"], name: "index_hitters_on_fangraph_id", using: :btree
   add_index "hitters", ["name"], name: "index_hitters_on_name", using: :btree
 
   create_table "pitchers", force: true do |t|
     t.integer  "team_id"
     t.integer  "game_id"
-    t.string   "name"
-    t.string   "alias"
-    t.string   "bathand"
-    t.string   "throwhand"
+    t.string   "name",                       default: ""
+    t.string   "alias",                      default: ""
+    t.integer  "fangraph_id",                default: 0
+    t.string   "bathand",                    default: ""
+    t.string   "throwhand",                  default: ""
     t.boolean  "starter",                    default: false
     t.boolean  "bullpen",                    default: false
-    t.integer  "one"
-    t.integer  "two"
-    t.integer  "three"
+    t.integer  "one",                        default: 0
+    t.integer  "two",                        default: 0
+    t.integer  "three",                      default: 0
     t.integer  "FIP",                        default: 0
     t.float    "LD_L",            limit: 24, default: 0.0
     t.float    "WHIP_L",          limit: 24, default: 0.0
@@ -154,14 +157,15 @@ ActiveRecord::Schema.define(version: 20150624181551) do
   end
 
   add_index "pitchers", ["alias"], name: "index_pitchers_on_alias", using: :btree
+  add_index "pitchers", ["fangraph_id"], name: "index_pitchers_on_fangraph_id", using: :btree
   add_index "pitchers", ["name"], name: "index_pitchers_on_name", using: :btree
 
   create_table "teams", force: true do |t|
-    t.string   "name"
-    t.string   "abbr"
-    t.string   "stadium"
-    t.string   "zipcode"
-    t.integer  "timezone"
+    t.string   "name",       default: ""
+    t.string   "abbr",       default: ""
+    t.string   "stadium",    default: ""
+    t.string   "zipcode",    default: ""
+    t.integer  "timezone",   default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -170,8 +174,8 @@ ActiveRecord::Schema.define(version: 20150624181551) do
   add_index "teams", ["name"], name: "index_teams_on_name", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "username"
-    t.string   "password_digest"
+    t.string   "username",        default: ""
+    t.string   "password_digest", default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
   end

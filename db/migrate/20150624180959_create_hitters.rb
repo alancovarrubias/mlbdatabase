@@ -1,12 +1,13 @@
 class CreateHitters < ActiveRecord::Migration
   def change
     create_table :hitters do |t|
-    	t.belongs_to :team
-      t.belongs_to :game
-    	t.string "name"
-    	t.string "alias"
-      t.string "bathand"
-      t.string "throwhand"
+    	t.belongs_to :team, :default => nil
+      t.belongs_to :game, :default => nil
+    	t.string "name", :default => ""
+    	t.string "alias", :default => ""
+      t.integer "fangraph_id", :default => 0
+      t.string "bathand", :default => ""
+      t.string "throwhand", :default => ""
       t.integer "lineup", :default => 0
       t.boolean "starter", :default => false
       t.integer "SB_L", :default => 0
@@ -59,6 +60,7 @@ class CreateHitters < ActiveRecord::Migration
 
     add_index("hitters", "name")
     add_index("hitters", "alias")
+    add_index("hitters", "fangraph_id")
 
   end
 end
