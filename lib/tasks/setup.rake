@@ -1279,4 +1279,13 @@ namespace :setup do
 						:wOBA_previous_R => pitcher.wOBA_previous_R)
 	end
 
+	task :add_fangraphs => :environment do
+		pitchers = Pitcher.where(:game_id => nil)
+		pitchers.each do |nil_pitcher|
+			Pitcher.where(:alias => nil_pitcher.alias).each do |pitcher|
+				pitcher.update_attributes(:fangraph_id => nil_pitcher.fangraph_id)
+			end
+		end
+	end
+
 end
