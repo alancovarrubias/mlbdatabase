@@ -3,6 +3,7 @@ class CreateTeams < ActiveRecord::Migration
     create_table :teams do |t|
     	t.string "name", :default => ""
     	t.string "abbr", :default => ""
+      t.string "game_abbr", :default => ""
     	t.string "stadium", :default => ""
     	t.string "zipcode", :default => ""
     	t.integer "timezone", :default => 0
