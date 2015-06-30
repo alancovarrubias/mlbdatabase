@@ -941,6 +941,7 @@ namespace :setup do
 		starters()
 
 		url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
+		puts url
 		doc = Nokogiri::HTML(open(url))
 		
 		pitchers = Pitcher.where(:game_id => nil)
