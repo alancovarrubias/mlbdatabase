@@ -252,6 +252,8 @@ namespace :setup do
 				return 'Jeremy McBryde'
 			when 'Jorge de la Rosa'
 				return 'Jorge De La Rosa'
+			when 'Rubby de la Rosa'
+				return 'Rubby De La Rosa'
 			end
 		end
 
