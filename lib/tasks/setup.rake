@@ -1254,10 +1254,9 @@ namespace :setup do
 		end
 
 		game_ids.each do |id|
-			pitchers = Pitcher.where(:game_id => id)
 			pitcher_names.each do |name|
-				if pitchers.where(:name => name).size == 3
-					pitchers.where(:name => name).second.destroy
+				if Pitcher.where(:name => name).size == 3
+					Pitcher.where(:name => name).second.destroy
 				end
 			end
 		end
