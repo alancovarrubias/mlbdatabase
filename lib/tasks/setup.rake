@@ -47,9 +47,11 @@ namespace :setup do
 			zipcode = ["92806", "77002", "94621", "M5V 1J1", "30315", "53214", "63102", "60613", "85004", "90012", "94107",
 				"44115", "98134", "33125", "11368", "20003", "21201", "92101", "19148", "15212", "76011", "33705", "02215", "45202",
 				"80205", "64129", "48201", "55403", "60616", "10451"]
+			fangraph_id = [1, 21, 10, 14, 16, 23, 28, 17, 15, 22, 30, 5, 11, 20, 25, 24, 2, 29, 26, 27, 13, 12, 3, 18, 19, 7, 6, 8, 4, 9]
+
 
 			(0...name.size).each{|i|
-				team = Team.create(:name => name[i], :abbr => abbr[i], :stadium => stadium[i], :zipcode => zipcode[i])
+				team = Team.create(:name => name[i], :abbr => abbr[i], :stadium => stadium[i], :zipcode => zipcode[i], :fangraph_id => fangraph_id[i])
 				if team.name == "Angels" || team.name == "Athletics" || team.name == "Diamondbacks" || team.name == "Dodgers" || team.name == "Giants" || team.name == "Mariners" || team.name == "Padres"
 					team.update_attributes(:timezone => -3)
 				elsif team.name == "Rockies"
@@ -248,6 +250,8 @@ namespace :setup do
 				return 'Chris Rearick'
 			when 'Jeremy Mcbryde'
 				return 'Jeremy McBryde'
+			when 'Jorge de la Rosa'
+				return 'Jorge De La Rosa'
 			end
 		end
 
@@ -1211,6 +1215,9 @@ namespace :setup do
 				end
 			end
 		end
+	end
+
+	task :test => :environment do
 	end
 
 end

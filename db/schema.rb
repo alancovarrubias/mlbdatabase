@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150624181551) do
+ActiveRecord::Schema.define(version: 20150630180703) do
 
   create_table "games", force: true do |t|
     t.integer  "away_team_id"
@@ -161,16 +161,18 @@ ActiveRecord::Schema.define(version: 20150624181551) do
   add_index "pitchers", ["name"], name: "index_pitchers_on_name", using: :btree
 
   create_table "teams", force: true do |t|
-    t.string   "name",       default: ""
-    t.string   "abbr",       default: ""
-    t.string   "stadium",    default: ""
-    t.string   "zipcode",    default: ""
-    t.integer  "timezone",   default: 0
+    t.string   "name",        default: ""
+    t.string   "abbr",        default: ""
+    t.string   "stadium",     default: ""
+    t.string   "zipcode",     default: ""
+    t.integer  "timezone",    default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "fangraph_id"
   end
 
   add_index "teams", ["abbr"], name: "index_teams_on_abbr", using: :btree
+  add_index "teams", ["fangraph_id"], name: "index_teams_on_fangraph_id", using: :btree
   add_index "teams", ["name"], name: "index_teams_on_name", using: :btree
 
   create_table "users", force: true do |t|
