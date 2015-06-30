@@ -1,5 +1,12 @@
-<tr>
-	<td><%= hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.bathand + ")"%></td>
+<% if hitter.name == 'Total' %>
+<tbody class="total">
+	<tr>
+		<td><%= hitter.name %></td>
+<% else %>
+<tbody>
+	<tr>
+		<td><%= hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.throwhand + ")"%></td>
+<% end %>
 	<td bgcolor="#7FFFD4"><%= hitter.wOBA_L %></td>
 	<td bgcolor="#7FFFD4"><%= hitter.OBP_L %></td>
 	<td bgcolor="#7FFFD4"><%= hitter.SLG_L %></td>
@@ -28,3 +35,4 @@
 	<td bgcolor="#FF7F00"><%= hitter.wRC_14 %></td>
 	<td bgcolor="#FF7F00"><%= hitter.wRC_previous_L %></td>
 </tr>
+</tbody>

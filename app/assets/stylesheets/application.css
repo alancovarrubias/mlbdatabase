@@ -21,43 +21,30 @@ table {
   color: #363636;
   background: #f6f6f6;
   text-align:center;
-  }
-caption {
-  text-align: center;
-  font: bold 16px arial, helvetica, sans-serif;
-  background: transparent;
-  padding:6px 4px 8px 0px;
-  color: #CC00FF;
-  text-transform: uppercase;
 }
-thead, tfoot {
-background:url(bg1.png) repeat-x;
-text-align:left;
-height:30px;
-}
-thead th, tfoot th {
-padding:5px;
-}
-table a {
-color: #333333;
-text-decoration:none;
-}
-table a:hover {
-text-decoration:underline;
-}
-tr.odd {
-background: #f1f1f1;
-}
+
+
 tbody th, tbody td {
-padding:5px;
+  padding:5px;
 }
+
+tbody.total td {
+  border-top: 1px solid black;
+  background: #f6f6f6;
+  border-left: none;
+} 
 
 td
 {
     border-left: 1px solid black;
+    border-right: 1px solid black;
 }
 
 th
 {
     border: 1px solid black;
+}
+
+body {
+  margin-left: 1%; margin-right: 1%;
 }

@@ -1230,6 +1230,13 @@ namespace :setup do
 		end
 	end
 
+	task :boxscores => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		
+	end
+
 	task :delete_duplicate_pitchers => :environment do
 		year = Time.now.year.to_s
 		month = Time.now.month.to_s

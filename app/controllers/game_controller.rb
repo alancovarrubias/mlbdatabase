@@ -14,6 +14,14 @@ class GameController < ApplicationController
 		month = Date::MONTHNAMES[@game.month.to_i]
 		@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away.id, :starter => true).order("lineup")
 		@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home.id, :starter => true).order("lineup")
+		if !@away_hitters.empty?
+			away_total = addTotalStats(@away_hitters)
+			@away_hitters << away_total
+		end
+		if !@home_hitters.empty?
+			home_total = addTotalStats(@home_hitters)
+			@home_hitters << home_total
+		end
 		@away_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :starter => true)
 		@home_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :starter => true)
 		@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :bullpen => true)
