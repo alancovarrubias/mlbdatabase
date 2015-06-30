@@ -70,8 +70,8 @@ namespace :setup do
 				url = "http://www.baseball-reference.com/teams/#{team.abbr}/2015-roster.shtml"
 				puts url
 				doc = Nokogiri::HTML(open(url))
-				href = name = bathand = throwhand = nil
-				pitcher = false
+				pitcher = hitter = href = name = bathand = throwhand = nil
+				pitcher_bool = false
 			 	doc.css("#appearances td").each_with_index do |stat, index|
 			 		text = stat.text
 			 		case index%29
@@ -84,19 +84,23 @@ namespace :setup do
 			 			throwhand = text
 			 		when 13
 			 			if text.to_i > 0
-			 				pitcher = true
+			 				pitcher_bool = true
 			 			end
-			 			if !Hitter.find_by_name(name)
+			 			if !hitter = Hitter.find_by_name(name)
 							Hitter.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 								:bathand => bathand, :throwhand => throwhand)
+						elsif hitter.alias == nil
+							hitter.update_attributes(:alias => href)
 						end
-						if pitcher
-							if !Pitcher.find_by_name(name)
+						if pitcher_bool
+							if !pitcher = Pitcher.find_by_name(name)
 								Pitcher.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 									:bathand => bathand, :throwhand => throwhand)
+							elsif pitcher.alias == nil
+								pitcher.update_attributes(:alias => href)
 							end
 						end
-						pitcher = false
+						pitcher_bool = false
 			 		end		
 			 	end
 			end
@@ -141,8 +145,8 @@ namespace :setup do
 				url = "http://www.baseball-reference.com/teams/#{team.abbr}/2015-roster.shtml"
 				puts url
 				doc = Nokogiri::HTML(open(url))
-				href = name = bathand = throwhand = nil
-				pitcher = false
+				pitcher = hitter = href = name = bathand = throwhand = nil
+				pitcher_bool = false
 			 	doc.css("#appearances td").each_with_index do |stat, index|
 			 		text = stat.text
 			 		case index%29
@@ -155,19 +159,23 @@ namespace :setup do
 			 			throwhand = text
 			 		when 13
 			 			if text.to_i > 0
-			 				pitcher = true
+			 				pitcher_bool = true
 			 			end
-			 			if !Hitter.find_by_name(name)
+			 			if !hitter = Hitter.find_by_name(name)
 							Hitter.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 								:bathand => bathand, :throwhand => throwhand)
+						elsif hitter.alias == nil
+							hitter.update_attributes(:alias => href)
 						end
-						if pitcher
-							if !Pitcher.find_by_name(name)
+						if pitcher_bool
+							if !pitcher = Pitcher.find_by_name(name)
 								Pitcher.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 									:bathand => bathand, :throwhand => throwhand)
+							elsif pitcher.alias == nil
+								pitcher.update_attributes(:alias => href)
 							end
 						end
-						pitcher = false
+						pitcher_bool = false
 			 		end		
 			 	end
 			end
@@ -1250,7 +1258,7 @@ namespace :setup do
 
 	task :fix_pitcher => :environment do
 		pitchers = Pitcher.where(:name => "Rubby De La Rosa")
-		pitcher1 = pitchers.first
+		pitcher = pitchers.first
 		pitcher2 = pitchers.second
 
 		pitcher2.update_attributes(:team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
