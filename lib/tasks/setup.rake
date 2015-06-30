@@ -1230,39 +1230,39 @@ namespace :setup do
 		end
 	end
 
-	# task :delete_duplicate_pitchers => :environment do
-	# 	year = Time.now.year.to_s
-	# 	month = Time.now.month.to_s
-	# 	if month.size == 1
-	# 		month = "0" + month
-	# 	end
-	# 	day = Time.now.day.to_s
-	# 	if day.size == 1
-	# 		day = "0" + day
-	# 	end
+	task :delete_duplicate_pitchers => :environment do
+		year = Time.now.year.to_s
+		month = Time.now.month.to_s
+		if month.size == 1
+			month = "0" + month
+		end
+		day = Time.now.day.to_s
+		if day.size == 1
+			day = "0" + day
+		end
 
-	# 	pitcher_names = Array.new
+		pitcher_names = Array.new
 
-	# 	game_ids = Array.new
+		game_ids = Array.new
 
-	# 	Pitcher.all.where(:game_id => nil).each do |pitcher|
-	# 		pitcher_names << pitcher.name
-	# 	end
+		Pitcher.all.where(:game_id => nil).each do |pitcher|
+			pitcher_names << pitcher.name
+		end
 
-	# 	Game.where(:year => year, :month => month, :day => day).each do |game|
-	# 		game_ids << game.id
-	# 	end
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+			game_ids << game.id
+		end
 
-	# 	game_ids.each do |id|
-	# 		pitchers = Pitcher.where(:game_id => id)
-	# 		pitcher_names.each do |name|
-	# 			if pitchers.where(:name => name).size == 3
-	# 				pitchers.where(:name => name).second.destroy
-	# 			end
-	# 		end
-	# 	end
+		game_ids.each do |id|
+			pitchers = Pitcher.where(:game_id => id)
+			pitcher_names.each do |name|
+				if pitchers.where(:name => name).size == 3
+					pitchers.where(:name => name).second.destroy
+				end
+			end
+		end
 
-	# end
+	end
 
 	task :fix_pitcher => :environment do
 		pitchers = Pitcher.where(:name => "Rubby De La Rosa")
