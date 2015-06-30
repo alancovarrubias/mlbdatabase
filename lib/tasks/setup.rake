@@ -580,120 +580,120 @@ namespace :setup do
 
 		pitchers = Pitcher.where(:game_id => nil)
 
-		fip = name = pitcher = nil
-		urls = url + url_previous
-		urls.each_with_index do |url, url_index|
-			puts url
-			doc = Nokogiri::HTML(open(url))
-			doc.css(".grid_line_regular").each_with_index do |stat, index|
-				text = stat.text
-				case index%4
-				when 1
-					name = text
-					fangraph_id = getFangraph(stat).to_i
-					pitcher = pitchers.find_by_fangraph_id(fangraph_id)
-					if pitcher == nil
-						pitcher = pitchers.find_by_name(name)
-					end
-				when 3
-					fip = text.to_i
-					if pitcher != nil
-						case url_index%30
-						when 0
-							pitcher.update_attributes(:team_id => url_index + 1, :FIP => fip)
-						when 1
-							pitcher.update_attributes(:FIP_previous => fip)
-						end
-		 			else
-		 				puts name + ' not found'
-		 			end
-				end
-		 	end
-		end
+		# fip = name = pitcher = nil
+		# urls = url + url_previous
+		# urls.each_with_index do |url, url_index|
+		# 	puts url
+		# 	doc = Nokogiri::HTML(open(url))
+		# 	doc.css(".grid_line_regular").each_with_index do |stat, index|
+		# 		text = stat.text
+		# 		case index%4
+		# 		when 1
+		# 			name = text
+		# 			fangraph_id = getFangraph(stat).to_i
+		# 			pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+		# 			if pitcher == nil
+		# 				pitcher = pitchers.find_by_name(name)
+		# 			end
+		# 		when 3
+		# 			fip = text.to_i
+		# 			if pitcher != nil
+		# 				case url_index%30
+		# 				when 0
+		# 					pitcher.update_attributes(:team_id => url_index + 1, :FIP => fip)
+		# 				when 1
+		# 					pitcher.update_attributes(:FIP_previous => fip)
+		# 				end
+		#  			else
+		#  				puts name + ' not found'
+		#  			end
+		# 		end
+		#  	end
+		# end
 
 
-		urls = url_l + url_r
+		# urls = url_l + url_r
 
-		pitcher = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = nil
-		urls.each_with_index do |url, url_index|
-			doc = Nokogiri::HTML(open(url))
-			puts url
-			doc.css(".grid_line_regular").each_with_index do |stat, index|
-				text = stat.text
-				case index%13
-				when 1
-					name = text
-					fangraph_id = getFangraph(stat).to_i
-					pitcher = pitchers.find_by_fangraph_id(fangraph_id)
-					if pitcher == nil
-						pitcher = pitchers.find_by_name(name)
-					end
-				when 3
-					ld = text[0...-2].to_f
-				when 4
-					whip = text.to_f
-				when 5
-					ip = text.to_f
-				when 6
-					so = text.to_i
-				when 7
-					bb = text.to_i
-				when 8
-					era = text.to_f
-				when 9
-					fb = text[0...-2].to_f
-				when 10
-					xfip = text.to_i
-				when 11
-					kbb = text.to_f
-				when 12
-					wOBA = (text.to_f*1000).to_i
-					if pitcher != nil
-						case url_index/30
-						when 0
-							pitcher.update_attributes(:team_id => url_index + 1, :LD_L => ld, :WHIP_L => whip, :IP_L => ip, :SO_L => so, :BB_L => bb, :ERA_L => era, :FB_L => fb, :xFIP_L => xfip, :KBB_L => kbb, :wOBA_L => wOBA)
-						when 1
-							pitcher.update_attributes(:LD_R => ld, :WHIP_R => whip, :IP_R => ip, :SO_R => so, :BB_R => bb, :ERA_R => era, :FB_R => fb, :xFIP_R => xfip, :KBB_R => kbb, :wOBA_R => wOBA)
-						end
-					else
-						puts name + ' not found'
-					end
-				end
-			end
-		end
+		# pitcher = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = nil
+		# urls.each_with_index do |url, url_index|
+		# 	doc = Nokogiri::HTML(open(url))
+		# 	puts url
+		# 	doc.css(".grid_line_regular").each_with_index do |stat, index|
+		# 		text = stat.text
+		# 		case index%13
+		# 		when 1
+		# 			name = text
+		# 			fangraph_id = getFangraph(stat).to_i
+		# 			pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+		# 			if pitcher == nil
+		# 				pitcher = pitchers.find_by_name(name)
+		# 			end
+		# 		when 3
+		# 			ld = text[0...-2].to_f
+		# 		when 4
+		# 			whip = text.to_f
+		# 		when 5
+		# 			ip = text.to_f
+		# 		when 6
+		# 			so = text.to_i
+		# 		when 7
+		# 			bb = text.to_i
+		# 		when 8
+		# 			era = text.to_f
+		# 		when 9
+		# 			fb = text[0...-2].to_f
+		# 		when 10
+		# 			xfip = text.to_i
+		# 		when 11
+		# 			kbb = text.to_f
+		# 		when 12
+		# 			wOBA = (text.to_f*1000).to_i
+		# 			if pitcher != nil
+		# 				case url_index/30
+		# 				when 0
+		# 					pitcher.update_attributes(:team_id => url_index + 1, :LD_L => ld, :WHIP_L => whip, :IP_L => ip, :SO_L => so, :BB_L => bb, :ERA_L => era, :FB_L => fb, :xFIP_L => xfip, :KBB_L => kbb, :wOBA_L => wOBA)
+		# 				when 1
+		# 					pitcher.update_attributes(:LD_R => ld, :WHIP_R => whip, :IP_R => ip, :SO_R => so, :BB_R => bb, :ERA_R => era, :FB_R => fb, :xFIP_R => xfip, :KBB_R => kbb, :wOBA_R => wOBA)
+		# 				end
+		# 			else
+		# 				puts name + ' not found'
+		# 			end
+		# 		end
+		# 	end
+		# end
 
-		pitcher = ld = whip = ip = so = nil
-		url_30.each do |url|
-			doc = Nokogiri::HTML(open(url))
-			name = ld = whip = ip = so = bb = nil
-			doc.css(".grid_line_regular").each_with_index do |stat, index| #Search through all the information. Use an instance variable to determine which information I want.
-				text = stat.text
-				case index%8
-				when 1
-					name = text
-					fangraph_id = getFangraph(stat).to_i
-					pitcher = pitchers.find_by_fangraph_id(fangraph_id)
-					if pitcher == nil
-						pitcher = pitchers.find_by_name(name)
-					end
-				when 3
-					ld = text[0...-2].to_f
-				when 4
-					whip = text.to_f
-				when 5
-					ip = text.to_f
-				when 6
-					so = text.to_i
-				when 7
-					bb = text.to_i
-					if pitcher != nil
-						pitcher.update_attributes(:LD_30 => ld, :WHIP_30 => whip, :IP_30 => ip, :SO_30 => so, :BB_30 => bb)
-					else
-						puts name + ' not found'
-					end
-				end
-			end
-		end
+		# pitcher = ld = whip = ip = so = nil
+		# url_30.each do |url|
+		# 	doc = Nokogiri::HTML(open(url))
+		# 	name = ld = whip = ip = so = bb = nil
+		# 	doc.css(".grid_line_regular").each_with_index do |stat, index| #Search through all the information. Use an instance variable to determine which information I want.
+		# 		text = stat.text
+		# 		case index%8
+		# 		when 1
+		# 			name = text
+		# 			fangraph_id = getFangraph(stat).to_i
+		# 			pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+		# 			if pitcher == nil
+		# 				pitcher = pitchers.find_by_name(name)
+		# 			end
+		# 		when 3
+		# 			ld = text[0...-2].to_f
+		# 		when 4
+		# 			whip = text.to_f
+		# 		when 5
+		# 			ip = text.to_f
+		# 		when 6
+		# 			so = text.to_i
+		# 		when 7
+		# 			bb = text.to_i
+		# 			if pitcher != nil
+		# 				pitcher.update_attributes(:LD_30 => ld, :WHIP_30 => whip, :IP_30 => ip, :SO_30 => so, :BB_30 => bb)
+		# 			else
+		# 				puts name + ' not found'
+		# 			end
+		# 		end
+		# 	end
+		# end
 
 		urls = url_previous_l + url_previous_r
 		pitcher = name = fb = xfip = kbb = wOBA = ld = whip = ip = so = bb = nil
@@ -731,9 +731,18 @@ namespace :setup do
 							pitcher.update_attributes(:team_id => url_index + 1, :FB_previous_L => fb, :xFIP_previous_L => xfip, :KBB_previous_L => kbb, :wOBA_previous_L => wOBA)
 						when 1
 							pitcher.update_attributes(:FB_previous_R => fb, :xFIP_previous_R => xfip, :KBB_previous_R => kbb, :wOBA_previous_R => wOBA)
+							if pitcher.name == "Mike Leake"
+								puts url_index/30
+								puts pitcher.name
+								puts fb
+								puts xfip
+								puts kbb
+								puts wOBA
+							else
+							end
 						end
 					else
-						puts name + ' not found'
+						# puts name + ' not found'
 					end
 				end
 			end

@@ -7,6 +7,9 @@ gem 'rails', '4.1.6'
 # group :production do
 # 	gem 'pg'
 # end
+group :production do
+	gem 'pg'
+end
 group :development do
 	gem 'mysql2'
 end
