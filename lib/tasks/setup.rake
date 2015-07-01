@@ -1472,4 +1472,20 @@ namespace :setup do
 						:wOBA_previous_R => pitcher.wOBA_previous_R)
 	end
 
+	task :whoo => :environment do
+		abbr = ["LAA", "HOU", "OAK", "TOR", "ATL", "MIL", "STL", "CHC", "ARI", "LAD", "SFG", "CLE", "SEA", "MIA", "NYM",
+				"WSN", "BAL", "SDP", "PHI", "PIT", "TEX", "TBR", "BOS", "CIN", "COL", "KCR", "DET", "MIN", "CHW", "NYY"]
+
+		game_abbr = ["ANA", "HOU", "OAK", "TOR", "ATL", "MIL", "SLN", "CHN", "ARI", "LAN", "SFN", "CLE", "SEA", "MIA", "NYN",
+				"WAS", "BAL", "SDN", "PHI", "PIT", "TEX", "TBA", "BOS", "CIN", "COL", "KCA", "DET", "MIN", "CHA", "NYA"]
+		fangraph_id = [1, 21, 10, 14, 16, 23, 28, 17, 15, 22, 30, 5, 11, 20, 25, 24, 2, 29, 26, 27, 13, 12, 3, 18, 19, 7, 6, 8, 4, 9]
+
+
+		Team.each_with_index do |team, index|
+			team.update_attributes(:fangraph_id => fangraph_id[index], :game_abbr => game_abbr[index], :abbr => abbr[index])
+		end
+
+
+	end
+
 end
