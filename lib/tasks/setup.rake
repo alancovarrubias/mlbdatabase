@@ -106,8 +106,37 @@ namespace :setup do
 								pitcher.update_attributes(:alias => href)
 							end
 						end
-						pitcher_bo = false
+						pitcher_bool = false
 			 		end		
+			 	end
+
+			 	hitter = pitcher = bathand = throwhand = name = nil
+			 	pitcher_bool = false
+			 	doc.css("#40man td").each_with_index do |stat, index|
+			 		text = stat.text
+			 		case index%14
+			 		when 2
+			 			name = text
+			 		when 4
+			 			if text == "Pitcher"
+			 				pitcher_bool = true
+			 			end
+			 		when 8
+			 			bathand = text
+			 		when 9
+			 			throwhand = text
+			 		when 13
+			 			if !hitter = Hitter.find_by_name(name)
+			 				Hitter.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
+									:bathand => bathand, :throwhand => throwhand)
+			 			end
+			 			if pitcher_bool
+			 				if !pitcher = Pitcher.find_by_name(name)
+			 					Pitcher.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
+									:bathand => bathand, :throwhand => throwhand)
+			 				end
+			 			end
+			 		end
 			 	end
 			end
 		end
@@ -184,8 +213,38 @@ namespace :setup do
 						pitcher_bool = false
 			 		end		
 			 	end
+
+			 	hitter = pitcher = bathand = throwhand = name = nil
+			 	pitcher_bool = false
+			 	doc.css("#40man td").each_with_index do |stat, index|
+			 		text = stat.text
+			 		case index%14
+			 		when 2
+			 			name = text
+			 		when 4
+			 			if text == "Pitcher"
+			 				pitcher_bool = true
+			 			end
+			 		when 8
+			 			bathand = text
+			 		when 9
+			 			throwhand = text
+			 		when 13
+			 			if !hitter = Hitter.find_by_name(name)
+			 				Hitter.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
+									:bathand => bathand, :throwhand => throwhand)
+			 			end
+			 			if pitcher_bool
+			 				if !pitcher = Pitcher.find_by_name(name)
+			 					Pitcher.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
+									:bathand => bathand, :throwhand => throwhand)
+			 				end
+			 			end
+			 		end
+			 	end
 			end
 		end
+
 		create_players	
 		
 	end
@@ -268,6 +327,8 @@ namespace :setup do
 				return 'Jorge De La Rosa'
 			when 'Rubby de la Rosa'
 				return 'Rubby De La Rosa'
+			when 'Hyun-Jin Ryu'
+				return 'Hyun-jin Ryu'
 			end
 		end
 
@@ -530,6 +591,73 @@ namespace :setup do
 			end
 		end
 
+
+		Team.each do |team|
+			urls = Array.new
+			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+			url_previous_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=13&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+			url_previous_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=14&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+			urls << url_l
+			urls << url_r
+			urls << url_14
+			urls << url_previous_l
+
+
+			ab = sb = bb = so = slg = obp = wOBA = wRC = ld = hitter = name = nil
+			hitters = Hitter.where(:game_id => nil)
+			urls.each_with_index do |url, url_index|
+				puts url
+				doc = Nokogiri::HTML(open(url))
+				doc.css(".grid_line_regular").each_with_index do |stat, index|
+					text = stat.text
+					case index%12
+					when 1
+						name = text
+						fangraph_id = getFangraph(stat).to_i
+						hitter = hitters.find_by_fangraph_id(fangraph_id)
+						if hitter == nil
+							hitter = hitters.find_by_name(name)
+						end
+					when 3
+						ab = text.to_i
+					when 4
+						sb = text.to_i
+					when 5
+						bb = text.to_i
+					when 6
+						so = text.to_i
+					when 7
+						slg = (text.to_f*1000).to_i
+					when 8
+						obp = (text.to_f*1000).to_i
+					when 9
+						wOBA = (text.to_f*1000).to_i
+					when 10
+						wRC = text.to_i
+					when 11
+						ld = text[0...-2].to_f
+						if hitter != nil
+							case url_index
+							when 0
+								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_L => ab, :SB_L => sb, :BB_L => bb, :SO_L => so, :SLG_L => slg, :OBP_L => obp, :wOBA_L => wOBA, :LD_L => ld, :wRC_L => wRC)
+							when 1
+								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_R => ab, :SB_R => sb, :BB_R => bb, :SO_R => so, :SLG_R => slg, :OBP_R => obp, :wOBA_R => wOBA, :LD_R => ld, :wRC_R => wRC)
+							when 2
+								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_14 => ab, :SB_14 => sb, :BB_14 => bb, :SO_14 => so, :SLG_14 => slg, :OBP_14 => obp, :wOBA_14 => wOBA, :LD_14 => ld, :wRC_14 => wRC)
+							when 3
+								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_previous_L => ab, :SB_previous_L => sb, :BB_previous_L => bb, :SO_previous_L => so, :SLG_previous_L => slg, :OBP_previous_L => obp, :wOBA_previous_L => wOBA, :LD_previous_L => ld, :wRC_previous_L => wRC)
+							when 4
+								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_previous_R => ab, :SB_previous_R => sb, :BB_previous_R => bb, :SO_previous_R => so, :SLG_previous_R => slg, :OBP_previous_R => obp, :wOBA_previous_R => wOBA, :LD_previous_R => ld, :wRC_previous_R => wRC)
+							end
+						else
+							puts name + ' not found'
+						end
+					end
+				end
+			end
+		end
 		url_l = ["http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=1&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=21&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=10&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=14&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=16&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=23&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=28&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=17&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=15&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=22&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=30&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=5&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=11&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=20&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=25&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=24&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=2&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=29&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=26&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=27&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=13&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=12&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=3&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=18&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=43,54&season=#{year}&month=13&season1=#{year}&ind=0&team=19&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=7&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=6&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=8&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=4&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=9&rost=1&age=0&filter=&players=0"]
 		url_r = ["http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=1&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=21&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=10&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=14&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=16&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=23&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=28&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=17&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=15&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=22&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=30&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=5&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=11&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=20&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=25&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=24&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=2&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=29&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=26&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=27&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=13&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=12&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=3&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=18&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=19&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=7&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=6&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=8&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=4&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=9&rost=1&age=0&filter=&players=0"]
 		url_14 = ["http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=1&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=21&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=10&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=14&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=16&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=23&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=28&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=17&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=15&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=22&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=30&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=5&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=11&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=20&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=25&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=24&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=2&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=29&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=26&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=27&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=13&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=12&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=3&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=18&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=19&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=7&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=6&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=8&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=4&rost=1&age=0&filter=&players=0", "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=9&rost=1&age=0&filter=&players=0"]
@@ -1158,6 +1286,7 @@ namespace :setup do
 				end
 				if team = Team.find_by_name(team)
 					puts ump
+					puts team.name
 					Game.where(:year => year, :month => month, :day => day, :home_team_id => team.id).first.update_attributes(:ump => ump)
 				end
 			end
@@ -1240,7 +1369,56 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 
-		url = ""
+
+
+		url = "http://www.baseball-reference.com/boxes/LAN/LAN201506040.shtml"
+
+		doc = Nokogiri::HTML(open(url))
+
+		int = 22
+		table = var = row = 0
+		team_id = player = nil
+		hitters = Hitter.where(:game_id => nil)
+		pitchers = Pitcher.where(:game_id => nil)
+		doc.css(".normal_text td").each do |stat|
+			text = stat.text
+			case var%int
+			when 0
+				row += 1
+				if table%2 == 0
+					team_id = game.away_team.id
+				else
+					team_id = game.home_team.id
+				end
+				child = stat.last_element_child
+				if table == 2
+					int = 25
+					var = 0
+				end
+				if child == nil # This is a total, so a new table is near
+					table += 1
+				else
+					href = child['href']
+					href = href[11..href.index(".")-1]
+					if table < 2 # we are still at the hitting tables
+						player = hitters.find_by_alias(href)
+					else # we are at the pitching tables
+						player = pitchers.find_by_alias(href)
+					end
+
+					if player != nil && row <= 9
+						if player.class.name == "Hitter"
+							Hitter.create(:game_id => game.id, :team_id => team.id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id)
+						elsif player.class.name == "Pitcher"
+							Pitcher.create(:game_id => game.id, :team_id => team.id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id)
+						end
+					else
+						puts href + ' not found'
+					end
+				end
+			end
+			var += 1
+		end
 
 
 	end
@@ -1292,27 +1470,6 @@ namespace :setup do
 						:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
 						:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
 						:wOBA_previous_R => pitcher.wOBA_previous_R)
-	end
-
-	task :add_fangraphs => :environment do
-		pitchers = Pitcher.where(:game_id => nil)
-		pitchers.each do |nil_pitcher|
-			Pitcher.where(:alias => nil_pitcher.alias).each do |pitcher|
-				pitcher.update_attributes(:fangraph_id => nil_pitcher.fangraph_id)
-			end
-		end
-	end
-
-	task :update_teams => :environment do
-		abbr = ["LAA", "HOU", "OAK", "TOR", "ATL", "MIL", "STL", "CHC", "ARI", "LAD", "SFG", "CLE", "SEA", "MIA", "NYM",
-				"WSN", "BAL", "SDP", "PHI", "PIT", "TEX", "TBR", "BOS", "CIN", "COL", "KCR", "DET", "MIN", "CHW", "NYY"]
-
-		game_abbr = ["ANA", "HOU", "OAK", "TOR", "ATL", "MIL", "SLN", "CHN", "ARI", "LAN", "SFN", "CLE", "SEA", "MIA", "NYN",
-				"WAS", "BAL", "SDN", "PHI", "PIT", "TEX", "TBA", "BOS", "CIN", "COL", "KCA", "DET", "MIN", "CHA", "NYA"]
-
-		Team.all.each_with_index do |team, index|
-			team.update_attributes(:abbr => abbr[index+1], :game_abbr => game_abbr[index+1])
-		end
 	end
 
 end
