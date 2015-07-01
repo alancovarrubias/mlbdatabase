@@ -985,6 +985,7 @@ namespace :setup do
 						end
 					end
 					if found && index%14 == 13
+						puts int
 						if int == 0
 							game.update_attributes(:humidity_1 => humidity, :precipitation_1 => precipitation, :wind_1 => wind, :temperature_1 => temperature)
 						elsif int == 1
@@ -1008,11 +1009,26 @@ namespace :setup do
 		require 'open-uri'
 
 		def convertTime(game, time)
+
 			if !time.include?(":")
 				return ""
 			end
-			hour = time[0...time.index(":")].to_i + game.home_team.timezone
-			return hour.to_s + time[time.index(":")..-4]
+
+			colon = time.index(":")
+
+			hour = time[0...colon].to_i + game.home_team.timezone
+
+
+			# Checks the borderline cases
+			suffix = time[colon..-4]
+			if hour <= 0
+				hour = hour + 12
+			elsif hour >= 9 && hour != 12
+				suffix[suffix.index("P")] = "A"
+			end
+
+			return hour.to_s + suffix
+
 		end
 
 		url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
