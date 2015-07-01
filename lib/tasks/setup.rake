@@ -1124,7 +1124,8 @@ namespace :setup do
 			elsif pitcher = pitchers.find_by_name(text)
 				pitcher.update_attributes(:starter => true)
 			else
-				puts 'Could not find pitcher ' + text
+				pitcher = Pitcher.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
+				puts pitcher.name + ' created'
 			end
 		end
 
@@ -1142,7 +1143,8 @@ namespace :setup do
 			elsif hitter = hitters.find_by_name(name)
 				hitter.update_attributes(:starter => true, :lineup => lineup)
 			else
-				puts 'Could not find hitter ' + name
+				hitter = Hitter.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
+				puts hitter.name + ' created'
 			end
 		end
 	end
@@ -1439,66 +1441,29 @@ namespace :setup do
 
 	end
 
-	task :delete_duplicate_pitchers => :environment do
+	task :test => :environment do
+
 		year = Time.now.year.to_s
 		month = Time.now.month.to_s
+		day = Time.now.day.to_s
+
 		if month.size == 1
 			month = "0" + month
 		end
-		day = Time.now.day.to_s
+
 		if day.size == 1
 			day = "0" + day
 		end
 
-		pitcher_names = Array.new
-
-		game_ids = Array.new
-
-		Pitcher.all.where(:game_id => nil).each do |pitcher|
-			pitcher_names << pitcher.name
-		end
-
 		Game.where(:year => year, :month => month, :day => day).each do |game|
-			game_ids << game.id
-		end
-
-		game_ids.each do |id|
-			pitcher_names.each do |name|
-				if Pitcher.where(:name => name).size == 4
-					Pitcher.where(:name => name).fourth.destroy
-				end
+			pitchers_size = game.pitchers.where(:starter => true).size
+			if pitchers_size != 2
+				puts game.home_team.name + ' missing pitchers'
 			end
-		end
-
-	end
-
-	task :fix_pitcher => :environment do
-		pitchers = Pitcher.where(:name => "Rubby De La Rosa")
-		pitcher = pitchers.first
-		pitcher2 = pitchers.second
-
-		pitcher2.update_attributes(:team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
-						:throwhand => pitcher.throwhand, :bullpen => true, :one => pitcher.one, :two => pitcher.two, :three => pitcher.three, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
-						:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
-						:KBB_L => pitcher.KBB_L, :LD_R => pitcher.LD_R, :WHIP_R => pitcher.WHIP_R, :IP_R => pitcher.IP_R,
-						:SO_R => pitcher.SO_R, :BB_R => pitcher.BB_R, :ERA_R => pitcher.ERA_R, :wOBA_R => pitcher.wOBA_R, :FB_R => pitcher.FB_R, :xFIP_R => pitcher.xFIP_R,
-						:KBB_R => pitcher.KBB_R, :LD_30 => pitcher.LD_30, :WHIP_30 => pitcher.WHIP_30, :IP_30 => pitcher.IP_30, :SO_30 => pitcher.SO_30, :BB_30 => pitcher.BB_30, 
-						:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
-						:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
-						:wOBA_previous_R => pitcher.wOBA_previous_R)
-	end
-
-	task :whoo => :environment do
-		abbr = ["LAA", "HOU", "OAK", "TOR", "ATL", "MIL", "STL", "CHC", "ARI", "LAD", "SFG", "CLE", "SEA", "MIA", "NYM",
-				"WSN", "BAL", "SDP", "PHI", "PIT", "TEX", "TBR", "BOS", "CIN", "COL", "KCR", "DET", "MIN", "CHW", "NYY"]
-
-		game_abbr = ["ANA", "HOU", "OAK", "TOR", "ATL", "MIL", "SLN", "CHN", "ARI", "LAN", "SFN", "CLE", "SEA", "MIA", "NYN",
-				"WAS", "BAL", "SDN", "PHI", "PIT", "TEX", "TBA", "BOS", "CIN", "COL", "KCA", "DET", "MIN", "CHA", "NYA"]
-		fangraph_id = [1, 21, 10, 14, 16, 23, 28, 17, 15, 22, 30, 5, 11, 20, 25, 24, 2, 29, 26, 27, 13, 12, 3, 18, 19, 7, 6, 8, 4, 9]
-
-
-		Team.each_with_index do |team, index|
-			team.update_attributes(:fangraph_id => fangraph_id[index], :game_abbr => game_abbr[index], :abbr => abbr[index])
+			hitters_size = game.hitters.where(:starter => true).size
+			if hitters_size != 2
+				puts game.home_team.name + ' missing hitters'
+			end
 		end
 
 
