@@ -1149,6 +1149,126 @@ namespace :setup do
 		end
 	end
 
+	task :tomorrow => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		def convertTime(game, time)
+
+			if !time.include?(":")
+				return ""
+			end
+
+			colon = time.index(":")
+
+			hour = time[0...colon].to_i + game.home_team.timezone
+
+
+			# Checks the borderline cases
+			suffix = time[colon..-4]
+			if hour <= 0
+				hour = hour + 12
+			elsif hour >= 9 && hour != 12
+				suffix[suffix.index("P")] = "A"
+			end
+
+			return hour.to_s + suffix
+
+		end
+
+
+		def starters()
+			Pitcher.all.where(:tomorrow_starter => true, :game_id => nil).each do |pitcher|
+				pitcher.update_attributes(:starter => false)
+			end
+		end
+
+
+		url = "http://www.baseballpress.com/lineups/#{DateTime.now.tomorrow.to_date}"
+		doc = Nokogiri::HTML(open(url))
+
+		home = Array.new
+		away = Array.new
+		gametime = Array.new
+
+		doc.css(".game-time").each do |time|
+			gametime << time.text
+		end
+
+		doc.css(".team-name").each_with_index do |stat, index|
+			team = Team.find_by_name(stat.text)
+			if index%2 == 0
+				away << team
+			else
+				home << team
+			end
+		end
+
+		year = Time.now.tomorrow.year.to_s
+		month = Time.now.tomorrow.month.to_s
+		day = Time.now.tomorrow.day.to_s
+
+		if month.size == 1
+			month = '0' + month
+		end
+		if day.size == 1
+			day = '0' + day
+		end
+
+		count = 1
+		todays_games = Game.where(:year => year, :month => month, :day => day)
+		(0...gametime.size).each{|i|
+			games = todays_games.where(:home_team_id => home[i].id, :away_team_id => away[i].id)
+			# Double header issues are located here
+			if games.size == 2
+				if count == 1
+					game = games.first
+				else
+					game = games.second
+					count = 0
+				end
+				time = convertTime(game, gametime[i])
+				game.update_attributes(:time => time)
+				count += 1
+			elsif games.size == 1
+				game = games.first
+				time = convertTime(game, gametime[i])
+				game.update_attributes(:time => time)
+			else
+				game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '0')
+				time = convertTime(game, gametime[i])
+				game.update_attributes(:time => time)
+				puts "Game created " + game.url
+			end
+		}
+
+
+		starters()
+
+		url = "http://www.baseballpress.com/lineups/#{DateTime.now.tomorrow.to_date}"
+		puts url
+		doc = Nokogiri::HTML(open(url))
+		
+		pitchers = Pitcher.where(:game_id => nil)
+		doc.css(".team-name+ div").each do |player|
+			text = player.text
+			href = player.child['data-bref']
+			fangraph_id = player.child['data-mlb']
+			if text == "TBD"
+				next
+			end
+			text = text[0...-4]
+			if pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+				pitcher.update_attributes(:tomorrow_starter => true)
+			elsif pitcher = pitchers.find_by_alias(href)
+				pitcher.update_attributes(:tomorrow_starter => true)
+			elsif pitcher = pitchers.find_by_name(text)
+				pitcher.update_attributes(:tomorrow_starter => true)
+			end
+		end
+
+	end
+
 	task :bullpen => :environment do
 		require 'nokogiri'
 		require 'open-uri'

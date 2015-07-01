@@ -10,7 +10,7 @@ class IndexController < ApplicationController
 		year = params[:year]
 		month = params[:month]
 		day = params[:day]
-		@time = Date::MONTHNAMES[month.to_i] + ' ' + day.to_s + ' Matchups'
+		@time = Date::MONTHNAMES[month.to_i] + ' ' + day + ' Matchups'
 		if month.size == 1
 			month = "0" + month
 		end
@@ -20,6 +20,7 @@ class IndexController < ApplicationController
 
 		@games = Game.where(:year => year, :month => month, :day => day).order("home_team_id ASC")
 	end
+
 
 	def year
 		@years = Array.new

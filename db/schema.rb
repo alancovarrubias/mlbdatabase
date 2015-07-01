@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150630232010) do
+ActiveRecord::Schema.define(version: 20150701205156) do
 
   create_table "games", force: true do |t|
     t.integer  "away_team_id"
@@ -107,53 +107,54 @@ ActiveRecord::Schema.define(version: 20150630232010) do
   create_table "pitchers", force: true do |t|
     t.integer  "team_id"
     t.integer  "game_id"
-    t.string   "name",                       default: ""
-    t.string   "alias",                      default: ""
-    t.integer  "fangraph_id",                default: 0
-    t.string   "bathand",                    default: ""
-    t.string   "throwhand",                  default: ""
-    t.boolean  "starter",                    default: false
-    t.boolean  "bullpen",                    default: false
-    t.integer  "one",                        default: 0
-    t.integer  "two",                        default: 0
-    t.integer  "three",                      default: 0
-    t.integer  "FIP",                        default: 0
-    t.float    "LD_L",            limit: 24, default: 0.0
-    t.float    "WHIP_L",          limit: 24, default: 0.0
-    t.float    "IP_L",            limit: 24, default: 0.0
-    t.integer  "SO_L",                       default: 0
-    t.integer  "BB_L",                       default: 0
-    t.float    "ERA_L",           limit: 24, default: 0.0
-    t.integer  "wOBA_L",                     default: 0
-    t.float    "FB_L",            limit: 24, default: 0.0
-    t.float    "xFIP_L",          limit: 24, default: 0.0
-    t.float    "KBB_L",           limit: 24, default: 0.0
-    t.float    "LD_R",            limit: 24, default: 0.0
-    t.float    "WHIP_R",          limit: 24, default: 0.0
-    t.float    "IP_R",            limit: 24, default: 0.0
-    t.integer  "SO_R",                       default: 0
-    t.integer  "BB_R",                       default: 0
-    t.float    "ERA_R",           limit: 24, default: 0.0
-    t.integer  "wOBA_R",                     default: 0
-    t.float    "FB_R",            limit: 24, default: 0.0
-    t.float    "xFIP_R",          limit: 24, default: 0.0
-    t.float    "KBB_R",           limit: 24, default: 0.0
-    t.float    "LD_30",           limit: 24, default: 0.0
-    t.float    "WHIP_30",         limit: 24, default: 0.0
-    t.float    "IP_30",           limit: 24, default: 0.0
-    t.integer  "SO_30",                      default: 0
-    t.integer  "BB_30",                      default: 0
-    t.integer  "FIP_previous",               default: 0
-    t.float    "FB_previous_L",   limit: 24, default: 0.0
-    t.float    "FB_previous_R",   limit: 24, default: 0.0
-    t.float    "xFIP_previous_L", limit: 24, default: 0.0
-    t.float    "xFIP_previous_R", limit: 24, default: 0.0
-    t.float    "KBB_previous_L",  limit: 24, default: 0.0
-    t.float    "KBB_previous_R",  limit: 24, default: 0.0
-    t.integer  "wOBA_previous_L",            default: 0
-    t.integer  "wOBA_previous_R",            default: 0
+    t.string   "name",                        default: ""
+    t.string   "alias",                       default: ""
+    t.integer  "fangraph_id",                 default: 0
+    t.string   "bathand",                     default: ""
+    t.string   "throwhand",                   default: ""
+    t.boolean  "starter",                     default: false
+    t.boolean  "bullpen",                     default: false
+    t.integer  "one",                         default: 0
+    t.integer  "two",                         default: 0
+    t.integer  "three",                       default: 0
+    t.integer  "FIP",                         default: 0
+    t.float    "LD_L",             limit: 24, default: 0.0
+    t.float    "WHIP_L",           limit: 24, default: 0.0
+    t.float    "IP_L",             limit: 24, default: 0.0
+    t.integer  "SO_L",                        default: 0
+    t.integer  "BB_L",                        default: 0
+    t.float    "ERA_L",            limit: 24, default: 0.0
+    t.integer  "wOBA_L",                      default: 0
+    t.float    "FB_L",             limit: 24, default: 0.0
+    t.float    "xFIP_L",           limit: 24, default: 0.0
+    t.float    "KBB_L",            limit: 24, default: 0.0
+    t.float    "LD_R",             limit: 24, default: 0.0
+    t.float    "WHIP_R",           limit: 24, default: 0.0
+    t.float    "IP_R",             limit: 24, default: 0.0
+    t.integer  "SO_R",                        default: 0
+    t.integer  "BB_R",                        default: 0
+    t.float    "ERA_R",            limit: 24, default: 0.0
+    t.integer  "wOBA_R",                      default: 0
+    t.float    "FB_R",             limit: 24, default: 0.0
+    t.float    "xFIP_R",           limit: 24, default: 0.0
+    t.float    "KBB_R",            limit: 24, default: 0.0
+    t.float    "LD_30",            limit: 24, default: 0.0
+    t.float    "WHIP_30",          limit: 24, default: 0.0
+    t.float    "IP_30",            limit: 24, default: 0.0
+    t.integer  "SO_30",                       default: 0
+    t.integer  "BB_30",                       default: 0
+    t.integer  "FIP_previous",                default: 0
+    t.float    "FB_previous_L",    limit: 24, default: 0.0
+    t.float    "FB_previous_R",    limit: 24, default: 0.0
+    t.float    "xFIP_previous_L",  limit: 24, default: 0.0
+    t.float    "xFIP_previous_R",  limit: 24, default: 0.0
+    t.float    "KBB_previous_L",   limit: 24, default: 0.0
+    t.float    "KBB_previous_R",   limit: 24, default: 0.0
+    t.integer  "wOBA_previous_L",             default: 0
+    t.integer  "wOBA_previous_R",             default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "tomorrow_starter"
   end
 
   add_index "pitchers", ["alias"], name: "index_pitchers_on_alias", using: :btree

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+  		<title><%= @away.name + " @ " + @home.name %></title>
+  		<%= stylesheet_link_tag('application') %>
+	</head>
+
+	<body>
+
+		<h2><%= @away.name  + " @ " + @home.name %></h2>
+		<h3>Projected Pitchers</h3>
+		<%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %>
+	</br>
+	</br>
+	</br>
+
+	<table>
+		<tr>
+			<th colspan="39"><%= "Starting Pitchers" %></th>
+		</tr>
+		<%= render(:partial => "pitcherheader") %>
+
+		<% @away_pitchers.each do |pitcher| %>
+			<%= render(:partial => "pitcher", :locals => {:pitcher => pitcher}) %>
+		<% end %>
+
+		<% @home_pitchers.each do |pitcher| %>
+			<%= render(:partial => "pitcher", :locals => {:pitcher => pitcher}) %>
+		<% end %>
+
+	</body>
+</html>
