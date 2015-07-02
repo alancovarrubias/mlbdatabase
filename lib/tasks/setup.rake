@@ -1555,14 +1555,4 @@ namespace :setup do
 	end
 
 
-	task :whoo => :environment do
-		require 'nokogiri'
-		require 'open-uri'
-		url = "http://www.baseball-reference.com/teams/NYY/2015-roster.shtml"
-		doc = Nokogiri::HTML(open(url))
-
-		doc.each do ||
-	end
-
-
 end
