@@ -1660,5 +1660,10 @@ namespace :setup do
 
 	end
 
+	task :create_aj => :environment do
+
+		Hitter.create(:id => 1370, :team_id => 5, :game_id => 18, :name => "A.J. Pierzynski", :alias => "pierza", :fangraph_id => nil, :bathand => "L", :throwhand => "R", :lineup => 4, :starter => true, :SB_L => 0, :wOBA_L => 272, :OBP_L => 300, :SLG_L => 296, :AB_L => 27, :BB_L => 2, :SO_L => 4, :LD_L => 26.1, :wRC_L => 70, :SB_R => 0, :wOBA_R => 317, :OBP_R => 310, :SLG_R => 423, :AB_R => 156, :BB_R => 7, :SO_R => 16, :LD_R => 20.3, :wRC_R => 101, :wOBA_14 => 295, :OBP_14 => 289, :SLG_14 => 389, :AB_14 => 36, :BB_14 => 2, :SB_14 => 0, :SO_14 => 3, :LD_14 => 27.3, :wRC_14 => 85, :SB_previous_L => 0, :wOBA_previous_L => 220, :OBP_previous_L => 232, :SLG_previous_L => 258, :AB_previous_L => 93, :BB_previous_L => 1, :SO_previous_L => 13, :LD_previous_L => 14.8, :wRC_previous_L => 31, :SB_previous_R => 0, :wOBA_previous_R => 298, :OBP_previous_R => 309, :SLG_previous_R => 367, :AB_previous_R => 245, :BB_previous_R => 13, :SO_previous_R => 41, :LD_previous_R => 23.8, :wRC_previous_R => 87)
+	end
+
 
 end
