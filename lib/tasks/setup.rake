@@ -352,7 +352,7 @@ namespace :setup do
 		end
 
 		(1..30).each do |i|
-			url = "http://www.fangraphs.com/depthcharts.aspx?position=ALL&teamid=19"
+			url = "http://www.fangraphs.com/depthcharts.aspx?position=ALL&teamid=#{i}"
 			doc = Nokogiri::HTML(open(url))
 
 			hitters = Hitter.where(:game_id => nil)
