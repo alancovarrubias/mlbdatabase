@@ -293,7 +293,7 @@ namespace :setup do
 				return 'Ed Easley'
 			when 'JR Murphy'
 				return 'John Ryan Murphy'
-			when 'Delino Deshields Jr'
+			when 'Delino Deshields Jr.'
 				return 'Delino DeShields'
 			when 'Steve Tolleson'
 				return 'Steven Tolleson'
@@ -398,9 +398,7 @@ namespace :setup do
 					if hitter = hitters.find_by_name(name)
 						hitter.update_attributes(:fangraph_id => fangraph_id)
 					elsif hitter = hitters.find_by_name(nicknames(name))
-						puts hitter.name + ' ' + fangraph_id.to_s
 						hitter.update_attributes(:fangraph_id => fangraph_id)
-						puts hitter.name + ' ' + hitter.fangraph_id.to_s
 					else
 						if name != 'Total' && name != 'The Others'
 							puts name + ' not found'
@@ -757,39 +755,34 @@ namespace :setup do
 				end
 			end
 
-			urls.clear
-			urls << url_30
-
 			pitcher = ld = whip = ip = so = nil
-			url_30.each do |url|
-				puts url
-				doc = Nokogiri::HTML(open(url))
-				name = ld = whip = ip = so = bb = nil
-				doc.css(".grid_line_regular").each_with_index do |stat, index| #Search through all the information. Use an instance variable to determine which information I want.
-					text = stat.text
-					case index%8
-					when 1
-						name = text
-						fangraph_id = getFangraph(stat).to_i
-						pitcher = pitchers.find_by_fangraph_id(fangraph_id)
-						if pitcher == nil
-							pitcher = pitchers.find_by_name(name)
-						end
-					when 3
-						ld = text[0...-2].to_f
-					when 4
-						whip = text.to_f
-					when 5
-						ip = text.to_f
-					when 6
-						so = text.to_i
-					when 7
-						bb = text.to_i
-						if pitcher != nil
-							pitcher.update_attributes(:LD_30 => ld, :WHIP_30 => whip, :IP_30 => ip, :SO_30 => so, :BB_30 => bb)
-						else
-							puts name + ' not found'
-						end
+			puts url_30
+			doc = Nokogiri::HTML(open(url_30))
+			name = ld = whip = ip = so = bb = nil
+			doc.css(".grid_line_regular").each_with_index do |stat, index| #Search through all the information. Use an instance variable to determine which information I want.
+				text = stat.text
+				case index%8
+				when 1
+					name = text
+					fangraph_id = getFangraph(stat).to_i
+					pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+					if pitcher == nil
+						pitcher = pitchers.find_by_name(name)
+					end
+				when 3
+					ld = text[0...-2].to_f
+				when 4
+					whip = text.to_f
+				when 5
+					ip = text.to_f
+				when 6
+					so = text.to_i
+				when 7
+					bb = text.to_i
+					if pitcher != nil
+						pitcher.update_attributes(:LD_30 => ld, :WHIP_30 => whip, :IP_30 => ip, :SO_30 => so, :BB_30 => bb)
+					else
+						puts name + ' not found'
 					end
 				end
 			end
