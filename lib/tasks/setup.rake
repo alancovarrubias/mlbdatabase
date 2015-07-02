@@ -255,6 +255,8 @@ namespace :setup do
 
 		def nicknames(text)
 			case text
+			when 'Zachary Heathcott'
+				return 'Slade Heathcott'
 			when 'Daniel Burawa'
 				return 'Danny Burawa'
 			when 'Kenneth Roberts'
