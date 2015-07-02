@@ -1072,11 +1072,11 @@ namespace :setup do
 			href = player.last_element_child['data-bref']
 			fangraph_id = player.last_element_child['data-mlb']
 			if hitter = hitters.find_by_fangraph_id(fangraph_id)
-				hitter.update_attributes(:starter => true, :lineup => lineup)
+				hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
 			elsif hitter = hitters.find_by_alias(href)
-				hitter.update_attributes(:starter => true, :lineup => lineup)
+				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :lineup => lineup)
 			elsif hitter = hitters.find_by_name(name)
-				hitter.update_attributes(:starter => true, :lineup => lineup)
+				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href, :lineup => lineup)
 			else
 				hitter = Hitter.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
 				puts hitter.name + ' created'
