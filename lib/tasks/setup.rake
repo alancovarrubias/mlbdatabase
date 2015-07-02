@@ -471,7 +471,7 @@ namespace :setup do
 					else
 						num = '0'
 					end
-					if month == '06' && day == '29'
+					if month.to_i > 6 || (month.to_i == 6 && day.to_i < 29)
 						break
 					end
 				when 4
