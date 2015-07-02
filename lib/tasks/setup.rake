@@ -1415,6 +1415,12 @@ namespace :setup do
 					end
 				end
 
+				Hitter.where(:game_id => game.id).each do |hitter|
+					if !starting_hitters.include?(hitter)
+						hitter.destroy
+					end
+				end
+
 				starting_pitchers.each do |pitcher|
 					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :alias => pitcher.alias).empty?
 						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
@@ -1426,6 +1432,12 @@ namespace :setup do
 							:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
 							:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
 							:wOBA_previous_R => pitcher.wOBA_previous_R)
+					end
+				end
+
+				Pitcher.where(:game_id => game.id, :starter => true).each do |pitcher|
+					if !starting_pitchers.include?(pitcher)
+						pitcher.destroy
 					end
 				end
 
@@ -1442,6 +1454,14 @@ namespace :setup do
 							:wOBA_previous_R => pitcher.wOBA_previous_R)
 					end
 				end
+
+				Pitcher.where(:game_id => game.id, :bullpen => true).each do |pitcher|
+					if !bullpen_pitchers.include?(pitcher)
+						pitcher.destroy
+					end
+				end
+
+
 			end
 		end
 	end
@@ -1522,6 +1542,7 @@ namespace :setup do
 		end
 
 		Game.where(:year => year, :month => month, :day => day).each do |game|
+			puts game.home_team.name
 			pitchers_size = game.pitchers.where(:starter => true).size
 			if pitchers_size != 2
 				puts pitchers_size
