@@ -1610,7 +1610,7 @@ namespace :setup do
 		end
 
 		Game.where(:year => year, :month => month, :day => day).each do |game|
-			pitchers_size = Pitcher.where(:tomorrow_starter => true, :home_team_id => game.home_team.id).size
+			pitchers_size = (Pitcher.where(:tomorrow_starter => true, :team_id => game.home_team.id) + Pitcher.where(:tomorrow_starter => true, :team_id => game.away_team.id)).size
 			if pitchers_size != 2
 				puts game.home_team.name + ' missing tomorrow pitchers'
 			end
