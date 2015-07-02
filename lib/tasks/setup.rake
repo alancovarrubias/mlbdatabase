@@ -1596,4 +1596,12 @@ namespace :setup do
 
 	end
 
+	task :nope => :environment do
+		Game.all.each do |game|
+			if game.pitchers.size == 0
+				game.destroy
+			end
+		end
+	end
+
 end
