@@ -9,7 +9,8 @@
 			<h1><%= @time %></h1>
 		</div>
 
-		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%>
+		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
+		<%= link_to(@month + ' ' + @year, {:controller => 'index', :action => 'day', :year => params[:year], :month => params[:month]}) %>
 
 		<div id="main">
 			<div id="content">

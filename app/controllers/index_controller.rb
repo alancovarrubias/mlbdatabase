@@ -7,7 +7,7 @@ class IndexController < ApplicationController
 
 	def game
 		require 'date'
-		year = params[:year]
+		@year = params[:year]
 		month = params[:month]
 		day = params[:day]
 		@time = Date::MONTHNAMES[month.to_i] + ' ' + day + ' Matchups'
@@ -18,7 +18,9 @@ class IndexController < ApplicationController
 			day = "0" + day
 		end
 
-		@games = Game.where(:year => year, :month => month, :day => day).order("home_team_id ASC")
+		@games = Game.where(:year => @year, :month => month, :day => day).order("home_team_id ASC")
+		@month = Date::MONTHNAMES[month.to_i]
+
 	end
 
 
