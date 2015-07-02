@@ -11,6 +11,7 @@
 	</br>
 
 		<h2><%= @away.name  + " @ " + @home.name %></h2>
+		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
 		<%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %></br></br>
 		<% if @left %>
 			<%= link_to('RH', {:controller => 'game', :action => 'matchup', :id => params[:id], :left => 0, :year => params[:year], :month => params[:month], :day => params[:day]})%>

@@ -1524,10 +1524,12 @@ namespace :setup do
 		Game.where(:year => year, :month => month, :day => day).each do |game|
 			pitchers_size = game.pitchers.where(:starter => true).size
 			if pitchers_size != 2
+				puts pitchers_size
 				puts game.home_team.name + ' missing pitchers'
 			end
 			hitters_size = game.hitters.where(:starter => true).size
 			if hitters_size != 2
+				puts hitters_size
 				puts game.home_team.name + ' missing hitters'
 			end
 		end
@@ -1547,10 +1549,83 @@ namespace :setup do
 		Game.where(:year => year, :month => month, :day => day).each do |game|
 			pitchers_size = (Pitcher.where(:tomorrow_starter => true, :team_id => game.home_team.id) + Pitcher.where(:tomorrow_starter => true, :team_id => game.away_team.id)).size
 			if pitchers_size != 2
+				puts pitchers_size
 				puts game.home_team.name + ' missing tomorrow pitchers'
 			end
 		end
 
+
+	end
+
+	task :time => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		def convertTime(game, time)
+
+			if !time.include?(":")
+				return ""
+			end
+
+			colon = time.index(":")
+
+			hour = time[0...colon].to_i + game.home_team.timezone
+
+
+			# Checks the borderline cases
+			suffix = time[colon..-4]
+			if hour <= 0
+				hour = hour + 12
+			elsif hour >= 9 && hour != 12
+				suffix[suffix.index("P")] = "A"
+			end
+
+			return hour.to_s + suffix
+
+		end
+
+
+		today = Time.now.yesterday.yesterday.yesterday
+		while true
+			today = today.yesterday
+			year = today.year.to_s
+			month = today.month.to_s
+			day = today.day.to_s
+
+			if month == '3'
+				break
+			end
+
+			if month.size == 1
+				month = "0" + month
+			end
+			if day.size == 1
+				day = "0" + day
+			end
+
+
+			url = "http://www.baseballpress.com/lineups/#{year}-#{month}-#{day}"
+			doc = Nokogiri::HTML(open(url))
+			puts url
+			puts year
+			puts month
+			puts day
+			games = Game.where(:year => year, :month => month, :day => day)
+			puts games.size
+
+			time = home = 0
+			doc.css(".game-time , .team-name").each_with_index do |stat, index|
+				case index%3
+				when 0
+					time = stat.text
+				when 2
+					home = Team.find_by_name(stat.text)
+					game = games.where(:home_team_id => home.id).first
+					puts game.url
+					game.update_attributes(:time => convertTime(game, time))
+				end
+			end
+		end
 
 	end
 
