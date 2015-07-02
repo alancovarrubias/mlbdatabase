@@ -92,18 +92,14 @@ namespace :setup do
 			 			if text.to_i > 0
 			 				pitcher_bool = true
 			 			end
-			 			if !hitter = Hitter.find_by_name(name)
+			 			if !hitter = Hitter.find_by_alias(href)
 							Hitter.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 								:bathand => bathand, :throwhand => throwhand)
-						elsif hitter.alias == nil
-							hitter.update_attributes(:alias => href)
 						end
 						if pitcher_bool
-							if !pitcher = Pitcher.find_by_name(name)
+							if !pitcher = Pitcher.find_by_alias(href)
 								Pitcher.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 									:bathand => bathand, :throwhand => throwhand)
-							elsif pitcher.alias == nil
-								pitcher.update_attributes(:alias => href)
 							end
 						end
 						pitcher_bool = false
@@ -196,18 +192,14 @@ namespace :setup do
 			 			if text.to_i > 0
 			 				pitcher_bool = true
 			 			end
-			 			if !hitter = Hitter.find_by_name(name)
+			 			if !hitter = Hitter.find_by_alias(href)
 							Hitter.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 								:bathand => bathand, :throwhand => throwhand)
-						elsif hitter.alias == nil
-							hitter.update_attributes(:alias => href)
 						end
 						if pitcher_bool
-							if !pitcher = Pitcher.find_by_name(name)
+							if !pitcher = Pitcher.find_by_alias(href)
 								Pitcher.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 									:bathand => bathand, :throwhand => throwhand)
-							elsif pitcher.alias == nil
-								pitcher.update_attributes(:alias => href)
 							end
 						end
 						pitcher_bool = false
@@ -1488,6 +1480,7 @@ namespace :setup do
 						var = 0
 					end
 					if child == nil # This is a total, so a new table is near
+						row = 0
 						table += 1
 					else
 						href = child['href']
@@ -1498,11 +1491,11 @@ namespace :setup do
 							player = pitchers.find_by_alias(href)
 						end
 
-						if player != nil && row <= 9
-							if player.class.name == "Hitter"
-								# Hitter.create(:game_id => game.id, :team_id => team.id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id)
-							elsif player.class.name == "Pitcher"
-								# Pitcher.create(:game_id => game.id, :team_id => team.id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id)
+						if player != nil
+							if row <= 9 && player.class.name == "Hitter"
+								Hitter.create(:game_id => game.id, :team_id => team_id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id, :lineup => row)
+							elsif row == 1 && player.class.name == "Pitcher"
+								Pitcher.create(:game_id => game.id, :team_id => team_id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id)
 							end
 						else
 							puts href + ' not found'
@@ -1512,8 +1505,6 @@ namespace :setup do
 				var += 1
 			end
 		end
-
-
 	end
 
 	task :test => :environment do
@@ -1561,6 +1552,16 @@ namespace :setup do
 		end
 
 
+	end
+
+
+	task :whoo => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+		url = "http://www.baseball-reference.com/teams/NYY/2015-roster.shtml"
+		doc = Nokogiri::HTML(open(url))
+
+		doc.each do ||
 	end
 
 
