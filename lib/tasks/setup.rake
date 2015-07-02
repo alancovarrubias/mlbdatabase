@@ -691,7 +691,7 @@ namespace :setup do
 						if pitcher != nil
 							case url_index/30
 							when 0
-								pitcher.update_attributes(:team_id => url_index + 1, :FIP => fip)
+								pitcher.update_attributes(:team_id => team.id, :FIP => fip)
 							when 1
 								pitcher.update_attributes(:FIP_previous => fip)
 							end
@@ -743,7 +743,7 @@ namespace :setup do
 						if pitcher != nil
 							case url_index/30
 							when 0
-								pitcher.update_attributes(:team_id => url_index + 1, :LD_L => ld, :WHIP_L => whip, :IP_L => ip, :SO_L => so, :BB_L => bb, :ERA_L => era, :FB_L => fb, :xFIP_L => xfip, :KBB_L => kbb, :wOBA_L => wOBA)
+								pitcher.update_attributes(:team_id => team.id, :LD_L => ld, :WHIP_L => whip, :IP_L => ip, :SO_L => so, :BB_L => bb, :ERA_L => era, :FB_L => fb, :xFIP_L => xfip, :KBB_L => kbb, :wOBA_L => wOBA)
 							when 1
 								pitcher.update_attributes(:LD_R => ld, :WHIP_R => whip, :IP_R => ip, :SO_R => so, :BB_R => bb, :ERA_R => era, :FB_R => fb, :xFIP_R => xfip, :KBB_R => kbb, :wOBA_R => wOBA)
 							end
@@ -828,7 +828,7 @@ namespace :setup do
 						if pitcher != nil
 							case url_index/30
 							when 0
-								pitcher.update_attributes(:team_id => url_index + 1, :FB_previous_L => fb, :xFIP_previous_L => xfip, :KBB_previous_L => kbb, :wOBA_previous_L => wOBA)
+								pitcher.update_attributes(:team_id => team.id, :FB_previous_L => fb, :xFIP_previous_L => xfip, :KBB_previous_L => kbb, :wOBA_previous_L => wOBA)
 							when 1
 								pitcher.update_attributes(:FB_previous_R => fb, :xFIP_previous_R => xfip, :KBB_previous_R => kbb, :wOBA_previous_R => wOBA)
 							end
