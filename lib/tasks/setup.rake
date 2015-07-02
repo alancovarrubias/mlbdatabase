@@ -1461,8 +1461,8 @@ namespace :setup do
 				end
 
 				Pitcher.where(:game_id => game.id, :starter => true).each do |pitcher|
-					if !Pitcher.where(:game_id => nil).find_by_alias(hitter.alias).starter
-						hitter.destroy
+					if !Pitcher.where(:game_id => nil).find_by_alias(pitcher.alias).starter
+						pitcher.destroy
 					end
 				end
 
