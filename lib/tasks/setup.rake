@@ -1415,11 +1415,11 @@ namespace :setup do
 					end
 				end
 
-				Hitter.where(:game_id => game.id).each do |hitter|
-					if !starting_hitters.include?(hitter)
-						hitter.destroy
-					end
-				end
+				# Hitter.where(:game_id => game.id).each do |hitter|
+				# 	if !starting_hitters.include?(hitter)
+				# 		hitter.destroy
+				# 	end
+				# end
 
 				starting_pitchers.each do |pitcher|
 					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :alias => pitcher.alias).empty?
@@ -1435,11 +1435,11 @@ namespace :setup do
 					end
 				end
 
-				Pitcher.where(:game_id => game.id, :starter => true).each do |pitcher|
-					if !starting_pitchers.include?(pitcher)
-						pitcher.destroy
-					end
-				end
+				# Pitcher.where(:game_id => game.id, :starter => true).each do |pitcher|
+				# 	if !starting_pitchers.include?(pitcher)
+				# 		pitcher.destroy
+				# 	end
+				# end
 
 				bullpen_pitchers.each do |pitcher|
 					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :alias => pitcher.alias).empty?
@@ -1455,11 +1455,11 @@ namespace :setup do
 					end
 				end
 
-				Pitcher.where(:game_id => game.id, :bullpen => true).each do |pitcher|
-					if !bullpen_pitchers.include?(pitcher)
-						pitcher.destroy
-					end
-				end
+				# Pitcher.where(:game_id => game.id, :bullpen => true).each do |pitcher|
+				# 	if !bullpen_pitchers.include?(pitcher)
+				# 		pitcher.destroy
+				# 	end
+				# end
 
 
 			end
