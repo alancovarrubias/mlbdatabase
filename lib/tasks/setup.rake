@@ -352,7 +352,7 @@ namespace :setup do
 		end
 
 		(1..30).each do |i|
-			url = "http://www.fangraphs.com/depthcharts.aspx?position=ALL&teamid=#{i}"
+			url = "http://www.fangraphs.com/depthcharts.aspx?position=ALL&teamid=15"
 			doc = Nokogiri::HTML(open(url))
 
 			hitters = Hitter.where(:game_id => nil)
@@ -385,6 +385,7 @@ namespace :setup do
 					while !letter?(name[-1])
 						name = name[0...-1]
 					end
+					puts name
 					if pitcher = pitchers.find_by_name(name)
 						fangraph_id = getFangraph(stat)
 						pitcher.update_attributes(:fangraph_id => fangraph_id)
@@ -402,17 +403,11 @@ namespace :setup do
 						hitter.update_attributes(:fangraph_id => fangraph_id)
 					elsif hitter = hitters.find_by_name(nicknames(name))
 						fangraph_id = getFangraph(stat)
+						puts hitter.name + ' ' + fangraph_id.to_s
 						hitter.update_attributes(:fangraph_id => fangraph_id)
 					else
 						if name != 'Total' && name != 'The Others'
 							puts name + ' not found'
-						end
-					end
-
-					if pitcher != nil
-						hitter = hitters.find_by_name(pitcher.name)
-						if hitter != nil
-							hitter.update_attributes(:fangraph_id => pitcher.fangraph_id)
 						end
 					end
 
