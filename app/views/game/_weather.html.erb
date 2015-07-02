@@ -11,6 +11,7 @@
 		<th>Precipitation</th>
 	</tr>
 	<tr>
+		<td><%= format_time(@game.time, 0) %></td>
 		<td align="center"><%= @game.temperature_1 %></td>
 		<td align="center"><%= @game.wind_1 %></td>
 		<td align="center"><%= @game.pressure_1 %></td>
@@ -18,6 +19,7 @@
 		<td align="center"><%= @game.precipitation_1 %></td>
 	</tr>
 	<tr>
+		<td><%= format_time(@game.time, 1) %></td>
 		<td align="center"><%= @game.temperature_2 %></td>
 		<td align="center"><%= @game.wind_2 %></td>
 		<td align="center"><%= @game.pressure_2 %></td>
@@ -25,6 +27,7 @@
 		<td align="center"><%= @game.precipitation_2 %></td>
 	</tr>
 	<tr>
+		<td><%= format_time(@game.time, 2) %></td>
 		<td align="center"><%= @game.temperature_3 %></td>
 		<td align="center"><%= @game.wind_3 %></td>
 		<td align="center"><%= @game.pressure_3 %></td>
