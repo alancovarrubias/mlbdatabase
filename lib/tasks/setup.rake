@@ -472,8 +472,6 @@ namespace :setup do
 						num = '0'
 					end
 					if month.to_i > 6 || (month.to_i == 6 && day.to_i >= 29)
-						puts month
-						puts day
 						break
 					end
 				when 4
@@ -1180,7 +1178,7 @@ namespace :setup do
 
 		def starters()
 			Pitcher.all.where(:tomorrow_starter => true, :game_id => nil).each do |pitcher|
-				pitcher.update_attributes(:starter => false)
+				pitcher.update_attributes(:starter_tomorrow => false)
 			end
 		end
 
@@ -1517,54 +1515,58 @@ namespace :setup do
 		require 'open-uri'
 
 
+		games = Game.where("month < '06' OR (month = '06' AND day < '29')")
 
-		url = "http://www.baseball-reference.com/boxes/LAN/LAN201506040.shtml"
+		games.each do |game|
+			url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
+			puts url
 
-		doc = Nokogiri::HTML(open(url))
+			doc = Nokogiri::HTML(open(url))
 
-		int = 22
-		table = var = row = 0
-		team_id = player = nil
-		hitters = Hitter.where(:game_id => nil)
-		pitchers = Pitcher.where(:game_id => nil)
-		doc.css(".normal_text td").each do |stat|
-			text = stat.text
-			case var%int
-			when 0
-				row += 1
-				if table%2 == 0
-					team_id = game.away_team.id
-				else
-					team_id = game.home_team.id
-				end
-				child = stat.last_element_child
-				if table == 2
-					int = 25
-					var = 0
-				end
-				if child == nil # This is a total, so a new table is near
-					table += 1
-				else
-					href = child['href']
-					href = href[11..href.index(".")-1]
-					if table < 2 # we are still at the hitting tables
-						player = hitters.find_by_alias(href)
-					else # we are at the pitching tables
-						player = pitchers.find_by_alias(href)
-					end
-
-					if player != nil && row <= 9
-						if player.class.name == "Hitter"
-							Hitter.create(:game_id => game.id, :team_id => team.id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id)
-						elsif player.class.name == "Pitcher"
-							Pitcher.create(:game_id => game.id, :team_id => team.id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id)
-						end
+			int = 22
+			table = var = row = 0
+			team_id = player = nil
+			hitters = Hitter.where(:game_id => nil)
+			pitchers = Pitcher.where(:game_id => nil)
+			doc.css(".normal_text td").each do |stat|
+				text = stat.text
+				case var%int
+				when 0
+					row += 1
+					if table%2 == 0
+						team_id = game.away_team.id
 					else
-						puts href + ' not found'
+						team_id = game.home_team.id
+					end
+					child = stat.last_element_child
+					if table == 2
+						int = 25
+						var = 0
+					end
+					if child == nil # This is a total, so a new table is near
+						table += 1
+					else
+						href = child['href']
+						href = href[11..href.index(".")-1]
+						if table < 2 # we are still at the hitting tables
+							player = hitters.find_by_alias(href)
+						else # we are at the pitching tables
+							player = pitchers.find_by_alias(href)
+						end
+
+						if player != nil && row <= 9
+							if player.class.name == "Hitter"
+								# Hitter.create(:game_id => game.id, :team_id => team.id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id)
+							elsif player.class.name == "Pitcher"
+								# Pitcher.create(:game_id => game.id, :team_id => team.id, :starter => true, :name => player.name, :alias => player.alias, :fangraph_id => player.fangraph_id)
+							end
+						else
+							puts href + ' not found'
+						end
 					end
 				end
+				var += 1
 			end
-			var += 1
 		end
 
 
