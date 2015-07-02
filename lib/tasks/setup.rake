@@ -1178,7 +1178,7 @@ namespace :setup do
 
 		def starters()
 			Pitcher.all.where(:tomorrow_starter => true, :game_id => nil).each do |pitcher|
-				pitcher.update_attributes(:starter_tomorrow => false)
+				pitcher.update_attributes(:tomorrow_starter => false)
 			end
 		end
 
