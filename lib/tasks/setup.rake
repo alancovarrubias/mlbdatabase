@@ -1668,5 +1668,14 @@ namespace :setup do
 
 	end
 
+	task :deletegames => :environment do
+		games = Game.where("month < '06' OR (month = '06' AND day < '29')").each do |game|
+			game.pitchers.destroy_all
+			game.hitters.destroy_all
+			game.destroy
+		end
+
+	end
+
 
 end
