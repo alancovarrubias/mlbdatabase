@@ -1052,12 +1052,12 @@ namespace :setup do
 				next
 			end
 			text = text[0...-4]
-			if pitcher = pitchers.find_by_fangraph_id(fangraph_id)
-				pitcher.update_attributes(:starter => true)
-			elsif pitcher = pitchers.find_by_alias(href)
-				pitcher.update_attributes(:starter => true)
+			if fangraph_id != "" && pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+				pitcher.update_attributes(:starter => true, :alias => href)
+			elsif href != "" && pitcher = pitchers.find_by_alias(href)
+				pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id)
 			elsif pitcher = pitchers.find_by_name(text)
-				pitcher.update_attributes(:starter => true)
+				pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href)
 			else
 				pitcher = Pitcher.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
 				puts pitcher.name + ' created'
@@ -1072,10 +1072,19 @@ namespace :setup do
 			href = player.last_element_child['data-bref']
 			fangraph_id = player.last_element_child['data-mlb']
 			if fangraph_id != "" && hitter = hitters.find_by_fangraph_id(fangraph_id)
+				if name == "Miguel Sano"
+					puts 'fangraph'
+				end
 				hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
 			elsif href != "" && hitter = hitters.find_by_alias(href)
+				if name == "Miguel Sano"
+					puts 'alias'
+				end
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :lineup => lineup)
 			elsif hitter = hitters.find_by_name(name)
+				if name == 'Miguel Sano'
+					puts 'Miguel Sano'
+				end
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href, :lineup => lineup)
 			else
 				hitter = Hitter.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
