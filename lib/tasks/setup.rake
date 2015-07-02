@@ -363,11 +363,10 @@ namespace :setup do
 					while !letter?(name[-1])
 						name = name[0...-1]
 					end
+					fangraph_id = getFangraph(stat)
 					if hitter = hitters.find_by_name(name)
-						fangraph_id = getFangraph(stat)
 						hitter.update_attributes(:fangraph_id => fangraph_id)
 					elsif hitter = hitters.find_by_name(nicknames(name))
-						fangraph_id = getFangraph(stat)
 						hitter.update_attributes(:fangraph_id => fangraph_id)
 					else
 						if name != 'Total'
@@ -401,6 +400,7 @@ namespace :setup do
 					elsif hitter = hitters.find_by_name(nicknames(name))
 						puts hitter.name + ' ' + fangraph_id.to_s
 						hitter.update_attributes(:fangraph_id => fangraph_id)
+						puts hitter.name + ' ' + hitter.fangraph_id.to_s
 					else
 						if name != 'Total' && name != 'The Others'
 							puts name + ' not found'
