@@ -472,6 +472,8 @@ namespace :setup do
 						num = '0'
 					end
 					if month.to_i > 6 || (month.to_i == 6 && day.to_i < 29)
+						puts month
+						puts day
 						break
 					end
 				when 4
