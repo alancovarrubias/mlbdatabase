@@ -951,15 +951,18 @@ namespace :setup do
 
 			colon = time.index(":")
 
-			hour = time[0...colon].to_i + game.home_team.timezone
+			original_hour = time[0...colon].to_i
+			suffix = time[colon..-4]
+			hour = original_hour + game.home_team.timezone
 
 
 			# Checks the borderline cases
-			suffix = time[colon..-4]
-			if hour <= 0
-				hour = hour + 12
-			elsif hour >= 9 && hour != 12
+			if original_hour == 12 && hour != 12 || hour < 0
 				suffix[suffix.index("P")] = "A"
+			end
+
+			if hour < 1
+				hour += 12
 			end
 
 			return hour.to_s + suffix
@@ -1107,15 +1110,18 @@ namespace :setup do
 
 			colon = time.index(":")
 
-			hour = time[0...colon].to_i + game.home_team.timezone
+			original_hour = time[0...colon].to_i
+			suffix = time[colon..-4]
+			hour = original_hour + game.home_team.timezone
 
 
 			# Checks the borderline cases
-			suffix = time[colon..-4]
-			if hour <= 0
-				hour = hour + 12
-			elsif hour >= 9 && hour != 12
+			if original_hour == 12 && hour != 12 || hour < 0
 				suffix[suffix.index("P")] = "A"
+			end
+
+			if hour < 1
+				hour += 12
 			end
 
 			return hour.to_s + suffix
@@ -1594,15 +1600,18 @@ namespace :setup do
 
 			colon = time.index(":")
 
-			hour = time[0...colon].to_i + game.home_team.timezone
+			original_hour = time[0...colon].to_i
+			suffix = time[colon..-4]
+			hour = original_hour + game.home_team.timezone
 
 
 			# Checks the borderline cases
-			suffix = time[colon..-4]
-			if hour <= 0
-				hour = hour + 12
-			elsif hour >= 9 && hour != 12
+			if original_hour == 12 && hour != 12 || hour < 0
 				suffix[suffix.index("P")] = "A"
+			end
+
+			if hour < 1
+				hour += 12
 			end
 
 			return hour.to_s + suffix
@@ -1624,6 +1633,7 @@ namespace :setup do
 			if month.size == 1
 				month = "0" + month
 			end
+
 			if day.size == 1
 				day = "0" + day
 			end
@@ -1641,9 +1651,16 @@ namespace :setup do
 				when 0
 					time = stat.text
 				when 2
+					if time == "PPD"
+						next
+					end
 					home = Team.find_by_name(stat.text)
 					game = games.where(:home_team_id => home.id).first
-					puts game.url
+					puts home.name
+					if game == nil
+						puts home.name + ' skipped'
+						next
+					end
 					game.update_attributes(:time => convertTime(game, time))
 				end
 			end
