@@ -1250,7 +1250,8 @@ namespace :setup do
 		doc = Nokogiri::HTML(open(url))
 		
 		pitchers = Pitcher.where(:game_id => nil)
-		doc.css(".team-name+ div").each do |player|
+		doc.css(".team-name+ div").each_with_index do |player, index|
+			puts player
 			text = player.text
 			href = player.child['data-bref']
 			fangraph_id = player.child['data-mlb']
@@ -1264,6 +1265,14 @@ namespace :setup do
 				pitcher.update_attributes(:tomorrow_starter => true)
 			elsif pitcher = pitchers.find_by_name(text)
 				pitcher.update_attributes(:tomorrow_starter => true)
+			else
+				pitcher = Pitcher.create(:name => name, :tomorrow_starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
+				if index%2 == 0
+					pitcher.update_attributes(:team_id => away[index/2])
+				else
+					pitcher.update_attributes(:team_id => home[index/2])
+				end
+				puts pitcher.name + ' created'
 			end
 		end
 
