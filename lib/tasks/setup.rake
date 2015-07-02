@@ -1251,14 +1251,13 @@ namespace :setup do
 		
 		pitchers = Pitcher.where(:game_id => nil)
 		doc.css(".team-name+ div").each_with_index do |player, index|
-			puts player
 			text = player.text
 			href = player.child['data-bref']
 			fangraph_id = player.child['data-mlb']
 			if text == "TBD"
 				next
 			end
-			text = text[0...-4]
+			name = text[0...-4]
 			if pitcher = pitchers.find_by_fangraph_id(fangraph_id)
 				pitcher.update_attributes(:tomorrow_starter => true)
 			elsif pitcher = pitchers.find_by_alias(href)
