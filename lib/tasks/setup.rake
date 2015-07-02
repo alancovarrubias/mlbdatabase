@@ -1549,7 +1549,7 @@ namespace :setup do
 				puts game.home_team.name + ' missing pitchers'
 			end
 			hitters_size = game.hitters.where(:starter => true).size
-			if hitters_size != 2
+			if hitters_size != 18
 				puts hitters_size
 				puts game.home_team.name + ' missing hitters'
 			end
