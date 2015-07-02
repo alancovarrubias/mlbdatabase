@@ -591,7 +591,7 @@ namespace :setup do
 		end
 
 
-		Team.each do |team|
+		Team.all.each do |team|
 			urls = Array.new
 			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
 			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
@@ -599,7 +599,7 @@ namespace :setup do
 			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=13&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
 			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=14&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
 
-			
+
 			ab = sb = bb = so = slg = obp = wOBA = wRC = ld = hitter = name = nil
 			hitters = Hitter.where(:game_id => nil)
 			urls.each_with_index do |url, url_index|
