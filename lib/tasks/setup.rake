@@ -1071,23 +1071,9 @@ namespace :setup do
 			name = player.last_element_child.child.to_s
 			href = player.last_element_child['data-bref']
 			fangraph_id = player.last_element_child['data-mlb']
-			if name == "Miguel Sano"
-				puts player
-				puts name
-				puts href
-				puts fangraph_id
-				if href == nil
-					puts 'nil'
-				elsif href == ''
-					puts 'empty'
-				else
-					puts href.class
-					puts fangraph_id.class
-				end
-			end
-			if hitter = hitters.find_by_fangraph_id(fangraph_id)
+			if fangraph_id != "" && hitter = hitters.find_by_fangraph_id(fangraph_id)
 				hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
-			elsif hitter = hitters.find_by_alias(href)
+			elsif href != "" && hitter = hitters.find_by_alias(href)
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :lineup => lineup)
 			elsif hitter = hitters.find_by_name(name)
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href, :lineup => lineup)
