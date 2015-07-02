@@ -1067,9 +1067,9 @@ namespace :setup do
 		hitters = Hitter.where(:game_id => nil)
 		doc.css(".players div").each do |player|
 			text = player.text
-			puts text
 			lineup = text[0].to_i
 			name = player.last_element_child.child.to_s
+			puts name
 			href = player.last_element_child['data-bref']
 			fangraph_id = player.last_element_child['data-mlb']
 			if hitter = hitters.find_by_fangraph_id(fangraph_id)
