@@ -1597,6 +1597,25 @@ namespace :setup do
 			end
 		end
 
+		year = Time.now.tomorrow.year.to_s
+		month = Time.now.tomorrow.month.to_s
+		day = Time.now.tomorrow.day.to_s
+
+		if month.size == 1
+			month = "0" + month
+		end
+
+		if day.size == 1
+			day = "0" + day
+		end
+
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+			pitchers_size = Pitcher.where(:tomorrow_starter => true, :home_team_id => game.home_team.id).size
+			if pitchers_size != 2
+				puts game.home_team.name + ' missing tomorrow pitchers'
+			end
+		end
+
 
 	end
 
