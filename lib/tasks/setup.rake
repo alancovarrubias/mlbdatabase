@@ -1268,9 +1268,9 @@ namespace :setup do
 			else
 				pitcher = Pitcher.create(:name => name, :tomorrow_starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
 				if index%2 == 0
-					pitcher.update_attributes(:team_id => away[index/2])
+					pitcher.update_attributes(:team_id => away[index/2].id)
 				else
-					pitcher.update_attributes(:team_id => home[index/2])
+					pitcher.update_attributes(:team_id => home[index/2].id)
 				end
 				puts pitcher.name + ' created'
 			end
