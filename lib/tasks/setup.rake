@@ -1071,9 +1071,11 @@ namespace :setup do
 			name = player.last_element_child.child.to_s
 			href = player.last_element_child['data-bref']
 			fangraph_id = player.last_element_child['data-mlb']
+			puts fangraph_id.class
 			if fangraph_id != "" && hitter = hitters.find_by_fangraph_id(fangraph_id)
 				if name == "Miguel Sano"
-					puts 'fangraph'
+					puts hitter.name
+					puts fangraph_id
 				end
 				hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
 			elsif href != "" && hitter = hitters.find_by_alias(href)
@@ -1551,7 +1553,6 @@ namespace :setup do
 		end
 
 		Game.where(:year => year, :month => month, :day => day).each do |game|
-			puts game.home_team.name
 			pitchers_size = game.pitchers.where(:starter => true).size
 			if pitchers_size != 2
 				puts pitchers_size
