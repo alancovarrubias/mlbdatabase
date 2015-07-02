@@ -463,10 +463,6 @@ namespace :setup do
 
 				text = stat.text
 
-				if var%21 == 3 && text == 'preview'
-					break
-				end
-
 				case var%21
 				when 2
 					month, day = convertDate(text)
@@ -474,6 +470,9 @@ namespace :setup do
 						num = text[-2]
 					else
 						num = '0'
+					end
+					if month == '06' && day == '29'
+						break
 					end
 				when 4
 					home = Team.find_by_abbr(text)
