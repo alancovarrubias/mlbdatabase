@@ -1069,9 +1069,13 @@ namespace :setup do
 			text = player.text
 			lineup = text[0].to_i
 			name = player.last_element_child.child.to_s
-			puts name
 			href = player.last_element_child['data-bref']
 			fangraph_id = player.last_element_child['data-mlb']
+			if name == "Miguel Sano"
+				puts name
+				puts href
+				puts href
+			end
 			if hitter = hitters.find_by_fangraph_id(fangraph_id)
 				hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
 			elsif hitter = hitters.find_by_alias(href)
