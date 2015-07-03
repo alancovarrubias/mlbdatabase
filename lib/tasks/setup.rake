@@ -542,112 +542,112 @@ namespace :setup do
 
 		year = Time.now.year
 
-		Team.all.each do |team|
-			url = "http://www.baseball-reference.com/teams/#{team.abbr}/2015.shtml"
-			doc = Nokogiri::HTML(open(url))
-			puts url
+		# Team.all.each do |team|
+		# 	url = "http://www.baseball-reference.com/teams/#{team.abbr}/2015.shtml"
+		# 	doc = Nokogiri::HTML(open(url))
+		# 	puts url
 
-			hitters = Hitter.where(:game_id => nil)
-			doc.css("#team_batting tbody td").each_with_index do |stat, index|
-				text = stat.text
-				case index%28
-				when 2
-					name = getName(text)
-					href = getHref(stat)
-					if hitter = hitters.find_by_name(name)
-						if hitter.alias == nil
-							hitter.update_attributes(:alias => href)
-						end
-					else
-						Hitter.create(:game_id => nil, :name => name, :alias => href)
-						puts 'Hitter ' + name + ' created'
-					end
-				end
+		# 	hitters = Hitter.where(:game_id => nil)
+		# 	doc.css("#team_batting tbody td").each_with_index do |stat, index|
+		# 		text = stat.text
+		# 		case index%28
+		# 		when 2
+		# 			name = getName(text)
+		# 			href = getHref(stat)
+		# 			if hitter = hitters.find_by_name(name)
+		# 				if hitter.alias == nil
+		# 					hitter.update_attributes(:alias => href)
+		# 				end
+		# 			else
+		# 				Hitter.create(:game_id => nil, :name => name, :alias => href)
+		# 				puts 'Hitter ' + name + ' created'
+		# 			end
+		# 		end
 
-			end
+		# 	end
 
-			pitchers = Pitcher.where(:game_id => nil)
-			doc.css("#team_pitching tbody td").each_with_index do |stat, index|
-				text = stat.text
-				case index%34
-				when 2
-					name = getName(text)
-					href = getHref(stat)
-					if pitcher = pitchers.find_by_name(name)
-						if pitcher.alias == nil
-							pitcher.update_attributes(:alias => href)
-						end
-					else
-						Pitcher.create(:game_id => nil, :name => name, :alias => href)
-						puts 'Pitcher ' + name + ' created'
-					end
-				end
-			end
-		end
-
-
-		Team.all.each do |team|
-			urls = Array.new
-			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
-			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
-			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
-			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=13&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
-			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=14&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+		# 	pitchers = Pitcher.where(:game_id => nil)
+		# 	doc.css("#team_pitching tbody td").each_with_index do |stat, index|
+		# 		text = stat.text
+		# 		case index%34
+		# 		when 2
+		# 			name = getName(text)
+		# 			href = getHref(stat)
+		# 			if pitcher = pitchers.find_by_name(name)
+		# 				if pitcher.alias == nil
+		# 					pitcher.update_attributes(:alias => href)
+		# 				end
+		# 			else
+		# 				Pitcher.create(:game_id => nil, :name => name, :alias => href)
+		# 				puts 'Pitcher ' + name + ' created'
+		# 			end
+		# 		end
+		# 	end
+		# end
 
 
-			ab = sb = bb = so = slg = obp = wOBA = wRC = ld = hitter = name = nil
-			hitters = Hitter.where(:game_id => nil)
-			urls.each_with_index do |url, url_index|
-				puts url
-				doc = Nokogiri::HTML(open(url))
-				doc.css(".grid_line_regular").each_with_index do |stat, index|
-					text = stat.text
-					case index%12
-					when 1
-						name = text
-						fangraph_id = getFangraph(stat).to_i
-						hitter = hitters.find_by_fangraph_id(fangraph_id)
-						if hitter == nil
-							hitter = hitters.find_by_name(name)
-						end
-					when 3
-						ab = text.to_i
-					when 4
-						sb = text.to_i
-					when 5
-						bb = text.to_i
-					when 6
-						so = text.to_i
-					when 7
-						slg = (text.to_f*1000).to_i
-					when 8
-						obp = (text.to_f*1000).to_i
-					when 9
-						wOBA = (text.to_f*1000).to_i
-					when 10
-						wRC = text.to_i
-					when 11
-						ld = text[0...-2].to_f
-						if hitter != nil
-							case url_index
-							when 0
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_L => ab, :SB_L => sb, :BB_L => bb, :SO_L => so, :SLG_L => slg, :OBP_L => obp, :wOBA_L => wOBA, :LD_L => ld, :wRC_L => wRC)
-							when 1
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_R => ab, :SB_R => sb, :BB_R => bb, :SO_R => so, :SLG_R => slg, :OBP_R => obp, :wOBA_R => wOBA, :LD_R => ld, :wRC_R => wRC)
-							when 2
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_14 => ab, :SB_14 => sb, :BB_14 => bb, :SO_14 => so, :SLG_14 => slg, :OBP_14 => obp, :wOBA_14 => wOBA, :LD_14 => ld, :wRC_14 => wRC)
-							when 3
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_previous_L => ab, :SB_previous_L => sb, :BB_previous_L => bb, :SO_previous_L => so, :SLG_previous_L => slg, :OBP_previous_L => obp, :wOBA_previous_L => wOBA, :LD_previous_L => ld, :wRC_previous_L => wRC)
-							when 4
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_previous_R => ab, :SB_previous_R => sb, :BB_previous_R => bb, :SO_previous_R => so, :SLG_previous_R => slg, :OBP_previous_R => obp, :wOBA_previous_R => wOBA, :LD_previous_R => ld, :wRC_previous_R => wRC)
-							end
-						else
-							puts name + ' not found'
-						end
-					end
-				end
-			end
-		end
+		# Team.all.each do |team|
+		# 	urls = Array.new
+		# 	urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+		# 	urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+		# 	urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+		# 	urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=13&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+		# 	urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=14&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+
+
+		# 	ab = sb = bb = so = slg = obp = wOBA = wRC = ld = hitter = name = nil
+		# 	hitters = Hitter.where(:game_id => nil)
+		# 	urls.each_with_index do |url, url_index|
+		# 		puts url
+		# 		doc = Nokogiri::HTML(open(url))
+		# 		doc.css(".grid_line_regular").each_with_index do |stat, index|
+		# 			text = stat.text
+		# 			case index%12
+		# 			when 1
+		# 				name = text
+		# 				fangraph_id = getFangraph(stat).to_i
+		# 				hitter = hitters.find_by_fangraph_id(fangraph_id)
+		# 				if hitter == nil
+		# 					hitter = hitters.find_by_name(name)
+		# 				end
+		# 			when 3
+		# 				ab = text.to_i
+		# 			when 4
+		# 				sb = text.to_i
+		# 			when 5
+		# 				bb = text.to_i
+		# 			when 6
+		# 				so = text.to_i
+		# 			when 7
+		# 				slg = (text.to_f*1000).to_i
+		# 			when 8
+		# 				obp = (text.to_f*1000).to_i
+		# 			when 9
+		# 				wOBA = (text.to_f*1000).to_i
+		# 			when 10
+		# 				wRC = text.to_i
+		# 			when 11
+		# 				ld = text[0...-2].to_f
+		# 				if hitter != nil
+		# 					case url_index
+		# 					when 0
+		# 						hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_L => ab, :SB_L => sb, :BB_L => bb, :SO_L => so, :SLG_L => slg, :OBP_L => obp, :wOBA_L => wOBA, :LD_L => ld, :wRC_L => wRC)
+		# 					when 1
+		# 						hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_R => ab, :SB_R => sb, :BB_R => bb, :SO_R => so, :SLG_R => slg, :OBP_R => obp, :wOBA_R => wOBA, :LD_R => ld, :wRC_R => wRC)
+		# 					when 2
+		# 						hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_14 => ab, :SB_14 => sb, :BB_14 => bb, :SO_14 => so, :SLG_14 => slg, :OBP_14 => obp, :wOBA_14 => wOBA, :LD_14 => ld, :wRC_14 => wRC)
+		# 					when 3
+		# 						hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_previous_L => ab, :SB_previous_L => sb, :BB_previous_L => bb, :SO_previous_L => so, :SLG_previous_L => slg, :OBP_previous_L => obp, :wOBA_previous_L => wOBA, :LD_previous_L => ld, :wRC_previous_L => wRC)
+		# 					when 4
+		# 						hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_previous_R => ab, :SB_previous_R => sb, :BB_previous_R => bb, :SO_previous_R => so, :SLG_previous_R => slg, :OBP_previous_R => obp, :wOBA_previous_R => wOBA, :LD_previous_R => ld, :wRC_previous_R => wRC)
+		# 					end
+		# 				else
+		# 					puts name + ' not found'
+		# 				end
+		# 			end
+		# 		end
+		# 	end
+		# end
 
 		Team.all.each do |team|
 
@@ -682,7 +682,7 @@ namespace :setup do
 					when 3
 						fip = text.to_i
 						if pitcher != nil
-							case url_index/30
+							case url_index
 							when 0
 								pitcher.update_attributes(:team_id => team.id, :FIP => fip)
 							when 1
@@ -699,10 +699,10 @@ namespace :setup do
 			urls << url_l
 			urls << url_r
 
-			pitcher = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = nil
+			pitcher = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = name = nil
 			urls.each_with_index do |url, url_index|
 				doc = Nokogiri::HTML(open(url))
-				puts url
+				puts url[url.index("month")..-1]
 				doc.css(".grid_line_regular").each_with_index do |stat, index|
 					text = stat.text
 					case index%13
@@ -734,7 +734,7 @@ namespace :setup do
 					when 12
 						wOBA = (text.to_f*1000).to_i
 						if pitcher != nil
-							case url_index/30
+							case url_index
 							when 0
 								pitcher.update_attributes(:team_id => team.id, :LD_L => ld, :WHIP_L => whip, :IP_L => ip, :SO_L => so, :BB_L => bb, :ERA_L => era, :FB_L => fb, :xFIP_L => xfip, :KBB_L => kbb, :wOBA_L => wOBA)
 							when 1
@@ -814,7 +814,7 @@ namespace :setup do
 					when 10
 						wOBA = (text.to_f*1000).to_i
 						if pitcher != nil
-							case url_index/30
+							case url_index
 							when 0
 								pitcher.update_attributes(:team_id => team.id, :FB_previous_L => fb, :xFIP_previous_L => xfip, :KBB_previous_L => kbb, :wOBA_previous_L => wOBA)
 							when 1
