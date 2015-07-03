@@ -1677,5 +1677,13 @@ namespace :setup do
 
 	end
 
+	task :delete_players => :environment do
+		games = Game.where(:year => '2015', :month => '07', :day => '03').each do |game|
+			game.pitchers.destroy_all
+			game.hitters.destroy_all
+		end
+
+	end
+
 
 end
