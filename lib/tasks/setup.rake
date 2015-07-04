@@ -920,7 +920,6 @@ namespace :setup do
 						end
 					end
 					if found && index%14 == 13
-						puts int
 						if int == 0
 							game.update_attributes(:humidity_1 => humidity, :precipitation_1 => precipitation, :wind_1 => wind, :temperature_1 => temperature)
 						elsif int == 1
@@ -1083,6 +1082,89 @@ namespace :setup do
 			else
 				hitter = Hitter.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
 				puts hitter.name + ' created'
+			end
+		end
+
+		year = Time.now.year.to_s
+		month = Time.now.month.to_s
+		day = Time.now.day.to_s
+		hour = Time.now.hour
+
+		if month.size == 1
+			month = "0" + month
+		end
+
+		if day.size == 1
+			day = "0" + day
+		end
+
+		hitters = Hitter.where(:game_id => nil)
+		pitchers = Pitcher.where(:game_id => nil)
+
+		if hour > 6 && hour < 20
+			Game.where(:year => year, :month => month, :day => day).each do |game|
+				# Grab all the players with no game id, and if
+				starting_hitters = hitters.where(:starter => true, :team_id => game.home_team.id) + hitters.where(:starter => true, :team_id => game.away_team.id)
+				starting_pitchers = pitchers.where(:starter => true, :team_id => game.home_team.id) + pitchers.where(:starter => true, :team_id => game.away_team.id)
+				bullpen_pitchers = pitchers.where(:bullpen => true, :team_id => game.home_team.id) + pitchers.where(:bullpen => true, :team_id => game.away_team.id)
+
+				starting_hitters.each do |hitter|
+					if Hitter.where(:game_id => game.id, :name => hitter.name, :alias => hitter.alias).empty?
+						Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
+							:throwhand => hitter.throwhand, :lineup => hitter.lineup, :starter => true, :SB_L => hitter.SB_L, :wOBA_L => hitter.wOBA_L,
+							:OBP_L => hitter.OBP_L, :SLG_L => hitter.SLG_L, :AB_L => hitter.AB_L, :BB_L => hitter.BB_L, :SO_L => hitter.SO_L, :LD_L => hitter.LD_L,
+							:wRC_L => hitter.wRC_L, :SB_R => hitter.SB_R, :wOBA_R => hitter.wOBA_R, :OBP_R => hitter.OBP_R, :SLG_R => hitter.SLG_R, :AB_R => hitter.AB_R,
+							:BB_R => hitter.BB_R, :SO_R => hitter.SO_R, :LD_R => hitter.LD_R, :wRC_R => hitter.wRC_R, :SB_14 => hitter.SB_14, :wOBA_14 => hitter.wOBA_14,
+							:OBP_14 => hitter.OBP_14, :SLG_14 => hitter.SLG_14, :AB_14 => hitter.AB_14, :BB_14 => hitter.BB_14, :SO_14 => hitter.SO_14, :LD_14 => hitter.LD_14,
+							:wRC_14 => hitter.wRC_14, :SB_previous_L => hitter.SB_previous_L, :wOBA_previous_L => hitter.wOBA_previous_L, :OBP_previous_L => hitter.OBP_previous_L,
+							:SLG_previous_L => hitter.SLG_previous_L, :AB_previous_L => hitter.AB_previous_L, :BB_previous_L => hitter.BB_previous_L, :SO_previous_L => hitter.SO_previous_L,
+							:LD_previous_L => hitter.LD_previous_L, :wRC_previous_L => hitter.wRC_previous_L, :SB_previous_R => hitter.SB_previous_R, :wOBA_previous_R => hitter.wOBA_previous_R, 
+							:OBP_previous_R => hitter.OBP_previous_R, :SLG_previous_R => hitter.SLG_previous_R, :AB_previous_R => hitter.AB_previous_R, :BB_previous_R => hitter.BB_previous_R,
+							:SO_previous_R => hitter.SO_previous_R, :LD_previous_R => hitter.LD_previous_R, :wRC_previous_R => hitter.wRC_previous_R)
+					end
+				end
+
+				starting_pitchers.each do |pitcher|
+					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :alias => pitcher.alias).empty?
+						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
+							:throwhand => pitcher.throwhand, :starter => true, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
+							:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
+							:KBB_L => pitcher.KBB_L, :LD_R => pitcher.LD_R, :WHIP_R => pitcher.WHIP_R, :IP_R => pitcher.IP_R,
+							:SO_R => pitcher.SO_R, :BB_R => pitcher.BB_R, :ERA_R => pitcher.ERA_R, :wOBA_R => pitcher.wOBA_R, :FB_R => pitcher.FB_R, :xFIP_R => pitcher.xFIP_R,
+							:KBB_R => pitcher.KBB_R, :LD_30 => pitcher.LD_30, :WHIP_30 => pitcher.WHIP_30, :IP_30 => pitcher.IP_30, :SO_30 => pitcher.SO_30, :BB_30 => pitcher.BB_30, 
+							:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
+							:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
+							:wOBA_previous_R => pitcher.wOBA_previous_R)
+					end
+				end
+
+				bullpen_pitchers.each do |pitcher|
+					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :alias => pitcher.alias).empty?
+						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
+							:throwhand => pitcher.throwhand, :bullpen => true, :one => pitcher.one, :two => pitcher.two, :three => pitcher.three, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
+							:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
+							:KBB_L => pitcher.KBB_L, :LD_R => pitcher.LD_R, :WHIP_R => pitcher.WHIP_R, :IP_R => pitcher.IP_R,
+							:SO_R => pitcher.SO_R, :BB_R => pitcher.BB_R, :ERA_R => pitcher.ERA_R, :wOBA_R => pitcher.wOBA_R, :FB_R => pitcher.FB_R, :xFIP_R => pitcher.xFIP_R,
+							:KBB_R => pitcher.KBB_R, :LD_30 => pitcher.LD_30, :WHIP_30 => pitcher.WHIP_30, :IP_30 => pitcher.IP_30, :SO_30 => pitcher.SO_30, :BB_30 => pitcher.BB_30, 
+							:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
+							:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
+							:wOBA_previous_R => pitcher.wOBA_previous_R)
+					end
+				end
+
+				Hitter.where(:game_id => game.id).each do |hitter|
+					if !Hitter.where(:game_id => nil).find_by_alias(hitter.alias).starter
+						hitter.destroy
+					end
+				end
+
+				Pitcher.where(:game_id => game.id, :starter => true).each do |pitcher|
+					if !Pitcher.where(:game_id => nil).find_by_alias(pitcher.alias).starter
+						pitcher.destroy
+					end
+				end
+
+
 			end
 		end
 	end
@@ -1380,92 +1462,6 @@ namespace :setup do
 		end
 	end
 
-	task :add => :environment do
-
-		year = Time.now.year.to_s
-		month = Time.now.month.to_s
-		day = Time.now.day.to_s
-		hour = Time.now.hour
-
-		if month.size == 1
-			month = "0" + month
-		end
-
-		if day.size == 1
-			day = "0" + day
-		end
-
-		hitters = Hitter.where(:game_id => nil)
-		pitchers = Pitcher.where(:game_id => nil)
-
-		if hour > 6 && hour < 20
-			Game.where(:year => year, :month => month, :day => day).each do |game|
-				# Grab all the players with no game id, and if
-				starting_hitters = hitters.where(:starter => true, :team_id => game.home_team.id) + hitters.where(:starter => true, :team_id => game.away_team.id)
-				starting_pitchers = pitchers.where(:starter => true, :team_id => game.home_team.id) + pitchers.where(:starter => true, :team_id => game.away_team.id)
-				bullpen_pitchers = pitchers.where(:bullpen => true, :team_id => game.home_team.id) + pitchers.where(:bullpen => true, :team_id => game.away_team.id)
-
-				starting_hitters.each do |hitter|
-					if Hitter.where(:game_id => game.id, :name => hitter.name, :alias => hitter.alias).empty?
-						Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
-							:throwhand => hitter.throwhand, :lineup => hitter.lineup, :starter => true, :SB_L => hitter.SB_L, :wOBA_L => hitter.wOBA_L,
-							:OBP_L => hitter.OBP_L, :SLG_L => hitter.SLG_L, :AB_L => hitter.AB_L, :BB_L => hitter.BB_L, :SO_L => hitter.SO_L, :LD_L => hitter.LD_L,
-							:wRC_L => hitter.wRC_L, :SB_R => hitter.SB_R, :wOBA_R => hitter.wOBA_R, :OBP_R => hitter.OBP_R, :SLG_R => hitter.SLG_R, :AB_R => hitter.AB_R,
-							:BB_R => hitter.BB_R, :SO_R => hitter.SO_R, :LD_R => hitter.LD_R, :wRC_R => hitter.wRC_R, :SB_14 => hitter.SB_14, :wOBA_14 => hitter.wOBA_14,
-							:OBP_14 => hitter.OBP_14, :SLG_14 => hitter.SLG_14, :AB_14 => hitter.AB_14, :BB_14 => hitter.BB_14, :SO_14 => hitter.SO_14, :LD_14 => hitter.LD_14,
-							:wRC_14 => hitter.wRC_14, :SB_previous_L => hitter.SB_previous_L, :wOBA_previous_L => hitter.wOBA_previous_L, :OBP_previous_L => hitter.OBP_previous_L,
-							:SLG_previous_L => hitter.SLG_previous_L, :AB_previous_L => hitter.AB_previous_L, :BB_previous_L => hitter.BB_previous_L, :SO_previous_L => hitter.SO_previous_L,
-							:LD_previous_L => hitter.LD_previous_L, :wRC_previous_L => hitter.wRC_previous_L, :SB_previous_R => hitter.SB_previous_R, :wOBA_previous_R => hitter.wOBA_previous_R, 
-							:OBP_previous_R => hitter.OBP_previous_R, :SLG_previous_R => hitter.SLG_previous_R, :AB_previous_R => hitter.AB_previous_R, :BB_previous_R => hitter.BB_previous_R,
-							:SO_previous_R => hitter.SO_previous_R, :LD_previous_R => hitter.LD_previous_R, :wRC_previous_R => hitter.wRC_previous_R)
-					end
-				end
-
-				starting_pitchers.each do |pitcher|
-					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :alias => pitcher.alias).empty?
-						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
-							:throwhand => pitcher.throwhand, :starter => true, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
-							:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
-							:KBB_L => pitcher.KBB_L, :LD_R => pitcher.LD_R, :WHIP_R => pitcher.WHIP_R, :IP_R => pitcher.IP_R,
-							:SO_R => pitcher.SO_R, :BB_R => pitcher.BB_R, :ERA_R => pitcher.ERA_R, :wOBA_R => pitcher.wOBA_R, :FB_R => pitcher.FB_R, :xFIP_R => pitcher.xFIP_R,
-							:KBB_R => pitcher.KBB_R, :LD_30 => pitcher.LD_30, :WHIP_30 => pitcher.WHIP_30, :IP_30 => pitcher.IP_30, :SO_30 => pitcher.SO_30, :BB_30 => pitcher.BB_30, 
-							:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
-							:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
-							:wOBA_previous_R => pitcher.wOBA_previous_R)
-					end
-				end
-
-				bullpen_pitchers.each do |pitcher|
-					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :alias => pitcher.alias).empty?
-						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
-							:throwhand => pitcher.throwhand, :bullpen => true, :one => pitcher.one, :two => pitcher.two, :three => pitcher.three, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
-							:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
-							:KBB_L => pitcher.KBB_L, :LD_R => pitcher.LD_R, :WHIP_R => pitcher.WHIP_R, :IP_R => pitcher.IP_R,
-							:SO_R => pitcher.SO_R, :BB_R => pitcher.BB_R, :ERA_R => pitcher.ERA_R, :wOBA_R => pitcher.wOBA_R, :FB_R => pitcher.FB_R, :xFIP_R => pitcher.xFIP_R,
-							:KBB_R => pitcher.KBB_R, :LD_30 => pitcher.LD_30, :WHIP_30 => pitcher.WHIP_30, :IP_30 => pitcher.IP_30, :SO_30 => pitcher.SO_30, :BB_30 => pitcher.BB_30, 
-							:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
-							:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
-							:wOBA_previous_R => pitcher.wOBA_previous_R)
-					end
-				end
-
-				Hitter.where(:game_id => game.id).each do |hitter|
-					if !Hitter.where(:game_id => nil).find_by_alias(hitter.alias).starter
-						hitter.destroy
-					end
-				end
-
-				Pitcher.where(:game_id => game.id, :starter => true).each do |pitcher|
-					if !Pitcher.where(:game_id => nil).find_by_alias(pitcher.alias).starter
-						pitcher.destroy
-					end
-				end
-
-
-			end
-		end
-	end
-
 	task :boxscores => :environment do
 		require 'nokogiri'
 		require 'open-uri'
@@ -1624,6 +1620,87 @@ namespace :setup do
 	end
 
 	task :projected_starters => :environment do
+		today = Time.now
+		home = true
+		today_game = Game.where(:year => '2015', :month => '07', :day => '03').first
+
+		# store the teams of the game
+		home_team = today_game.home_team
+		away_team = today_game.away_team
+		home_pitcher = today_game.pitchers.where(:team_id => home_team.id).first
+		away_pitcher = today_game.pitchers.where(:team_id => away_team.id).first
+		puts home_pitcher.name
+		puts away_pitcher.name
+		while true
+			if home_pitcher == nil
+				return []
+			end
+			# find the previous day's games
+			today = today.yesterday
+			year = today.year.to_s
+			month = today.month.to_s
+			day = today.day.to_s
+
+			if month.size == 1
+				month = "0" + month
+			end
+
+			if day.size == 1
+				day = "0" + day
+			end
+
+			games = Game.where(:year => year, :month => month, :day => day)
+			# if it's the home team we're looking for
+			if home
+				# find the games with the same home_team_id
+				game = games.where("home_team_id = #{home_team.id} OR away_team_id = #{home_team.id}").first
+				if game == nil
+					next
+				end
+				puts game.url
+				# find the opposing pitcher
+				if home_team == game.home_team
+					opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
+				else
+					opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
+				end
+
+				if opp_pitcher.throwhand == ''
+					opp_pitcher = Pitcher.where(:game_id => nil, :alias => opp_pitcher.alias).first
+				end
+
+				# if the throwhand is the same, return the hitters of the home team
+				if opp_pitcher.throwhand == away_pitcher.throwhand
+					break
+				end
+
+			else
+				if away_pitcher == nil
+					break
+				end
+				# find the games with the same home_team_id
+				game = games.where("home_team_id = #{away_team.id} OR away_team_id = #{away_team.id}").first
+				if game == nil
+					next
+				end
+				# find the opposing pitcher
+				if away_team == game.away_team
+					opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
+				else
+					opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
+				end
+
+				if opp_pitcher.throwhand == ''
+					opp_pitcher = Pitcher.where(:game_id => nil, :alias => opp_pitcher.alias).first
+				end
+
+				# if the throwhand is the same, return the hitters of the away team
+				if opp_pitcher.throwhand == home_pitcher.throwhand
+					break
+				end
+
+			end
+		end
 
 	end
 

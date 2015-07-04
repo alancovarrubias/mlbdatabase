@@ -46,7 +46,11 @@
 		<% end %>
 
 		<tr>
-			<th colspan="28"><%= @away.name + " Starting Lineup" %></th>
+			<% if @away_projected %>
+				<th colspan="28" bgcolor="#DC143C"><%= @away.name + " Projected Starting Lineup" %></th>
+			<% else %>
+				<th colspan="28"><%= @away.name + " Starting Lineup" %></th>
+			<% end %>
 		</tr>
 
 		<% if @left %>
@@ -64,7 +68,11 @@
 		<% end %>
 
 		<tr>
-			<th colspan="28"><%= @home.name + " Starting Lineup"%></th>
+			<% if @home_projected %>
+				<th colspan="28" bgcolor="#DC143C"><%= @home.name + " Projected Starting Lineup" %></th>
+			<% else %>
+				<th colspan="28"><%= @home.name + " Starting Lineup" %></th>
+			<% end %>
 		</tr>
 
 		<% if @left %>

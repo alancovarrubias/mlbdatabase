@@ -21,6 +21,7 @@ class ApplicationController < ActionController::Base
 		lineup.each do |hitter|
 			current_hitter = Hitter.where(:game_id => nil, :alias => hitter.alias).first
 			if hitter.team.id == current_hitter.team.id
+				current_hitter.update_attributes(:lineup => hitter.lineup)
 				current_lineup << current_hitter
 			end
 		end
@@ -36,12 +37,27 @@ class ApplicationController < ActionController::Base
 		# store the teams of the game
 		home_team = today_game.home_team
 		away_team = today_game.away_team
-		home_pitcher = today_game.pitchers.where(:team_id => home.id).first
-		away_pitcher = today_game.pitchers.where(:team_id => away.id).first
+		home_pitcher = today_game.pitchers.where(:team_id => home_team.id).first
+		away_pitcher = today_game.pitchers.where(:team_id => away_team.id).first
 		while true
+			if home_pitcher == nil
+				return []
+			end
 			# find the previous day's games
 			today = today.yesterday
-			games = Game.where("year = #{today.year} AND month = #{today.month} AND day = #{today.day}")
+			year = today.year.to_s
+			month = today.month.to_s
+			day = today.day.to_s
+
+			if month.size == 1
+				month = "0" + month
+			end
+
+			if day.size == 1
+				day = "0" + day
+			end
+
+			games = Game.where(:year => year, :month => month, :day => day)
 			# if it's the home team we're looking for
 			if home
 				# find the games with the same home_team_id
@@ -56,12 +72,18 @@ class ApplicationController < ActionController::Base
 					opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
 				end
 
+				if opp_pitcher.throwhand == ''
+					opp_pitcher = Pitcher.where(:game_id => nil, :alias => opp_pitcher.alias).first
+				end
 				# if the throwhand is the same, return the hitters of the home team
 				if opp_pitcher.throwhand == away_pitcher.throwhand
-					return game.hitters.where(:team_id => home.id)
+					return game.hitters.where(:team_id => home_team.id)
 				end
 
 			else
+				if away_pitcher == nil
+					return []
+				end
 				# find the games with the same home_team_id
 				game = games.where("home_team_id = #{away_team.id} OR away_team_id = #{away_team.id}").first
 				if game == nil
@@ -74,9 +96,13 @@ class ApplicationController < ActionController::Base
 					opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
 				end
 
+				if opp_pitcher.throwhand == ''
+					opp_pitcher = Pitcher.where(:game_id => nil, :alias => opp_pitcher.alias).first
+				end
+
 				# if the throwhand is the same, return the hitters of the away team
 				if opp_pitcher.throwhand == home_pitcher.throwhand
-					return game.hitters.where(:team_id => away.id)
+					return game.hitters.where(:team_id => away_team.id)
 				end
 
 			end

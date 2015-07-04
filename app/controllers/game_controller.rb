@@ -17,6 +17,7 @@ class GameController < ApplicationController
 		else
 			@left = false
 		end
+
 		@game = Game.find_by_id(params[:id])
 		@home = @game.home_team
 		@away = @game.away_team
@@ -25,16 +26,20 @@ class GameController < ApplicationController
 		@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home.id, :starter => true).order("lineup")
 
 		today = Time.now
+		@home_projected = false
+		@away_projected = false
 		if @game.year.to_i == today.year && @game.month.to_i == today.month && @game.day.to_i == today.day
 
 			if @away_hitters.empty?
 				@away_hitters = findProjectedLineup(@game, false)
 				@away_hitters = getCurrentStats(@away_hitters)
+				@away_projected = true
 			end
 
 			if @home_hitters.empty?
 				@home_hitters = findProjectedLineup(@game, true)
 				@home_hitters = getCurrentStats(@home_hitters)
+				@home_projected = true
 			end
 
 		end
