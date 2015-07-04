@@ -23,6 +23,22 @@ class GameController < ApplicationController
 		@month = Date::MONTHNAMES[@game.month.to_i]
 		@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away.id, :starter => true).order("lineup")
 		@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home.id, :starter => true).order("lineup")
+
+		today = Time.now
+		if @game.year.to_i == today.year && @game.month.to_i == today.month && @game.day.to_i == today.day
+
+			if @away_hitters.empty?
+				@away_hitters = findProjectedLineup(@game, false)
+				@away_hitters = getCurrentStats(@away_hitters)
+			end
+
+			if @home_hitters.empty?
+				@home_hitters = findProjectedLineup(@game, true)
+				@home_hitters = getCurrentStats(@home_hitters)
+			end
+
+		end
+
 		if !@away_hitters.empty?
 			away_total = addTotalStats(@away_hitters)
 			@away_hitters << away_total

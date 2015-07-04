@@ -15,6 +15,74 @@ class ApplicationController < ActionController::Base
 		end
 	end
 
+	def getCurrentStats(lineup)
+		current_lineup = Array.new
+
+		lineup.each do |hitter|
+			current_hitter = Hitter.where(:game_id => nil, :alias => hitter.alias).first
+			if hitter.team.id == current_hitter.team.id
+				current_lineup << current_hitter
+			end
+		end
+
+		return current_lineup
+
+	end
+
+	def findProjectedLineup(today_game, home)
+
+		today = Time.now
+
+		# store the teams of the game
+		home_team = today_game.home_team
+		away_team = today_game.away_team
+		home_pitcher = today_game.pitchers.where(:team_id => home.id).first
+		away_pitcher = today_game.pitchers.where(:team_id => away.id).first
+		while true
+			# find the previous day's games
+			today = today.yesterday
+			games = Game.where("year = #{today.year} AND month = #{today.month} AND day = #{today.day}")
+			# if it's the home team we're looking for
+			if home
+				# find the games with the same home_team_id
+				game = games.where("home_team_id = #{home_team.id} OR away_team_id = #{home_team.id}").first
+				if game == nil
+					next
+				end
+				# find the opposing pitcher
+				if home_team == game.home_team
+					opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
+				else
+					opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
+				end
+
+				# if the throwhand is the same, return the hitters of the home team
+				if opp_pitcher.throwhand == away_pitcher.throwhand
+					return game.hitters.where(:team_id => home.id)
+				end
+
+			else
+				# find the games with the same home_team_id
+				game = games.where("home_team_id = #{away_team.id} OR away_team_id = #{away_team.id}").first
+				if game == nil
+					next
+				end
+				# find the opposing pitcher
+				if away_team == game.away_team
+					opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
+				else
+					opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
+				end
+
+				# if the throwhand is the same, return the hitters of the away team
+				if opp_pitcher.throwhand == home_pitcher.throwhand
+					return game.hitters.where(:team_id => away.id)
+				end
+
+			end
+		end
+	end
+
 	def addTotalStats(hitters)
 		total = Hitter.new(:name => 'Total')
 		sb_L = wOBA_L = obp_L = slg_L = ab_L = bb_L = so_L = ld_L = wRC_L = sb_R = wOBA_R = obp_R = slg_R = ab_R = bb_R = so_R = ld_R = wRC_R = 0

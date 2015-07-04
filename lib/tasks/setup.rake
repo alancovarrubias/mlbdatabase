@@ -1074,22 +1074,11 @@ namespace :setup do
 			name = player.last_element_child.child.to_s
 			href = player.last_element_child['data-bref']
 			fangraph_id = player.last_element_child['data-mlb']
-			puts fangraph_id.class
 			if fangraph_id != "" && hitter = hitters.find_by_fangraph_id(fangraph_id)
-				if name == "Miguel Sano"
-					puts hitter.name
-					puts fangraph_id
-				end
 				hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
 			elsif href != "" && hitter = hitters.find_by_alias(href)
-				if name == "Miguel Sano"
-					puts 'alias'
-				end
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :lineup => lineup)
 			elsif hitter = hitters.find_by_name(name)
-				if name == 'Miguel Sano'
-					puts 'Miguel Sano'
-				end
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href, :lineup => lineup)
 			else
 				hitter = Hitter.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
@@ -1538,56 +1527,6 @@ namespace :setup do
 		end
 	end
 
-	task :test => :environment do
-
-		year = Time.now.year.to_s
-		month = Time.now.month.to_s
-		day = Time.now.day.to_s
-
-		if month.size == 1
-			month = "0" + month
-		end
-
-		if day.size == 1
-			day = "0" + day
-		end
-
-		Game.where(:year => year, :month => month, :day => day).each do |game|
-			pitchers_size = game.pitchers.where(:starter => true).size
-			if pitchers_size != 2
-				puts pitchers_size
-				puts game.home_team.name + ' missing pitchers'
-			end
-			hitters_size = game.hitters.where(:starter => true).size
-			if hitters_size != 18
-				puts hitters_size
-				puts game.home_team.name + ' missing hitters'
-			end
-		end
-
-		year = Time.now.tomorrow.year.to_s
-		month = Time.now.tomorrow.month.to_s
-		day = Time.now.tomorrow.day.to_s
-
-		if month.size == 1
-			month = "0" + month
-		end
-
-		if day.size == 1
-			day = "0" + day
-		end
-
-		Game.where(:year => year, :month => month, :day => day).each do |game|
-			pitchers_size = (Pitcher.where(:tomorrow_starter => true, :team_id => game.home_team.id) + Pitcher.where(:tomorrow_starter => true, :team_id => game.away_team.id)).size
-			if pitchers_size != 2
-				puts pitchers_size
-				puts game.home_team.name + ' missing tomorrow pitchers'
-			end
-		end
-
-
-	end
-
 	task :time => :environment do
 		require 'nokogiri'
 		require 'open-uri'
@@ -1668,7 +1607,7 @@ namespace :setup do
 
 	end
 
-	task :deletegames => :environment do
+	task :delete_games => :environment do
 		games = Game.where("month < '06' OR (month = '06' AND day < '29')").each do |game|
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
@@ -1682,8 +1621,60 @@ namespace :setup do
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
 		end
+	end
+
+	task :projected_starters => :environment do
 
 	end
 
+	task :test => :environment do
+
+		year = Time.now.year.to_s
+		month = Time.now.month.to_s
+		day = Time.now.day.to_s
+
+		if month.size == 1
+			month = "0" + month
+		end
+
+		if day.size == 1
+			day = "0" + day
+		end
+
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+			pitchers_size = game.pitchers.where(:starter => true).size
+			if pitchers_size != 2
+				puts pitchers_size
+				puts game.home_team.name + ' missing pitchers'
+			end
+			hitters_size = game.hitters.where(:starter => true).size
+			if hitters_size != 18
+				puts hitters_size
+				puts game.home_team.name + ' missing hitters'
+			end
+		end
+
+		year = Time.now.tomorrow.year.to_s
+		month = Time.now.tomorrow.month.to_s
+		day = Time.now.tomorrow.day.to_s
+
+		if month.size == 1
+			month = "0" + month
+		end
+
+		if day.size == 1
+			day = "0" + day
+		end
+
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+			pitchers_size = (Pitcher.where(:tomorrow_starter => true, :team_id => game.home_team.id) + Pitcher.where(:tomorrow_starter => true, :team_id => game.away_team.id)).size
+			if pitchers_size != 2
+				puts pitchers_size
+				puts game.home_team.name + ' missing tomorrow pitchers'
+			end
+		end
+
+
+	end
 
 end
