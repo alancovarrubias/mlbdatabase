@@ -1041,7 +1041,7 @@ namespace :setup do
 
 		starters()
 
-		url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
+		url = "http://www.baseballpress.com/lineups/#{DateTime.now.yesterday.to_date}"
 		puts url
 		doc = Nokogiri::HTML(open(url))
 		
@@ -1085,9 +1085,9 @@ namespace :setup do
 			end
 		end
 
-		year = Time.now.year.to_s
-		month = Time.now.month.to_s
-		day = Time.now.day.to_s
+		year = Time.now.yesterday.year.to_s
+		month = Time.now.yesterday.month.to_s
+		day = Time.now.yesterday.day.to_s
 		hour = Time.now.hour
 
 		if month.size == 1
