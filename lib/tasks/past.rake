@@ -1,11 +1,111 @@
 namespace :past do
+
+	task :create_games => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+
+		month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+		@hash = Hash.new
+		month.each_with_index do |value, index|
+			@hash[value] = index+1
+		end
+
+		def convertDate(date)
+			comma = date.index(",")
+			date = date[comma+2..-1]
+			space = date.index(" ")
+			month = date[0...space]
+			day = date[space+1..-1]
+			if day.include?('(')
+				day = day[0...day.index('(')-1]
+			end
+			month = @hash[month].to_s
+			if month.size == 1
+				month = '0' + month
+			end
+			if day.size == 1
+				day = '0' + day
+			end
+			return [month, day]
+		end
+
+		def setTeams(amp, away, home)
+			if amp
+				var = away
+				away = home
+				home = var
+			end
+			return [away, home]
+		end
+
+		year = '2015'
+		teams_used = Array.new
+		Team.all.each do |team|
+
+			teams_used << team
+			url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{year}-schedule-scores.shtml"
+			doc = Nokogiri::HTML(open(url))
+
+			# initialize variables out of scope
+			num = var = 0
+			amp = seen = false
+			month = day = away = home = nil
+			doc.css("#team_schedule td").each_with_index do |stat, index|
+
+				text = stat.text
+
+				case var%21
+				when 2
+					month, day = convertDate(text)
+					if text.include?('(')
+						num = text[-2]
+					else
+						num = '0'
+					end
+					if month.to_i > 6 || (month.to_i == 7 && day.to_i >= 5)
+						break
+					end
+				when 4
+					home = Team.find_by_abbr(text)
+					if home == nil
+						puts text
+					end
+				when 5
+					if text == "@"
+						amp = true
+					else
+						amp = false
+					end
+				when 6
+					away = Team.find_by_abbr(text)
+					if away == nil
+						puts text
+					end
+					if teams_used.include?(away)
+						seen = true
+					else
+						seen = false
+					end
+					away, home = setTeams(amp, away, home)
+				when 9
+					if !seen
+						game = Game.create(:year => year, :month => month, :day => day, :num => num, :away_team_id => away.id, :home_team_id => home.id)
+						puts game.url
+					end
+				end
+				var += 1
+
+			end
+		end
+	end
 	
 	task :lineups => :environment do
 		require 'nokogiri'
 		require 'open-uri'
 
 
-		games = Game.where("month < '06' OR (month = '06' AND day < '29')")
+		games = Game.where("month < '07' OR (month = '07' AND day < '06')")
 
 		games.each do |game|
 			url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
@@ -142,7 +242,7 @@ namespace :past do
 	end
 
 	task :delete_games => :environment do
-		games = Game.where("month < '06' OR (month = '06' AND day < '29')").each do |game|
+		games = Game.where("month < '07' OR (month = '07' AND day < '06')").each do |game|
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
 			game.destroy
@@ -151,9 +251,25 @@ namespace :past do
 	end
 
 	task :delete_players => :environment do
-		games = Game.where(:year => '2015', :month => '07', :day => '03').each do |game|
+		games = Game.where(:year => '2015', :month => '07', :day => '06').each do |game|
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
+		end
+	end
+
+	task :temp => :environment do
+		Pitcher.all.each do |pitcher|
+			if pitcher.game_id != nil
+				nil_pitcher = Pitcher.where(:name => pitcher.name)
+				pitcher.update_attributes(:throwhand => pitcher.throwhand, :bathand => pitcher.bathand)
+			end
+		end
+
+		Hitter.all.each do |hitter|
+			if hitter.game_id != nil
+				nil_hitter = Hitter.where(:name => hitter.name)
+				hitter.update_attributes(:throwhand => hitter.throwhand, :bathand => hitter.bathand)
+			end
 		end
 	end
 

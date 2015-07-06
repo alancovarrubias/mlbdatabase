@@ -406,107 +406,6 @@ namespace :setup do
 		end
 	end
 
-
-	task :create_games => :environment do
-		require 'nokogiri'
-		require 'open-uri'
-
-
-		month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-		@hash = Hash.new
-		month.each_with_index do |value, index|
-			@hash[value] = index+1
-		end
-
-		def convertDate(date)
-			comma = date.index(",")
-			date = date[comma+2..-1]
-			space = date.index(" ")
-			month = date[0...space]
-			day = date[space+1..-1]
-			if day.include?('(')
-				day = day[0...day.index('(')-1]
-			end
-			month = @hash[month].to_s
-			if month.size == 1
-				month = '0' + month
-			end
-			if day.size == 1
-				day = '0' + day
-			end
-			return [month, day]
-		end
-
-		def setTeams(amp, away, home)
-			if amp
-				var = away
-				away = home
-				home = var
-			end
-			return [away, home]
-		end
-
-		year = '2015'
-		teams_used = Array.new
-		Team.all.each do |team|
-
-			teams_used << team
-			url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{year}-schedule-scores.shtml"
-			doc = Nokogiri::HTML(open(url))
-
-			# initialize variables out of scope
-			num = var = 0
-			amp = seen = false
-			month = day = away = home = nil
-			doc.css("#team_schedule td").each_with_index do |stat, index|
-
-				text = stat.text
-
-				case var%21
-				when 2
-					month, day = convertDate(text)
-					if text.include?('(')
-						num = text[-2]
-					else
-						num = '0'
-					end
-					if month.to_i > 6 || (month.to_i == 6 && day.to_i >= 29)
-						break
-					end
-				when 4
-					home = Team.find_by_abbr(text)
-					if home == nil
-						puts text
-					end
-				when 5
-					if text == "@"
-						amp = true
-					else
-						amp = false
-					end
-				when 6
-					away = Team.find_by_abbr(text)
-					if away == nil
-						puts text
-					end
-					if teams_used.include?(away)
-						seen = true
-					else
-						seen = false
-					end
-					away, home = setTeams(amp, away, home)
-				when 9
-					if !seen
-						game = Game.create(:year => year, :month => month, :day => day, :num => num, :away_team_id => away.id, :home_team_id => home.id)
-						puts game.url
-					end
-				end
-				var += 1
-
-			end
-		end
-	end
-
 	task :update => :environment do
 		require 'nokogiri'
 		require 'open-uri'
@@ -1467,7 +1366,7 @@ namespace :setup do
 	end
 
 	task :projected_starters => :environment do
-		
+
 		today = Time.now
 		home = true
 		today_game = Game.where(:year => '2015', :month => '07', :day => '03').first
