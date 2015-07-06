@@ -1,4 +1,5 @@
 namespace :past do
+	
 	task :lineups => :environment do
 		require 'nokogiri'
 		require 'open-uri'

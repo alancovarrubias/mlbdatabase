@@ -39,6 +39,7 @@ class ApplicationController < ActionController::Base
 		away_team = today_game.away_team
 		home_pitcher = today_game.pitchers.where(:team_id => home_team.id, :starter => true).first
 		away_pitcher = today_game.pitchers.where(:team_id => away_team.id, :starter => true).first
+
 		while true
 			# find the previous day's games
 			today = today.yesterday
@@ -82,7 +83,11 @@ class ApplicationController < ActionController::Base
 				# if the throwhand is the same, return the hitters of the home team
 				if opp_pitcher.throwhand == away_pitcher.throwhand
 					hitter = Hitter.find_by_name(home_pitcher.name)
-					array = game.hitters.where(:team_id => away_team.id).order("lineup")[0...-1] << hitter
+					array = game.hitters.where(:team_id => away_team.id).order("lineup")
+					if home_team.league == 'NL'
+						array = array[0...-1]
+						array << hitter
+					end
 					return array
 				end
 
@@ -113,7 +118,11 @@ class ApplicationController < ActionController::Base
 				# if the throwhand is the same, return the hitters of the away team
 				if opp_pitcher.throwhand == home_pitcher.throwhand
 					hitter = Hitter.find_by_name(away_pitcher.name)
-					array = game.hitters.where(:team_id => away_team.id).order("lineup")[0...-1] << hitter
+					array = game.hitters.where(:team_id => away_team.id).order("lineup")
+					if away_team.league == 'NL'
+						array = array[0...-1]
+						array << hitter
+					end
 					return array
 				end
 

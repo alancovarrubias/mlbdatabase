@@ -1467,6 +1467,7 @@ namespace :setup do
 	end
 
 	task :projected_starters => :environment do
+		
 		today = Time.now
 		home = true
 		today_game = Game.where(:year => '2015', :month => '07', :day => '03').first
@@ -1597,26 +1598,6 @@ namespace :setup do
 				puts game.home_team.name + ' missing tomorrow pitchers'
 			end
 		end
-
-	end
-
-	task :whoo => :environment do
-		name = ["Angels", "Astros", "Athletics", "Blue Jays", "Braves", "Brewers", "Cardinals",
-				"Cubs", "Diamondbacks", "Dodgers", "Giants", "Indians", "Mariners", "Marlins", "Mets",
-				"Nationals", "Orioles", "Padres", "Phillies", "Pirates", "Rangers", "Rays", "Red Sox",
-				"Reds", "Rockies", "Royals", "Tigers", "Twins", "White Sox", "Yankees"]
-		league = ["AL", "AL", "AL", "AL", "NL", "NL", "NL", "NL", "NL", "NL", "NL", "AL", "AL", "NL", "NL", "NL", "AL", "NL",
-				"NL", "NL", "AL", "AL", "AL", "NL", "NL", "AL", "AL", "AL", "AL", "AL"]
-
-
-		(0...30).each do |i|
-
-			Team.find_by_name(name[i]).update_attributes(:league => league[i])
-		end
-
-
-
-
 
 	end
 
