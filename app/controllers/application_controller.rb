@@ -18,10 +18,10 @@ class ApplicationController < ActionController::Base
 	def getCurrentStats(lineup)
 		current_lineup = Array.new
 
-		lineup.each do |hitter|
+		lineup.each_with_index do |hitter, index|
 			current_hitter = Hitter.where(:game_id => nil, :alias => hitter.alias).first
 			if hitter.team.id == current_hitter.team.id
-				current_hitter.update_attributes(:lineup => hitter.lineup)
+				current_hitter.update_attributes(:lineup => index+1)
 				current_lineup << current_hitter
 			end
 		end
@@ -81,7 +81,9 @@ class ApplicationController < ActionController::Base
 				end
 				# if the throwhand is the same, return the hitters of the home team
 				if opp_pitcher.throwhand == away_pitcher.throwhand
-					return game.hitters.where(:team_id => home_team.id).order("lineup")
+					hitter = Hitter.find_by_name(home_pitcher.name)
+					array = game.hitters.where(:team_id => away_team.id).order("lineup")[0...-1] << hitter
+					return array
 				end
 
 			else
@@ -110,7 +112,10 @@ class ApplicationController < ActionController::Base
 
 				# if the throwhand is the same, return the hitters of the away team
 				if opp_pitcher.throwhand == home_pitcher.throwhand
-					return game.hitters.where(:team_id => away_team.id).order("lineup")
+					hitter = Hitter.find_by_name(away_pitcher.name)
+					array = game.hitters.where(:team_id => away_team.id).order("lineup")[0...-1] << hitter
+					# array[-1] = Hitter.find_by_name(away_pitcher.name)
+					return array
 				end
 
 			end
