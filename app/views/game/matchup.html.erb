@@ -12,15 +12,8 @@
 
 		<h2><%= @away.name  + " @ " + @home.name %></h2>
 		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
-		<%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %></br></br>
-		<% if @left %>
-			<%= link_to('RH', {:controller => 'game', :action => 'matchup', :id => params[:id], :left => 0, :year => params[:year], :month => params[:month], :day => params[:day]})%>
-		<% else %>
-			<%= link_to('LH', {:controller => 'game', :action => 'matchup', :id => params[:id], :left => 1, :year => params[:year], :month => params[:month], :day => params[:day]})%>
-		<% end %>
+		<%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %></br>
 
-	</br>
-	</br>
 	</br>
 	</br>
 	</br>
@@ -53,14 +46,14 @@
 			<% end %>
 		</tr>
 
-		<% if @left %>
+		<% if @away_left %>
 			<%= render(:partial => "lefthitterheader") %>
 		<% else %>
 			<%= render(:partial => "righthitterheader") %>
 		<% end %>
 
 		<% @away_hitters.each do |hitter| %>
-			<% if @left %>
+			<% if @away_left %>
 				<%= render(:partial => "lefthitter", :locals => {:hitter => hitter}) %>
 			<% else %>
 				<%= render(:partial => "righthitter", :locals => {:hitter => hitter}) %>
@@ -75,14 +68,14 @@
 			<% end %>
 		</tr>
 
-		<% if @left %>
+		<% if @home_left %>
 			<%= render(:partial => "lefthitterheader") %>
 		<% else %>
 			<%= render(:partial => "righthitterheader") %>
 		<% end %>
 
 		<% @home_hitters.each do |hitter| %>
-			<% if @left %>
+			<% if @home_left %>
 				<%= render(:partial => "lefthitter", :locals => {:hitter => hitter}) %>
 			<% else %>
 				<%= render(:partial => "righthitter", :locals => {:hitter => hitter}) %>

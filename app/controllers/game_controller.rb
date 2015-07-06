@@ -19,9 +19,6 @@ class GameController < ApplicationController
 		@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away.id, :starter => true).order("lineup")
 		@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home.id, :starter => true).order("lineup")
 
-		puts @away_hitters.size
-		puts @home_hitters.size
-
 		today = Time.now
 		@month = Date::MONTHNAMES[@game.month.to_i]
 

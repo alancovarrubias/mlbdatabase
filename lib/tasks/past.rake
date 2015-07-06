@@ -257,22 +257,4 @@ namespace :past do
 		end
 	end
 
-	task :temp => :environment do
-		Pitcher.all.each do |pitcher|
-			if pitcher.game_id != nil && (pitcher.throwhand != '' && pitcher.bathand != '')
-				puts pitcher.name
-				nil_pitcher = Pitcher.where(:name => pitcher.name, :game_id => nil).first
-				pitcher.update_attributes(:throwhand => nil_pitcher.throwhand, :bathand => nil_pitcher.bathand)
-			end
-		end
-
-		Hitter.all.each do |hitter|
-			if hitter.game_id != nil && (hitter.throwhand != '' && hitter.bathand != '')
-				puts hitter.name
-				nil_hitter = Hitter.where(:name => hitter.name, :game_id => nil).first
-				hitter.update_attributes(:throwhand => nil_hitter.throwhand, :bathand => nil_hitter.bathand)
-			end
-		end
-	end
-
 end
