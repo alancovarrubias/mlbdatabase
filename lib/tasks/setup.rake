@@ -53,11 +53,15 @@ namespace :setup do
 			zipcode = ["92806", "77002", "94621", "M5V 1J1", "30315", "53214", "63102", "60613", "85004", "90012", "94107",
 				"44115", "98134", "33125", "11368", "20003", "21201", "92101", "19148", "15212", "76011", "33705", "02215", "45202",
 				"80205", "64129", "48201", "55403", "60616", "10451"]
+
+			league = ["AL", "AL", "AL", "AL", "NL", "NL", "NL", "NL", "NL", "NL", "NL", "AL", "AL", "NL", "NL", "NL", "AL", "NL",
+				"NL", "NL", "AL", "AL", "AL", "NL", "NL", "AL", "AL", "AL", "AL", "AL"]
+
 			fangraph_id = [1, 21, 10, 14, 16, 23, 28, 17, 15, 22, 30, 5, 11, 20, 25, 24, 2, 29, 26, 27, 13, 12, 3, 18, 19, 7, 6, 8, 4, 9]
 
 
 			(0...name.size).each{|i|
-				team = Team.create(:name => name[i], :abbr => abbr[i], :game_abbr => game_abbr[i], :stadium => stadium[i], :zipcode => zipcode[i], :fangraph_id => fangraph_id[i])
+				team = Team.create(:name => name[i], :abbr => abbr[i], :game_abbr => game_abbr[i], :stadium => stadium[i], :zipcode => zipcode[i], :fangraph_id => fangraph_id[i], :league => league[i])
 				if team.name == "Angels" || team.name == "Athletics" || team.name == "Diamondbacks" || team.name == "Dodgers" || team.name == "Giants" || team.name == "Mariners" || team.name == "Padres"
 					team.update_attributes(:timezone => -3)
 				elsif team.name == "Rockies"
@@ -1461,7 +1465,7 @@ namespace :setup do
 			end
 		end
 	end
-	
+
 	task :projected_starters => :environment do
 		today = Time.now
 		home = true
@@ -1593,6 +1597,25 @@ namespace :setup do
 				puts game.home_team.name + ' missing tomorrow pitchers'
 			end
 		end
+
+	end
+
+	task :whoo => :environment do
+		name = ["Angels", "Astros", "Athletics", "Blue Jays", "Braves", "Brewers", "Cardinals",
+				"Cubs", "Diamondbacks", "Dodgers", "Giants", "Indians", "Mariners", "Marlins", "Mets",
+				"Nationals", "Orioles", "Padres", "Phillies", "Pirates", "Rangers", "Rays", "Red Sox",
+				"Reds", "Rockies", "Royals", "Tigers", "Twins", "White Sox", "Yankees"]
+		league = ["AL", "AL", "AL", "AL", "NL", "NL", "NL", "NL", "NL", "NL", "NL", "AL", "AL", "NL", "NL", "NL", "AL", "NL",
+				"NL", "NL", "AL", "AL", "AL", "NL", "NL", "AL", "AL", "AL", "AL", "AL"]
+
+
+		(0...30).each do |i|
+
+			Team.find_by_name(name[i]).update_attributes(:league => league[i])
+		end
+
+
+
 
 
 	end

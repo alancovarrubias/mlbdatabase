@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150701205156) do
+ActiveRecord::Schema.define(version: 20150706210121) do
 
   create_table "games", force: true do |t|
     t.integer  "away_team_id"
@@ -171,6 +171,8 @@ ActiveRecord::Schema.define(version: 20150701205156) do
     t.datetime "updated_at"
     t.integer  "fangraph_id"
     t.string   "game_abbr"
+    t.string   "league",      default: ""
+    t.string   "division",    default: ""
   end
 
   add_index "teams", ["abbr"], name: "index_teams_on_abbr", using: :btree
