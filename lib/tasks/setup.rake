@@ -446,6 +446,7 @@ namespace :setup do
 		year = Time.now.year
 
 		Team.all.each do |team|
+
 			url = "http://www.baseball-reference.com/teams/#{team.abbr}/2015.shtml"
 			doc = Nokogiri::HTML(open(url))
 			puts url
