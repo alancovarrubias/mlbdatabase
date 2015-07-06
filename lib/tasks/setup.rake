@@ -1061,7 +1061,7 @@ namespace :setup do
 			elsif pitcher = pitchers.find_by_name(text)
 				pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href)
 			else
-				pitcher = Pitcher.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
+				pitcher = Pitcher.create(:name => text, :starter => true, :alias => href, :fangraph_id => fangraph_id)
 				puts pitcher.name + ' created'
 			end
 		end
