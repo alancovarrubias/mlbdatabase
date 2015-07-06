@@ -17,7 +17,7 @@
 				<p>
 					<u><b>Away @ Home</b></u><br/>
 					<% @games.each do |game| %>
-						<%= link_to(game.away_team.name + " @ " + game.home_team.name, {:controller => "game", :action => "matchup", :id => game.id, :left => "1", :year => params[:year], :month => params[:month], :day => params[:day]}) %> <br />
+						<%= link_to(game.away_team.name + " @ " + game.home_team.name, {:controller => "game", :action => "matchup", :id => game.id, :year => params[:year], :month => params[:month], :day => params[:day]}) %> <br />
 					<% end %>
 				</p>
 			</div>

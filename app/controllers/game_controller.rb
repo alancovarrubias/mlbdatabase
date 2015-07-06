@@ -12,31 +12,31 @@ class GameController < ApplicationController
 			redirect_to(:action => 'tomorrow', :id => params[:id], :year => params[:year], :month => params[:month], :day => params[:day])
 		end
 
-		if params[:left] == '1'
-			@left = true
-		else
-			@left = false
-		end
 
 		@game = Game.find_by_id(params[:id])
 		@home = @game.home_team
 		@away = @game.away_team
-		@month = Date::MONTHNAMES[@game.month.to_i]
 		@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away.id, :starter => true).order("lineup")
 		@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home.id, :starter => true).order("lineup")
 
+		puts @away_hitters.size
+		puts @home_hitters.size
+
 		today = Time.now
+		@month = Date::MONTHNAMES[@game.month.to_i]
+
+
 		@home_projected = false
 		@away_projected = false
 		if @game.year.to_i == today.year && @game.month.to_i == today.month && @game.day.to_i == today.day
 
-			if @away_hitters.empty?
+			if @away_hitters.size == 0
 				@away_hitters = findProjectedLineup(@game, false)
 				@away_hitters = getCurrentStats(@away_hitters)
 				@away_projected = true
 			end
 
-			if @home_hitters.empty?
+			if @home_hitters.size == 0
 				@home_hitters = findProjectedLineup(@game, true)
 				@home_hitters = getCurrentStats(@home_hitters)
 				@home_projected = true
@@ -57,6 +57,22 @@ class GameController < ApplicationController
 		@home_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :starter => true)
 		@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :bullpen => true)
 		@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :bullpen => true)
+
+		if @away_pitchers.first != nil
+			if @away_pitchers.first.throwhand == 'L'
+				@home_left = true
+			else
+				@home_left = false
+			end
+		end
+
+		if @home_pitchers.first != nil
+			if @home_pitchers.first.throwhand == 'L'
+				@away_left = true
+			else
+				@away_left = false
+			end
+		end
 
 		day = @game.day.to_i.to_s
 		@date = @month + ' ' + day

@@ -83,7 +83,7 @@ class ApplicationController < ActionController::Base
 				# if the throwhand is the same, return the hitters of the home team
 				if opp_pitcher.throwhand == away_pitcher.throwhand
 					hitter = Hitter.find_by_name(home_pitcher.name)
-					array = game.hitters.where(:team_id => away_team.id).order("lineup")
+					array = game.hitters.where(:team_id => home_team.id).order("lineup")
 					if home_team.league == 'NL'
 						array = array[0...-1]
 						array << hitter
