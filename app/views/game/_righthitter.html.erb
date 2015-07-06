@@ -1,9 +1,12 @@
-<tr>
-	<% if hitter.name == 'Total' %>
+<% if hitter.name == 'Total' %>
+<tbody class="total">
+	<tr>
 		<td><%= hitter.name %></td>
-	<% else %>
+<% else %>
+<tbody>
+	<tr>
 		<td><%= hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.throwhand + ")"%></td>
-	<% end %>
+<% end %>
 	<td bgcolor="#7FFFD4"><%= hitter.wOBA_R %></td>
 	<td bgcolor="#7FFFD4"><%= hitter.OBP_R %></td>
 	<td bgcolor="#7FFFD4"><%= hitter.SLG_R %></td>
