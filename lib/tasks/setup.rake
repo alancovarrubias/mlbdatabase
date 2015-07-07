@@ -972,6 +972,7 @@ namespace :setup do
 				lineup = text[0].to_i
 				name = player.last_element_child.child.to_s
 				href = player.last_element_child['data-bref']
+				puts name
 
 				if href != "" && hitter = hitters.find_by_alias(href)
 					hitter.update_attributes(:starter => true, :lineup => lineup)
