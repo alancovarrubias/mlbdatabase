@@ -1003,7 +1003,6 @@ namespace :setup do
 				end
 
 				href = player.child['data-bref']
-				fangraph_id = player.child['data-mlb']
 
 				game = todays_games[game_index]
 
@@ -1079,14 +1078,14 @@ namespace :setup do
 				starting_pitchers = pitchers.where(:game_id => game.id, :starter => true)
 				starting_hitters = Hitter.where(:game_id => game.id, :starter => true)
 				starting_hitters.each do |hitter|
-					if hitter.fangraph_id != 0 && !hitters.find_by_fangraph_id(hitter.fangraph_id).starter
+					if !hitters.find_by_alias(hitter.alias).starter
 						hitter.destroy
 						puts hitter.name + ' destroyed'
 					end
 				end
 
 				starting_pitchers.each do |pitcher|
-					if pitcher.fangraph_id != 0 && !pitchers.find_by_fangraph_id(pitcher.fangraph_id).starter
+					if !pitchers.find_by_alias(pitcher.alias).starter
 						pitcher.destroy
 						puts pitcher.name + ' destroyed'
 					end
