@@ -972,14 +972,13 @@ namespace :setup do
 				lineup = text[0].to_i
 				name = player.last_element_child.child.to_s
 				href = player.last_element_child['data-bref']
-				puts name
 
 				if href != "" && hitter = hitters.find_by_alias(href)
 					hitter.update_attributes(:starter => true, :lineup => lineup)
 					puts hitter.name + ' found by alias ' + hitter.alias
 				elsif hitter = hitters.find_by_name(name)
 					hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
-					puts hitter.name = ' found by name'
+					puts hitter.name + ' found by name'
 				else
 					hitter = Hitter.create(:name => name, :starter => true, :alias => href, :lineup => lineup)
 					puts hitter.name + ' created <<<<<<<<<<<<<'
@@ -1437,8 +1436,16 @@ namespace :setup do
 
 	task :see => :environment do
 
-		Hitter.where(:game_id => nil, :alias => '').each do |hitter|
-			puts hitter.name
+		require 'nokogiri'
+		require 'open-uri'
+
+		url = "http://www.baseballpress.com/lineups"
+		doc = Nokogiri::HTML(open(url))
+
+		doc.css(".players div").each do |player|
+
+			puts player.text
+		
 		end
 
 
