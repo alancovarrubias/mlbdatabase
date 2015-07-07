@@ -967,11 +967,17 @@ namespace :setup do
 			end
 
 			hitters = Hitter.where(:game_id => nil)
-			doc.css(".players div").each do |player|
+			puts doc.css(".players div").size
+			doc.css(".players div").each_with_index do |player, index|
 				text = player.text
 				lineup = text[0].to_i
 				name = player.last_element_child.child.to_s
 				href = player.last_element_child['data-bref']
+				puts href
+
+				if href == ''
+					puts name
+				end
 
 				if href != "" && hitter = hitters.find_by_alias(href)
 					hitter.update_attributes(:starter => true, :lineup => lineup)
@@ -984,6 +990,7 @@ namespace :setup do
 					puts hitter.name + ' created <<<<<<<<<<<<<'
 				end
 			end
+
 
 			todays_games = Game.where(:year => year, :month => month, :day => day).order("id ASC")
 			var = team_index = 0
@@ -1001,8 +1008,8 @@ namespace :setup do
 					var = 0
 					next
 				end
-
-				href = player.child['data-bref']
+				name = player.child
+				href = player['data-bref']
 
 				game = todays_games[game_index]
 
@@ -1011,7 +1018,7 @@ namespace :setup do
 					if Pitcher.where(:game_id => game.id, :alias => href).empty?
 						pitcher = Pitcher.where(:game_id => nil, :alias => href).first
 						if pitcher == nil
-							pitcher = Pitcher.where(:game_id => nil, :name => text).first
+							pitcher = Pitcher.where(:game_id => nil, :name => name).first
 						end
 						if pitcher != nil
 							Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
@@ -1024,14 +1031,14 @@ namespace :setup do
 									:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
 									:wOBA_previous_R => pitcher.wOBA_previous_R)
 						else
-							puts text + ' not found'
+							puts name + ' not found'
 						end
 					end
 				when 2..19
 					if Hitter.where(:game_id => game.id, :alias => href).empty?
 						hitter = Hitter.where(:game_id => nil, :alias => href).first
 						if hitter == nil
-							hitter = Hitter.where(:game_id => nil, :name => text).first
+							hitter = Hitter.where(:game_id => nil, :name => name).first
 						end
 						if hitter != nil
 							Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
@@ -1046,7 +1053,7 @@ namespace :setup do
 									:OBP_previous_R => hitter.OBP_previous_R, :SLG_previous_R => hitter.SLG_previous_R, :AB_previous_R => hitter.AB_previous_R, :BB_previous_R => hitter.BB_previous_R,
 									:SO_previous_R => hitter.SO_previous_R, :LD_previous_R => hitter.LD_previous_R, :wRC_previous_R => hitter.wRC_previous_R)
 						else
-							puts text + ' not found'
+							puts name + ' not found'
 						end
 					end
 				end
@@ -1079,7 +1086,6 @@ namespace :setup do
 				starting_hitters = Hitter.where(:game_id => game.id, :starter => true)
 				starting_hitters.each do |hitter|
 					if !hitters.find_by_alias(hitter.alias).starter
-						puts hitter.alias
 						if !hitters.find_by_name(hitter.name).starter
 							hitter.destroy
 							puts hitter.name + ' destroyed'
@@ -1089,7 +1095,6 @@ namespace :setup do
 
 				starting_pitchers.each do |pitcher|
 					if !pitchers.find_by_alias(pitcher.alias).starter
-						puts pitcher.alias
 						if !pitchers.find_by_name(pitcher.name).starter
 							pitcher.destroy
 							puts pitcher.name + ' destroyed'
