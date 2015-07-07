@@ -18,7 +18,7 @@ class IndexController < ApplicationController
 			day = "0" + day
 		end
 
-		@games = Game.where(:year => @year, :month => month, :day => day).order("home_team_id ASC")
+		@games = Game.where(:year => @year, :month => month, :day => day).order("home_team_id ASC").order("num ASC")
 		@month = Date::MONTHNAMES[month.to_i]
 
 	end
