@@ -992,7 +992,7 @@ namespace :setup do
 				end
 			end
 
-			todays_games = Game.where(:year => year, :month => month, :day => day).order("ASC")
+			todays_games = Game.where(:year => year, :month => month, :day => day).order("id ASC")
 			var = team_index = 0
 			game_index = -1
 			team = nil
