@@ -980,7 +980,7 @@ namespace :setup do
 			fangraph_id = player.last_element_child['data-mlb']
 			if fangraph_id != "" && hitter = hitters.find_by_fangraph_id(fangraph_id)
 				hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
-				puts hitter.name + ' found by id'
+				puts hitter.name + ' found by id ' + hitter.fangraph_id.to_s
 			elsif href != "" && hitter = hitters.find_by_alias(href)
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :lineup => lineup)
 				puts hitter.name + ' found by alias'
@@ -1017,6 +1017,7 @@ namespace :setup do
 				bullpen_pitchers = pitchers.where(:bullpen => true, :team_id => game.home_team.id) + pitchers.where(:bullpen => true, :team_id => game.away_team.id)
 
 				starting_hitters.each do |hitter|
+					puts hitter.name + ' starting'
 					if Hitter.where(:game_id => game.id, :name => hitter.name, :alias => hitter.alias).empty?
 						Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
 							:throwhand => hitter.throwhand, :lineup => hitter.lineup, :starter => true, :SB_L => hitter.SB_L, :wOBA_L => hitter.wOBA_L,
