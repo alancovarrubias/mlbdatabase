@@ -8,7 +8,7 @@
 <%today = Time.now %>
 <%tomorrow = Time.now.tomorrow %>
 
-<%= link_to('Individual Teams', {:controller => 'index', :action => 'teams'})%> </br>
+<%= link_to('Teams', {:controller => 'index', :action => 'teams'})%> </br>
 <%= link_to( yesterday.strftime("%B %e"), {:controller => 'index', :action => 'game', :year => yesterday.year, :month => yesterday.month, :day => yesterday.day})%></br>
 <%= link_to( today.strftime("%B %e"), {:controller => 'index', :action => 'game', :year => today.year, :month => today.month, :day => today.day})%></br>
 <%= link_to( tomorrow.strftime("%B %e"), {:controller => 'index', :action => 'game', :year => tomorrow.year, :month => tomorrow.month, :day => tomorrow.day})%></br>

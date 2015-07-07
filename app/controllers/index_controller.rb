@@ -75,4 +75,8 @@ class IndexController < ApplicationController
 		end
 	end
 
+	def teams
+		@teams = Team.all
+	end
+
 end
