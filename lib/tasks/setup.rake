@@ -1016,8 +1016,11 @@ namespace :setup do
 
 				case var
 				when 1
-					if Pitcher.where(:game_id => game.id, :name => text).empty?
+					if Pitcher.where(:game_id => game.id, :name => text, :alias => href).empty?
 						pitcher = Pitcher.where(:game_id => nil, :name => text).first
+						if pitcher == nil
+							pitcher = Pitcher.where(:game_id => nil, :alias => href).first
+						end
 						if pitcher != nil
 							Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
 									:throwhand => pitcher.throwhand, :starter => true, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
@@ -1033,8 +1036,11 @@ namespace :setup do
 						end
 					end
 				when 2..19
-					if Hitter.where(:game_id => game.id, :name => text).empty?
+					if Hitter.where(:game_id => game.id, :name => text, :alias => href).empty?
 						hitter = Hitter.where(:game_id => nil, :name => text).first
+						if hitter == nil
+							hitter = Hitter.where(:game_id => nil, :alias => href).first
+						end
 						if hitter != nil
 							Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
 									:throwhand => hitter.throwhand, :lineup => hitter.lineup, :starter => true, :SB_L => hitter.SB_L, :wOBA_L => hitter.wOBA_L,
