@@ -1062,9 +1062,6 @@ namespace :setup do
 			end
 
 
-			# Grab all the players with no game id
-			pitchers = Pitcher.where(:game_id => nil)
-
 			# Get the bullpen pitchers and delete extra players
 			
 			todays_games.each do |game|
@@ -1089,16 +1086,16 @@ namespace :setup do
 				starting_pitchers = pitchers.where(:game_id => game.id, :starter => true)
 				starting_hitters = Hitter.where(:game_id => game.id, :starter => true)
 				starting_hitters.each do |hitter|
-					if hitter.fangraph_id != 0 && !hitters.find_by_fangraph_id(hitter.fangraph_id).starter
-							hitter.destroy
-							puts hitter.name + ' destroyed'
+					if !hitters.find_by_alias(hitter.alias).starter
+						hitter.destroy
+						puts hitter.name + ' destroyed'
 					end
 				end
 
 				starting_pitchers.each do |pitcher|
-					if pitcher.fangraph_id != 0 && !pitchers.find_by_fangraph_id(pitcher.fangraph_id).starter
-							pitcher.destroy
-							puts pitcher.name + ' destroyed'
+					if !pitchers.find_by_alias(pitcher.alias).starter
+						pitcher.destroy
+						puts pitcher.name + ' destroyed'
 					end
 				end
 
