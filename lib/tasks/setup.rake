@@ -1019,7 +1019,6 @@ namespace :setup do
 				bullpen_pitchers = pitchers.where(:bullpen => true, :team_id => game.home_team.id) + pitchers.where(:bullpen => true, :team_id => game.away_team.id)
 
 				starting_hitters.each do |hitter|
-					puts hitter.name + ' starting'
 					if Hitter.where(:game_id => game.id, :name => hitter.name, :alias => hitter.alias).empty?
 						Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
 							:throwhand => hitter.throwhand, :lineup => hitter.lineup, :starter => true, :SB_L => hitter.SB_L, :wOBA_L => hitter.wOBA_L,
