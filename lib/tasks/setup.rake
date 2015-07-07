@@ -950,22 +950,18 @@ namespace :setup do
 			doc.css(".team-name+ div").each do |player|
 				text = player.text
 				href = player.child['data-bref']
-				fangraph_id = player.child['data-mlb']
 				if text == "TBD"
 					next
 				end
 				text = text[0...-4]
-				if fangraph_id != "" && pitcher = pitchers.find_by_fangraph_id(fangraph_id)
-					pitcher.update_attributes(:starter => true, :alias => href)
-					puts pitcher.name + ' found by id ' + pitcher.fangraph_id.to_s
-				elsif href != "" && pitcher = pitchers.find_by_alias(href)
-					pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id)
+				if href != "" && pitcher = pitchers.find_by_alias(href)
+					pitcher.update_attributes(:starter => true)
 					puts pitcher.name + ' found by alias ' + pitcher.alias
 				elsif pitcher = pitchers.find_by_name(text)
-					pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href)
+					pitcher.update_attributes(:starter => true, :alias => href)
 					puts pitcher.name + ' found by name'
 				else
-					pitcher = Pitcher.create(:name => text, :starter => true, :alias => href, :fangraph_id => fangraph_id)
+					pitcher = Pitcher.create(:name => text, :starter => true, :alias => href)
 					puts pitcher.name + ' created <<<<<<<<<<<<'
 				end
 			end
@@ -976,18 +972,15 @@ namespace :setup do
 				lineup = text[0].to_i
 				name = player.last_element_child.child.to_s
 				href = player.last_element_child['data-bref']
-				fangraph_id = player.last_element_child['data-mlb']
-				if fangraph_id != "" && hitter = hitters.find_by_fangraph_id(fangraph_id)
-					hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
-					puts hitter.name + ' found by id ' + hitter.fangraph_id.to_s
-				elsif href != "" && hitter = hitters.find_by_alias(href)
-					hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :lineup => lineup)
+
+				if href != "" && hitter = hitters.find_by_alias(href)
+					hitter.update_attributes(:starter => true, :lineup => lineup)
 					puts hitter.name + ' found by alias ' + hitter.alias
 				elsif hitter = hitters.find_by_name(name)
-					hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href, :lineup => lineup)
+					hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
 					puts hitter.name = ' found by name'
 				else
-					hitter = Hitter.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
+					hitter = Hitter.create(:name => name, :starter => true, :alias => href, :lineup => lineup)
 					puts hitter.name + ' created <<<<<<<<<<<<<'
 				end
 			end
