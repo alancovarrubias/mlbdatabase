@@ -960,10 +960,10 @@ namespace :setup do
 			text = text[0...-4]
 			if fangraph_id != "" && pitcher = pitchers.find_by_fangraph_id(fangraph_id)
 				pitcher.update_attributes(:starter => true, :alias => href)
-				puts pitcher.name + ' found by id ' + hitter.fangraph_id.to_s
+				puts pitcher.name + ' found by id ' + pitcher.fangraph_id.to_s
 			elsif href != "" && pitcher = pitchers.find_by_alias(href)
 				pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id)
-				puts pitcher.name + ' found by alias ' + hitter.alias
+				puts pitcher.name + ' found by alias ' + pitcher.alias
 			elsif pitcher = pitchers.find_by_name(text)
 				pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href)
 				puts pitcher.name + ' found by name'
@@ -1074,11 +1074,11 @@ namespace :setup do
 				end
 
 				pitchers = Pitcher.where(:game_id => game.id, :starter => true)
-				pitchers.each do |hitter|
-					if hitter.fangraph_id != 0 && !pitchers.find_by_fangraph_id(hitter.fangraph_id).starter
-						if hitter.alias != '' && !pitchers.find_by_alias(hitter.alias).starter
-							hitter.destroy
-							puts hitter.name + ' destroyed'
+				pitchers.each do |pitcher|
+					if pitcher.fangraph_id != 0 && !pitchers.find_by_fangraph_id(pitcher.fangraph_id).starter
+						if pitcher.alias != '' && !pitchers.find_by_alias(pitcher.alias).starter
+							pitcher.destroy
+							puts pitcher.name + ' destroyed'
 						end
 					end
 				end
