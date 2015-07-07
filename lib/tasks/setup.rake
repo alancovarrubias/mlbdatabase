@@ -1008,10 +1008,10 @@ namespace :setup do
 
 				case var
 				when 1
-					if Pitcher.where(:game_id => game.id, :name => text).empty?
-						pitcher = Pitcher.where(:game_id => nil, :name => text).first
+					if Pitcher.where(:game_id => game.id, :alias => href).empty?
+						pitcher = Pitcher.where(:game_id => nil, :alias => href).first
 						if pitcher == nil
-							pitcher = Pitcher.where(:game_id => nil, :alias => href).first
+							pitcher = Pitcher.where(:game_id => nil, :name => text).first
 						end
 						if pitcher != nil
 							Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
@@ -1028,10 +1028,10 @@ namespace :setup do
 						end
 					end
 				when 2..19
-					if Hitter.where(:game_id => game.id, :name => text).empty?
-						hitter = Hitter.where(:game_id => nil, :name => text).first
+					if Hitter.where(:game_id => game.id, :alias => href).empty?
+						hitter = Hitter.where(:game_id => nil, :alias => href).first
 						if hitter == nil
-							hitter = Hitter.where(:game_id => nil, :alias => href).first
+							hitter = Hitter.where(:game_id => nil, :name => text).first
 						end
 						if hitter != nil
 							Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
@@ -1061,7 +1061,7 @@ namespace :setup do
 				bullpen_pitchers = pitchers.where(:bullpen => true, :team_id => game.home_team.id) + pitchers.where(:bullpen => true, :team_id => game.away_team.id)
 
 				bullpen_pitchers.each do |pitcher|
-					if Pitcher.where(:game_id => game.id, :name => pitcher.name).empty?
+					if Pitcher.where(:game_id => game.id, :alias => pitcher.alias).empty?
 						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
 							:throwhand => pitcher.throwhand, :bullpen => true, :one => pitcher.one, :two => pitcher.two, :three => pitcher.three, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
 							:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
