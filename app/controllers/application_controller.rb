@@ -30,15 +30,15 @@ class ApplicationController < ActionController::Base
 
 	end
 
-	def findProjectedLineup(today_game, home)
+	def findProjectedLineup(today_game, home, away_pitcher, home_pitcher)
 
 		today = Time.now
 
 		# store the teams of the game
 		home_team = today_game.home_team
 		away_team = today_game.away_team
-		home_pitcher = today_game.pitchers.where(:team_id => home_team.id, :starter => true).first
-		away_pitcher = today_game.pitchers.where(:team_id => away_team.id, :starter => true).first
+		home_pitcher = home_pitcher.first
+		away_pitcher = away_pitcher.first
 
 		while true
 			# find the previous day's games

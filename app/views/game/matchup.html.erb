@@ -17,12 +17,18 @@
 	</br>
 	</br>
 	</br>
+	</br>
+	</br>
 
 	<h2><%= "Gametime: " + @game.time + ' Local Time' %></h2>
 
-	<h3><%= "Umpire: " + @game.ump %></h3>
+	<% if !@tomorrow_bool %>
 
-	<%= render(:partial => "weather")%>
+		<h3><%= "Umpire: " + @game.ump %></h3>
+
+		<%= render(:partial => "weather")%>
+
+	<% end %>
 
 	<table>
 		<tr>
@@ -82,24 +88,26 @@
 			<% end %>
 		<% end %>
 
-		<table>
-			<tr>
-				<th colspan="37"><%= @away.name + " Bullpen"%></th>
-			</tr>
-			<%= render(:partial => "bullpenpitchingheader") %>
-			<% @away_bullpen_pitchers.each do |pitcher| %>
-				<%= render(:partial => "bullpenpitching", :locals => {:pitcher => pitcher}) %>
-			<% end %>
-		</table>
+		<% if !@tomorrow_bool %>
+			<table>
+				<tr>
+					<th colspan="37"><%= @away.name + " Bullpen"%></th>
+				</tr>
+				<%= render(:partial => "bullpenpitchingheader") %>
+				<% @away_bullpen_pitchers.each do |pitcher| %>
+					<%= render(:partial => "bullpenpitching", :locals => {:pitcher => pitcher}) %>
+				<% end %>
+			</table>
 
-		<table>
-			<tr>
-				<th colspan="37"><%= @home.name + " Bullpen"%></th>
-			</tr>
-			<%= render(:partial => "bullpenpitchingheader") %>
-			<% @home_bullpen_pitchers.each do |pitcher| %>
-				<%= render(:partial => "bullpenpitching", :locals => {:pitcher => pitcher}) %>
-			<% end %>
-		</table>
+			<table>
+				<tr>
+					<th colspan="37"><%= @home.name + " Bullpen"%></th>
+				</tr>
+				<%= render(:partial => "bullpenpitchingheader") %>
+				<% @home_bullpen_pitchers.each do |pitcher| %>
+					<%= render(:partial => "bullpenpitching", :locals => {:pitcher => pitcher}) %>
+				<% end %>
+			</table>
+		<% end %>
 	</body>
 </html>

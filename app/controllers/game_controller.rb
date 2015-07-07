@@ -7,48 +7,29 @@ class GameController < ApplicationController
 		@game = Game.find_by_id(params[:id])
 		@home = @game.home_team
 		@away = @game.away_team
-		@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away.id, :starter => true).order("lineup")
-		@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home.id, :starter => true).order("lineup")
 
-		today = Time.now
-		@month = Date::MONTHNAMES[@game.month.to_i]
+		today_bool = false
+		@tomorrow_bool = false
 
-		@home_projected = false
-		@away_projected = false
-		if @game.year.to_i == today.year && @game.month.to_i == today.month && @game.day.to_i == today.day
+		year = Time.now.year.to_s
+		month = Time.now.month.to_s
+		day = Time.now.day.to_s
 
-			if @away_hitters.size == 0
-				@away_hitters = findProjectedLineup(@game, false)
-				@away_hitters = getCurrentStats(@away_hitters)
-				@away_projected = true
-			end
-
-			if @home_hitters.size == 0
-				@home_hitters = findProjectedLineup(@game, true)
-				@home_hitters = getCurrentStats(@home_hitters)
-				@home_projected = true
-			end
-
+		if year == params[:year] && month == params[:month] && day == params[:day]
+			today_bool = true
 		end
-
-		if !@away_hitters.empty?
-			away_total = addTotalStats(@away_hitters)
-			@away_hitters << away_total
-		end
-		if !@home_hitters.empty?
-			home_total = addTotalStats(@home_hitters)
-			@home_hitters << home_total
-		end
-
-
 
 
 		year = Time.now.tomorrow.year.to_s
 		month = Time.now.tomorrow.month.to_s
 		day = Time.now.tomorrow.day.to_s
 
-
 		if year == params[:year] && month == params[:month] && day == params[:day]
+			@tomorrow_bool = true
+		end
+
+
+		if @tomorrow_bool
 			@away_pitchers = Pitcher.where(:game_id => nil, :team_id => @away.id, :tomorrow_starter => true)
 			@home_pitchers = Pitcher.where(:game_id => nil, :team_id => @home.id, :tomorrow_starter => true)
 			@away_bullpen_pitchers = Array.new
@@ -76,12 +57,56 @@ class GameController < ApplicationController
 			end
 		end
 
+		@month = Date::MONTHNAMES[@game.month.to_i]
 		day = @game.day.to_i.to_s
 		@date = @month + ' ' + day
 		day = Date.parse("#{params[:year]}-#{params[:month]}-#{params[:day]}").wday
 		@one = Date::DAYNAMES[day-1]
 		@two = Date::DAYNAMES[day-2]
 		@three = Date::DAYNAMES[day-3]
+
+
+
+		if !@tomorrow_bool
+
+			@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away.id, :starter => true).order("lineup")
+			@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home.id, :starter => true).order("lineup")
+
+		else
+
+			@away_hitters = Array.new
+			@home_hitters = Array.new
+
+		end
+
+		@home_projected = false
+		@away_projected = false
+
+		if today_bool || @tomorrow_bool
+
+			if @away_hitters.size == 0
+				@away_hitters = findProjectedLineup(@game, false, @away_pitchers, @home_pitchers)
+				@away_hitters = getCurrentStats(@away_hitters)
+				@away_projected = true
+			end
+
+			if @home_hitters.size == 0
+				@home_hitters = findProjectedLineup(@game, true, @away_pitchers, @home_pitchers)
+				@home_hitters = getCurrentStats(@home_hitters)
+				@home_projected = true
+			end
+
+		end
+
+		if !@away_hitters.empty?
+			away_total = addTotalStats(@away_hitters)
+			@away_hitters << away_total
+		end
+		if !@home_hitters.empty?
+			home_total = addTotalStats(@home_hitters)
+			@home_hitters << home_total
+		end
+		
 
 	end
 
