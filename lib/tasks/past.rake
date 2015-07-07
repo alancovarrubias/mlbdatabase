@@ -242,7 +242,8 @@ namespace :past do
 	end
 
 	task :delete_games => :environment do
-		games = Game.where("month < '07' OR (month = '07' AND day < '06')").each do |game|
+		# games = Game.where("month < '07' OR (month = '07' AND day < '06')").each do |game|
+		games = Game.where(:year => '2015', :month => '07', :day => '07').each do |game|
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
 			game.destroy
