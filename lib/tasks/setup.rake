@@ -973,16 +973,20 @@ namespace :setup do
 		hitters = Hitter.where(:game_id => nil)
 		doc.css(".players div").each do |player|
 			text = player.text
+			puts text
 			lineup = text[0].to_i
 			name = player.last_element_child.child.to_s
 			href = player.last_element_child['data-bref']
 			fangraph_id = player.last_element_child['data-mlb']
 			if fangraph_id != "" && hitter = hitters.find_by_fangraph_id(fangraph_id)
 				hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
+				puts hitter.name + ' found by id'
 			elsif href != "" && hitter = hitters.find_by_alias(href)
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :lineup => lineup)
+				puts hitter.name + ' found by alias'
 			elsif hitter = hitters.find_by_name(name)
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href, :lineup => lineup)
+				puts hitter.name = ' found by name'
 			else
 				hitter = Hitter.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
 				puts hitter.name + ' created'

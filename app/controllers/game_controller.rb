@@ -124,7 +124,7 @@ class GameController < ApplicationController
 			@hitters = @team.hitters.where(:game_id => nil).order(:AB_L).reverse
 		else
 			@pitchers = @team.pitchers.where(:game_id => nil).order(:IP_R).reverse
-			@hitters = @team.hitters.where(:game_id => nil).order(:AB_R).reverse
+			@hitters = @team.hitters.where(:game_id => nil).order(:AB_R).reverse.limit(20)
 		end
 	end
 
