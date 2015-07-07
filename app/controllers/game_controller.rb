@@ -113,8 +113,8 @@ class GameController < ApplicationController
 
 	def team
 		@team = Team.find_by_id(params[:id])
-		@pitchers = @team.pitchers.where(:game_id => nil).order("IP_R desc")
-		@hitters = @team.hitters.where(:game_id => nil).order("AB_R desc")
+		@pitchers = @team.pitchers.where(:game_id => nil)
+		@hitters = @team.hitters.where(:game_id => nil)
 		if params[:left] == '1'
 			@left = true
 		else
