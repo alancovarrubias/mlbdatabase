@@ -960,20 +960,22 @@ namespace :setup do
 			text = text[0...-4]
 			if fangraph_id != "" && pitcher = pitchers.find_by_fangraph_id(fangraph_id)
 				pitcher.update_attributes(:starter => true, :alias => href)
+				puts pitcher.name + ' found by id ' + hitter.fangraph_id.to_s
 			elsif href != "" && pitcher = pitchers.find_by_alias(href)
 				pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id)
+				puts pitcher.name + ' found by alias ' + hitter.alias
 			elsif pitcher = pitchers.find_by_name(text)
 				pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href)
+				puts pitcher.name + ' found by name'
 			else
 				pitcher = Pitcher.create(:name => text, :starter => true, :alias => href, :fangraph_id => fangraph_id)
-				puts pitcher.name + ' created'
+				puts pitcher.name + ' created <<<<<<<<<<<<'
 			end
 		end
 
 		hitters = Hitter.where(:game_id => nil)
 		doc.css(".players div").each do |player|
 			text = player.text
-			puts text
 			lineup = text[0].to_i
 			name = player.last_element_child.child.to_s
 			href = player.last_element_child['data-bref']
@@ -983,13 +985,13 @@ namespace :setup do
 				puts hitter.name + ' found by id ' + hitter.fangraph_id.to_s
 			elsif href != "" && hitter = hitters.find_by_alias(href)
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :lineup => lineup)
-				puts hitter.name + ' found by alias'
+				puts hitter.name + ' found by alias ' + hitter.alias
 			elsif hitter = hitters.find_by_name(name)
 				hitter.update_attributes(:starter => true, :fangraph_id => fangraph_id, :alias => href, :lineup => lineup)
 				puts hitter.name = ' found by name'
 			else
 				hitter = Hitter.create(:name => name, :starter => true, :alias => href, :fangraph_id => fangraph_id, :lineup => lineup)
-				puts hitter.name + ' created'
+				puts hitter.name + ' created <<<<<<<<<<<<<'
 			end
 		end
 
@@ -1061,15 +1063,24 @@ namespace :setup do
 					end
 				end
 
-				Hitter.where(:game_id => game.id).each do |hitter|
-					if !Hitter.where(:game_id => nil).find_by_alias(hitter.alias).starter
-						hitter.destroy
+
+				hitters = Hitter.where(:game_id => game.id, :starter => true)
+				hitters.each do |hitter|
+					if hitter.fangraph_id != 0 && !hitters.find_by_fangraph_id(hitter.fangraph_id).starter
+						if hitter.alias != '' && !hitters.find_by_alias(hitter.alias).starter
+							hitter.destroy
+							puts hitter.name + ' destroyed'
+						end
 					end
 				end
 
-				Pitcher.where(:game_id => game.id, :starter => true).each do |pitcher|
-					if !Pitcher.where(:game_id => nil).find_by_alias(pitcher.alias).starter
-						pitcher.destroy
+				pitchers = Pitcher.where(:game_id => game.id, :starter => true)
+				pitchers.each do |hitter|
+					if hitter.fangraph_id != 0 && !pitchers.find_by_fangraph_id(hitter.fangraph_id).starter
+						if hitter.alias != '' && !pitchers.find_by_alias(hitter.alias).starter
+							hitter.destroy
+							puts hitter.name + ' destroyed'
+						end
 					end
 				end
 
