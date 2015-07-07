@@ -1008,18 +1008,20 @@ namespace :setup do
 			day = "0" + day
 		end
 
+		# Grab all the players with no game id
 		hitters = Hitter.where(:game_id => nil)
 		pitchers = Pitcher.where(:game_id => nil)
 
 		if hour > 6 && hour < 20
 			Game.where(:year => year, :month => month, :day => day).each do |game|
-				# Grab all the players with no game id, and if
+				
+				# grab starting and bullpen
 				starting_hitters = hitters.where(:starter => true, :team_id => game.home_team.id) + hitters.where(:starter => true, :team_id => game.away_team.id)
 				starting_pitchers = pitchers.where(:starter => true, :team_id => game.home_team.id) + pitchers.where(:starter => true, :team_id => game.away_team.id)
 				bullpen_pitchers = pitchers.where(:bullpen => true, :team_id => game.home_team.id) + pitchers.where(:bullpen => true, :team_id => game.away_team.id)
 
 				starting_hitters.each do |hitter|
-					if Hitter.where(:game_id => game.id, :name => hitter.name, :alias => hitter.alias).empty?
+					if Hitter.where(:game_id => game.id, :name => hitter.name, :fangraph_id => hitter.fangraph_id).empty?
 						Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
 							:throwhand => hitter.throwhand, :lineup => hitter.lineup, :starter => true, :SB_L => hitter.SB_L, :wOBA_L => hitter.wOBA_L,
 							:OBP_L => hitter.OBP_L, :SLG_L => hitter.SLG_L, :AB_L => hitter.AB_L, :BB_L => hitter.BB_L, :SO_L => hitter.SO_L, :LD_L => hitter.LD_L,
@@ -1035,7 +1037,7 @@ namespace :setup do
 				end
 
 				starting_pitchers.each do |pitcher|
-					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :alias => pitcher.alias).empty?
+					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :fangraph_id => pitcher.fangraph_id).empty?
 						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
 							:throwhand => pitcher.throwhand, :starter => true, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
 							:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
@@ -1049,7 +1051,7 @@ namespace :setup do
 				end
 
 				bullpen_pitchers.each do |pitcher|
-					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :alias => pitcher.alias).empty?
+					if Pitcher.where(:game_id => game.id, :name => pitcher.name, :fangraph_id => pitcher.fangraph_id).empty?
 						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
 							:throwhand => pitcher.throwhand, :bullpen => true, :one => pitcher.one, :two => pitcher.two, :three => pitcher.three, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
 							:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
@@ -1062,24 +1064,18 @@ namespace :setup do
 					end
 				end
 
-
-				hitters = Hitter.where(:game_id => game.id, :starter => true)
-				hitters.each do |hitter|
+				starting_hitters.each do |hitter|
 					if hitter.fangraph_id != 0 && !hitters.find_by_fangraph_id(hitter.fangraph_id).starter
-						if hitter.alias != '' && !hitters.find_by_alias(hitter.alias).starter
 							hitter.destroy
 							puts hitter.name + ' destroyed'
-						end
 					end
 				end
 
 				pitchers = Pitcher.where(:game_id => game.id, :starter => true)
 				pitchers.each do |pitcher|
 					if pitcher.fangraph_id != 0 && !pitchers.find_by_fangraph_id(pitcher.fangraph_id).starter
-						if pitcher.alias != '' && !pitchers.find_by_alias(pitcher.alias).starter
 							pitcher.destroy
 							puts pitcher.name + ' destroyed'
-						end
 					end
 				end
 
