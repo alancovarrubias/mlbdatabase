@@ -1079,15 +1079,21 @@ namespace :setup do
 				starting_hitters = Hitter.where(:game_id => game.id, :starter => true)
 				starting_hitters.each do |hitter|
 					if !hitters.find_by_alias(hitter.alias).starter
-						hitter.destroy
-						puts hitter.name + ' destroyed'
+						puts hitter.alias
+						if !hitters.find_by_name(hitter.name).starter
+							hitter.destroy
+							puts hitter.name + ' destroyed'
+						end
 					end
 				end
 
 				starting_pitchers.each do |pitcher|
 					if !pitchers.find_by_alias(pitcher.alias).starter
-						pitcher.destroy
-						puts pitcher.name + ' destroyed'
+						puts pitcher.alias
+						if !pitchers.find_by_name(pitcher.name).starter
+							pitcher.destroy
+							puts pitcher.name + ' destroyed'
+						end
 					end
 				end
 
