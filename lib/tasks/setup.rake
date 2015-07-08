@@ -444,14 +444,16 @@ namespace :setup do
 		end
 
 		year = Time.now.year
+		hitters = Hitter.where(:game_id => nil)
+		pitchers = Pitcher.where(:game_id => nil)
+		teams = Team.all
 
-		Team.all.each do |team|
+		teams.each do |team|
 
 			url = "http://www.baseball-reference.com/teams/#{team.abbr}/2015.shtml"
 			doc = Nokogiri::HTML(open(url))
 			puts url
 
-			hitters = Hitter.where(:game_id => nil)
 			doc.css("#team_batting tbody td").each_with_index do |stat, index|
 				text = stat.text
 				case index%28
@@ -470,7 +472,6 @@ namespace :setup do
 
 			end
 
-			pitchers = Pitcher.where(:game_id => nil)
 			doc.css("#team_pitching tbody td").each_with_index do |stat, index|
 				text = stat.text
 				case index%34
@@ -490,7 +491,7 @@ namespace :setup do
 		end
 
 
-		Team.all.each do |team|
+		teams.each do |team|
 			urls = Array.new
 			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
 			urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
@@ -500,7 +501,6 @@ namespace :setup do
 
 
 			ab = sb = bb = so = slg = obp = wOBA = wRC = ld = hitter = name = nil
-			hitters = Hitter.where(:game_id => nil)
 			urls.each_with_index do |url, url_index|
 				puts url
 				doc = Nokogiri::HTML(open(url))
@@ -553,7 +553,7 @@ namespace :setup do
 			end
 		end
 
-		Team.all.each do |team|
+		teams.each do |team|
 
 			urls = Array.new
 
@@ -564,8 +564,6 @@ namespace :setup do
 			url_previous = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,118&season=#{year-1}&month=0&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
 			url_previous_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,31,4,14,11,38,43,27,47&season=#{year-1}&month=13&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
 			url_previous_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,31,4,14,11,38,43,27,47&season=#{year-1}&month=14&season1=#{year-1}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
-
-			pitchers = Pitcher.where(:game_id => nil)
 
 			fip = name = pitcher = nil
 			urls << url
@@ -846,11 +844,11 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 
-		def starters()
-			Pitcher.all.where(:starter => true, :game_id => nil).each do |pitcher|
+		def starters(pitchers, hitters)
+			pitchers.where(:starter => true).each do |pitcher|
 				pitcher.update_attributes(:starter => false)
 			end
-			Hitter.all.where(:starter => true, :game_id => nil).each do |hitter|
+			hitters.where(:starter => true).each do |hitter|
 				hitter.update_attributes(:starter => false)
 			end
 		end
@@ -881,9 +879,6 @@ namespace :setup do
 
 		end
 
-		url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
-		doc = Nokogiri::HTML(open(url))
-
 		today = Time.now
 		year = today.year.to_s
 		month = today.month.to_s
@@ -896,6 +891,13 @@ namespace :setup do
 		if day.size == 1
 			day = '0' + day
 		end
+
+		nil_pitchers = Pitcher.where(:game_id => nil)
+		nil_hitters = Hitter.where(:game_id => nil)
+		todays_games = Game.where(:year => year, :month => month, :day => day)
+
+		url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
+		doc = Nokogiri::HTML(open(url))
 
 		home = Array.new
 		away = Array.new
@@ -919,8 +921,6 @@ namespace :setup do
 		teams = home + away
 		duplicates = teams.select{ |e| teams.count(e) > 1 }.uniq
 
-		todays_games = Game.where(:year => year, :month => month, :day => day)
-		puts todays_games.size
 		(0...gametime.size).each{ |i|
 
 			games = todays_games.where(:home_team_id => home[i].id, :away_team_id => away[i].id)
@@ -944,50 +944,38 @@ namespace :setup do
 
 		if hour > 6 && hour < 20
 
-			starters()
+			starters(nil_pitchers, nil_hitters)
 			
-			pitchers = Pitcher.where(:game_id => nil)
 			doc.css(".team-name+ div").each do |player|
 				text = player.text
 				href = player.child['data-bref']
+
 				if text == "TBD"
 					next
 				end
+
 				text = text[0...-4]
-				if href != "" && pitcher = pitchers.find_by_alias(href)
+				if href != "" && pitcher = nil_pitchers.find_by_alias(href)
 					pitcher.update_attributes(:starter => true)
 					puts pitcher.name + ' found by alias ' + pitcher.alias
-				elsif pitcher = pitchers.find_by_name(text)
+				elsif pitcher = nil_pitchers.find_by_name(text)
 					pitcher.update_attributes(:starter => true, :alias => href)
 					puts pitcher.name + ' found by name'
-				else
-					pitcher = Pitcher.create(:name => text, :starter => true, :alias => href)
-					puts pitcher.name + ' created <<<<<<<<<<<<'
 				end
 			end
 
-			hitters = Hitter.where(:game_id => nil)
-			puts doc.css(".players div").size
 			doc.css(".players div").each_with_index do |player, index|
 				text = player.text
 				lineup = text[0].to_i
 				name = player.last_element_child.child.to_s
 				href = player.last_element_child['data-bref']
-				puts href
 
-				if href == ''
-					puts name
-				end
-
-				if href != "" && hitter = hitters.find_by_alias(href)
+				if href != "" && hitter = nil_hitters.find_by_alias(href)
 					hitter.update_attributes(:starter => true, :lineup => lineup)
 					puts hitter.name + ' found by alias ' + hitter.alias
-				elsif hitter = hitters.find_by_name(name)
+				elsif hitter = nil_hitters.find_by_name(name)
 					hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
 					puts hitter.name + ' found by name'
-				else
-					hitter = Hitter.create(:name => name, :starter => true, :alias => href, :lineup => lineup)
-					puts hitter.name + ' created <<<<<<<<<<<<<'
 				end
 			end
 
@@ -1013,12 +1001,15 @@ namespace :setup do
 
 				game = todays_games[game_index]
 
+				game_pitchers = Pitcher.where(:game_id => game.id)
+				game_hitters = Hitter.where(:game_id => game.id)
+
 				case var
 				when 1
-					if Pitcher.where(:game_id => game.id, :alias => href).empty?
-						pitcher = Pitcher.where(:game_id => nil, :alias => href).first
+					if game_pitchers.find_by_alias(href) == nil
+						pitcher = nil_pitchers.find_by_alias(href)
 						if pitcher == nil
-							pitcher = Pitcher.where(:game_id => nil, :name => name).first
+							pitcher = nil_pitchers.find_by_name(name)
 						end
 						if pitcher != nil
 							Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
@@ -1035,12 +1026,15 @@ namespace :setup do
 						end
 					end
 				when 2..19
-					if Hitter.where(:game_id => game.id, :alias => href).empty?
-						hitter = Hitter.where(:game_id => nil, :alias => href).first
+					if game_hitters.find_by_alias(href) == nil
+						hitter = nil_hitters.find_by_alias(href)
 						if hitter == nil
-							hitter = Hitter.where(:game_id => nil, :name => name).first
+							hitter = nil_hitters.find_by_name(name)
 						end
 						if hitter != nil
+							if hitter.team == nil
+								puts hitter.name
+							end
 							Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
 									:throwhand => hitter.throwhand, :lineup => hitter.lineup, :starter => true, :SB_L => hitter.SB_L, :wOBA_L => hitter.wOBA_L,
 									:OBP_L => hitter.OBP_L, :SLG_L => hitter.SLG_L, :AB_L => hitter.AB_L, :BB_L => hitter.BB_L, :SO_L => hitter.SO_L, :LD_L => hitter.LD_L,
@@ -1062,13 +1056,18 @@ namespace :setup do
 
 
 			# Get the bullpen pitchers and delete extra players
-			
+			nil_bullpen_pitchers = nil_pitchers.where(:bullpen => true)
+			nil_starting_pitchers = nil_pitchers.where(:starter => true)
+			nil_starting_hitters = nil_hitters.where(:starter => true)
 			todays_games.each do |game|
 
-				bullpen_pitchers = pitchers.where(:bullpen => true, :team_id => game.home_team.id) + pitchers.where(:bullpen => true, :team_id => game.away_team.id)
+				game_hitters = Hitter.where(:game_id => game.id)
+				game_pitchers = Pitcher.where(:game_id => game.id)
+
+				bullpen_pitchers = nil_bullpen_pitchers.where(:team_id => game.home_team.id) + nil_bullpen_pitchers.where(:team_id => game.away_team.id)
 
 				bullpen_pitchers.each do |pitcher|
-					if Pitcher.where(:game_id => game.id, :alias => pitcher.alias).empty?
+					if game_pitchers.find_by_alias(pitcher.alias) == nil
 						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
 							:throwhand => pitcher.throwhand, :bullpen => true, :one => pitcher.one, :two => pitcher.two, :three => pitcher.three, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
 							:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
@@ -1082,11 +1081,11 @@ namespace :setup do
 				end
 
 
-				starting_pitchers = pitchers.where(:game_id => game.id, :starter => true)
-				starting_hitters = Hitter.where(:game_id => game.id, :starter => true)
+				starting_pitchers = game_pitchers.where(:starter => true)
+				starting_hitters = game_hitters.where(:starter => true)
 				starting_hitters.each do |hitter|
-					if !hitters.find_by_alias(hitter.alias).starter
-						if !hitters.find_by_name(hitter.name).starter
+					if !nil_hitters.find_by_alias(hitter.alias).starter
+						if !nil_hitters.find_by_name(hitter.name).starter
 							hitter.destroy
 							puts hitter.name + ' destroyed'
 						end
@@ -1094,15 +1093,13 @@ namespace :setup do
 				end
 
 				starting_pitchers.each do |pitcher|
-					if !pitchers.find_by_alias(pitcher.alias).starter
-						if !pitchers.find_by_name(pitcher.name).starter
+					if !nil_pitchers.find_by_alias(pitcher.alias).starter
+						if !nil_pitchers.find_by_name(pitcher.name).starter
 							pitcher.destroy
 							puts pitcher.name + ' destroyed'
 						end
 					end
 				end
-
-
 			end
 		end
 
@@ -1447,17 +1444,17 @@ namespace :setup do
 
 	task :see => :environment do
 
-		require 'nokogiri'
 		require 'open-uri'
+		require 'json'
+		require 'psych'
 
-		url = "http://www.baseballpress.com/lineups"
-		doc = Nokogiri::HTML(open(url))
+		city = 'anaheim,usa'
+		request = "http://api.openweathermap.org/data/2.5/weather?q=#{city}"
+		response = open(request).readlines.join
+		puts response['wind']
+		print JSON.parse(response)['name']
 
-		doc.css(".players div").each do |player|
-
-			puts player.text
 		
-		end
 
 
 

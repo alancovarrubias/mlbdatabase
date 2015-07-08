@@ -119,7 +119,7 @@ class ApplicationController < ActionController::Base
 				if opp_pitcher.throwhand == home_pitcher.throwhand
 					hitter = Hitter.find_by_name(away_pitcher.name)
 					array = game.hitters.where(:team_id => away_team.id).order("lineup")
-					if away_team.league == 'NL'
+					if home_team.league == 'NL'
 						array = array[0...-1]
 						array << hitter
 					end
