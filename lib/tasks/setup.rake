@@ -1450,13 +1450,10 @@ namespace :setup do
 		nil_pitchers = Pitcher.where(:game_id => nil)
 		href = Array.new
 		nil_pitchers.each do |pitcher|
-			if pitcher.alias == nil
-				hitter = Hitter.find_by_name(pitcher.name)
-				if hitter == nil
-					puts pitcher.name
-				else
-					pitcher.update_attributes(:alias => hitter.alias)
-				end
+			if !href.include?(pitcher.name)
+				href << pitcher.name
+			else
+				puts pitcher.name
 			end
 		end
 
