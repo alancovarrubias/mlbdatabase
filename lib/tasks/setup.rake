@@ -1451,7 +1451,12 @@ namespace :setup do
 		href = Array.new
 		nil_pitchers.each do |pitcher|
 			if pitcher.alias == nil
-				pitcher.update_attributes(:alias => Hitter.find_by_name(pitcher.name).alias)
+				hitter = Hitter.find_by_name(pitcher.name)
+				if hitter == nil
+					puts pitcher.name
+				else
+					pitcher.update_attributes(:alias => hitter.alias)
+				end
 			end
 		end
 
