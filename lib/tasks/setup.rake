@@ -1448,10 +1448,10 @@ namespace :setup do
 
 
 		nil_hitters = Hitter.where(:game_id => nil)
-		names = Array.new
+		href = Array.new
 		nil_hitters.each do |hitter|
-			if !names.include?(hitter.name)
-				names << hitter.name
+			if !href.include?(hitter.alias)
+				href << hitter.alias
 			else
 				puts hitter.name
 			end
