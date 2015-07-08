@@ -957,10 +957,11 @@ namespace :setup do
 				text = text[0...-4]
 				if href != "" && pitcher = nil_pitchers.find_by_alias(href)
 					pitcher.update_attributes(:starter => true)
-					puts pitcher.name + ' found by alias ' + pitcher.alias
 				elsif pitcher = nil_pitchers.find_by_name(text)
 					pitcher.update_attributes(:starter => true, :alias => href)
 					puts pitcher.name + ' found by name'
+				else
+					puts pitcher.name + ' not found'
 				end
 			end
 
@@ -972,10 +973,11 @@ namespace :setup do
 
 				if href != "" && hitter = nil_hitters.find_by_alias(href)
 					hitter.update_attributes(:starter => true, :lineup => lineup)
-					puts hitter.name + ' found by alias ' + hitter.alias
 				elsif hitter = nil_hitters.find_by_name(name)
 					hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
 					puts hitter.name + ' found by name'
+				else
+					puts hitter.name + ' not found'
 				end
 			end
 
