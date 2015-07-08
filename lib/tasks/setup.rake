@@ -1453,7 +1453,7 @@ namespace :setup do
 			if !href.include?(hitter.alias)
 				href << hitter.alias
 			else
-				puts hitter.name
+				puts hitter.alias
 			end
 		end
 
