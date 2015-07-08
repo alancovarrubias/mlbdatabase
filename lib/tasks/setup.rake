@@ -1447,13 +1447,11 @@ namespace :setup do
 	task :see_multiples => :environment do
 
 
-		nil_hitters = Hitter.where(:game_id => nil)
+		nil_pitchers = Pitcher.where(:game_id => nil)
 		href = Array.new
-		nil_hitters.each do |hitter|
-			if !href.include?(hitter.alias)
-				href << hitter.alias
-			else
-				puts hitter.name
+		nil_pitchers.each do |pitcher|
+			if pitcher.alias == nil
+				pitcher.update_attributes(:alias => Hitter.find_by_name(pitcher.name).alias)
 			end
 		end
 
