@@ -1444,20 +1444,18 @@ namespace :setup do
 		end
 	end
 
-	task :see => :environment do
+	task :see_multiples => :environment do
 
-		require 'open-uri'
-		require 'json'
-		require 'psych'
 
-		city = 'anaheim,usa'
-		request = "http://api.openweathermap.org/data/2.5/weather?q=#{city}"
-		response = open(request).readlines.join
-		puts response['wind']
-		print JSON.parse(response)['name']
-
-		
-
+		nil_hitters = Hitter.where(:game_id => nil)
+		names = Array.new
+		nil_hitters.each do |hitter|
+			if !names.include?(hitter.name)
+				names << hitter.name
+			else
+				puts hitter.name
+			end
+		end
 
 
 	end
