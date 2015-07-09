@@ -447,10 +447,10 @@ namespace :past do
 					when 11
 						wpa = text.to_i
 						if hitter != nil
-							BatterScore.create(:game_id => game.id, :hitter_id => hitter.id, :name => hitter.name, :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
+							HitterScore.create(:game_id => game.id, :hitter_id => hitter.id, :name => hitter.name, :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
 									:SO => so, :wOBA => woba, :pLI => pli, :WPA => wpa)
 						else
-							BatterScore.create(:game_id => game.id, :hitter_id => nil, :name => '', :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
+							HitterScore.create(:game_id => game.id, :hitter_id => nil, :name => '', :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
 									:SO => so, :wOBA => woba, :pLI => pli, :WPA => wpa)
 						end
 					end
