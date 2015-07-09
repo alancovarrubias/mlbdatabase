@@ -977,7 +977,7 @@ namespace :setup do
 					hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
 					puts hitter.name + ' found by name'
 				else
-					puts hitter.name + ' not found'
+					puts name + ' not found'
 				end
 			end
 
