@@ -5,8 +5,14 @@ class GameController < ApplicationController
 
 
 		@game = Game.find_by_id(params[:id])
-		@home = @game.home_team
 		@away = @game.away_team
+		@home = @game.home_team
+
+		@away_hitting_boxscores = @game.hitter_box_scores.where(:home => false)
+		@away_pitching_boxscores = @game.pitcher_box_scores.where(:home => false)
+
+		@home_hitting_boxscores = @game.hitter_box_scores.where(:home => true)
+		@home_pitching_boxscores = @game.pitcher_box_scores.where(:home => true)
 
 		@innings = Array.new
 		@away_score = Array.new

@@ -1,4 +1,4 @@
-class CreateInnings < ActiveRecord::Migration
+2class CreateInnings < ActiveRecord::Migration
   def change
     create_table :innings do |t|
     	t.belongs_to :game

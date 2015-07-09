@@ -377,7 +377,7 @@ namespace :past do
 					home = true
 				end
 
-				hitter = pitcher = href = bo = pa = h = hr = r = rbi = bb = so = woba = pli = wpa = nil
+				name = hitter = pitcher = href = bo = pa = h = hr = r = rbi = bb = so = woba = pli = wpa = nil
 				doc.css(css).each_with_index do |stat, index|
 					text = stat.text
 					case index%int
@@ -403,10 +403,13 @@ namespace :past do
 									puts href
 								end
 							end
-
 						end
 					when 1
-						bo = text.to_i
+						if css_index < 2
+							bo = text.to_i
+						else
+							bo = text.to_f
+						end
 					when 2
 						pa = text.to_i
 					when 3
@@ -420,29 +423,41 @@ namespace :past do
 					when 7
 						bb = text.to_i
 					when 8
-						so = text.to_i
+						if css_index < 2
+							so = text.to_i
+						else
+							so = text.to_f
+						end
 					when 9
-						woba = text.to_i
+						if css_index < 2
+							woba = (text.to_f*1000).to_i
+						else
+							woba = text.to_f
+						end
 					when 10
-						pli = text.to_i
+						pli = text.to_f
 						if css_index >= 2
+							puts pli
 							if pitcher != nil
 								PitcherBoxScore.create(:game_id => game.id, :pitcher_id => pitcher.id, :name => pitcher.name, :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
 									:SO => bb, :FIP => so, :pLI => woba, :WPA => pli)
 							else
-								PitcherBoxScore.create(:game_id => game.id, :pitcher_id => nil, :name => '', :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
+								PitcherBoxScore.create(:game_id => game.id, :pitcher_id => nil, :name => name, :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
 									:SO => bb, :FIP => so, :pLI => woba, :WPA => pli)
 							end
+							pitcher = nil
 						end
 					when 11
-						wpa = text.to_i
+						wpa = text.to_f
+						puts name
 						if hitter != nil
 							HitterBoxScore.create(:game_id => game.id, :hitter_id => hitter.id, :name => hitter.name, :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
 									:SO => so, :wOBA => woba, :pLI => pli, :WPA => wpa)
 						else
-							HitterBoxScore.create(:game_id => game.id, :hitter_id => nil, :name => '', :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
+							HitterBoxScore.create(:game_id => game.id, :hitter_id => nil, :name => name, :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
 									:SO => so, :wOBA => woba, :pLI => pli, :WPA => wpa)
 						end
+						hitter = nil
 					end
 
 				end
@@ -501,6 +516,18 @@ namespace :past do
 				puts url
 			end
 
+		end
+
+	end
+
+	task :whoo => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		url = "http://www.fangraphs.com/boxscore.aspx?date=2015-05-25&team=Orioles&dh=0&season=2015"
+		doc = Nokogiri::HTML(open(url))
+		doc.css("#WinsBox1_dgab_ctl00 .grid_line_regular").each do |stat|
+			puts stat.child.text
 		end
 
 	end
