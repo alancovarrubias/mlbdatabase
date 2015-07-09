@@ -14,11 +14,29 @@
 		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
 		<%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %></br>
 
-	</br>
-	</br>
-	</br>
-	</br>
-	</br>
+
+	<table>
+		<tr>
+			<th>Boxscore</th>
+			<% @innings.each do |inning| %>
+				<th><%= inning %></th>
+			<% end %>
+		</tr>
+		<tr>
+			<th><%= @away.name%></th>
+			<% @away_score.each do |inning| %>
+				<td><%= inning %></td>
+			<% end %>
+		</br>
+		</tr>
+		<tr>
+			<th><%= @home.name%></th>
+			<% @home_score.each do |inning| %>
+				<td><%= inning %></td>
+			<% end %>
+		</tr>
+	</table>
+
 
 	<h2><%= "Gametime: " + @game.time + ' Local Time' %></h2>
 

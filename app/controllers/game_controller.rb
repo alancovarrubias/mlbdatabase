@@ -8,6 +8,16 @@ class GameController < ApplicationController
 		@home = @game.home_team
 		@away = @game.away_team
 
+		@innings = Array.new
+		@away_score = Array.new
+		@home_score = Array.new
+
+		@game.innings.each do |inning|
+			@innings << inning.number
+			@away_score << inning.away
+			@home_score << inning.home
+		end
+
 		today_bool = false
 		@tomorrow_bool = false
 

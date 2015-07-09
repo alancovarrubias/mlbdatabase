@@ -245,16 +245,22 @@ namespace :past do
 		require 'nokogiri'
 		require 'open-uri'
 
-		games = Game.all
+		games = Game.where("year = '2015' AND month < '07' AND day < '08'")
 
 		games.each do |game|
 
 			url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
 			doc = Nokogiri::HTML(open(url))
 
-			puts url
+			docs = doc.css("#linescore").first
 
-			text = doc.css("#linescore").first.text
+			if docs == nil
+				puts url + ' did not work'
+				next
+			else
+				puts url
+				text = docs.text
+			end
 
 			newline = text.index("\n")
 			innings = text[0...newline]
