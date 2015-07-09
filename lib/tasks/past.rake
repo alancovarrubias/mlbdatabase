@@ -490,7 +490,7 @@ namespace :past do
 	task :test => :environment do
 		require 'nokogiri'
 		require 'open-uri'
-		games = Game.all
+		games = Game.where("month < '07' OR (month < '07' AND day = '07')")
 		games.each do |game|
 
 			if game.innings.size != 0

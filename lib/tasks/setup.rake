@@ -961,7 +961,7 @@ namespace :setup do
 					pitcher.update_attributes(:starter => true, :alias => href)
 					puts pitcher.name + ' found by name'
 				else
-					puts pitcher.name + ' not found'
+					text + ' not found'
 				end
 			end
 
@@ -999,6 +999,7 @@ namespace :setup do
 					next
 				end
 				name = player.child
+				puts name
 				href = player['data-bref']
 
 				game = todays_games[game_index]
