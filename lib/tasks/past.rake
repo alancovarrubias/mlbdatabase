@@ -392,6 +392,7 @@ namespace :past do
 									hitter.update_attributes(:fangraph_id => href)
 								else
 									puts 'hitter ' + name + ' not found, fix fangraph_id'
+									puts href
 								end
 							else
 								if pitcher = nil_pitchers.find_by_fangraph_id(href)
@@ -399,6 +400,7 @@ namespace :past do
 									pitcher.update_attributes(:fangraph_id => href)
 								else
 									puts 'pitcher ' + name + ' not found, fix fangraph_id'
+									puts href
 								end
 							end
 
