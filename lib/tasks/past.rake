@@ -241,14 +241,14 @@ namespace :past do
 
 	end
 
-	task :boxscores => :environment do
+	task :innings => :environment do
 		require 'nokogiri'
 		require 'open-uri'
 
-		today = Time.now
-		year = today.year.to_s
-		month = today.month.to_s
-		day = today.day.to_s
+		yesterday = Time.now.yesterday
+		year = yesterday.year.to_s
+		month = yesterday.month.to_s
+		day = yesterday.day.to_s
 
 		if month.size == 1
 			month = "0" + month
@@ -258,7 +258,7 @@ namespace :past do
 			day = "0" + day
 		end
 
-		games = Game.where("month < '07' OR (month = '07' AND day < '08')")
+		games = Game.where(:year => year, :month => month)
 
 		games.each do |game|
 
@@ -325,10 +325,15 @@ namespace :past do
 			(0...inning_array.size).each do |i|
 				Inning.create(:game_id => game.id, :number => inning_array[i], :away => away_array[i], :home => home_array[i])
 			end
-
 		end
+	end
 
-		
+	task :boxscores => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		url = "http://www.baseball-reference.com/boxes/NYA/NYA201504100.shtml"
+		doc = Nokogiri::HTML(open(url))
 	end
 
 	task :delete_games => :environment do
