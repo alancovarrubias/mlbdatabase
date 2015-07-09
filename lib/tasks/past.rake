@@ -437,20 +437,20 @@ namespace :past do
 						pli = text.to_i
 						if css_index >= 2
 							if pitcher != nil
-								PitcherScore.create(:game_id => game.id, :pitcher_id => pitcher.id, :name => pitcher.name, :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
+								PitcherBoxScore.create(:game_id => game.id, :pitcher_id => pitcher.id, :name => pitcher.name, :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
 									:SO => bb, :FIP => so, :pLI => woba, :wPA => pli)
 							else
-								PitcherScore.create(:game_id => game.id, :pitcher_id => nil, :name => '', :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
+								PitcherBoxScore.create(:game_id => game.id, :pitcher_id => nil, :name => '', :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
 									:SO => bb, :FIP => so, :pLI => woba, :wPA => pli)
 							end
 						end
 					when 11
 						wpa = text.to_i
 						if hitter != nil
-							HitterScore.create(:game_id => game.id, :hitter_id => hitter.id, :name => hitter.name, :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
+							HitterBoxScore.create(:game_id => game.id, :hitter_id => hitter.id, :name => hitter.name, :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
 									:SO => so, :wOBA => woba, :pLI => pli, :WPA => wpa)
 						else
-							HitterScore.create(:game_id => game.id, :hitter_id => nil, :name => '', :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
+							HitterBoxScore.create(:game_id => game.id, :hitter_id => nil, :name => '', :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
 									:SO => so, :wOBA => woba, :pLI => pli, :WPA => wpa)
 						end
 					end
