@@ -364,7 +364,7 @@ namespace :past do
 
 		games.each do |game|
 
-			url = "http://www.fangraphs.com/boxscore.aspx?date=#{game.year}-#{game.month}-#{game.day}&team=#{game.home_team}&dh=#{game.num}&season=#{game.year}"
+			url = "http://www.fangraphs.com/boxscore.aspx?date=#{game.year}-#{game.month}-#{game.day}&team=#{game.home_team.fangraph_abbr}&dh=#{game.num}&season=#{game.year}"
 			doc = Nokogiri::HTML(open(url))
 			puts url
 
