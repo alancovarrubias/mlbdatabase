@@ -1446,7 +1446,6 @@ namespace :setup do
 
 	task :see_multiples => :environment do
 
-
 		nil_pitchers = Pitcher.where(:game_id => nil)
 		href = Array.new
 		nil_pitchers.each do |pitcher|

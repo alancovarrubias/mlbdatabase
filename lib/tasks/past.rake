@@ -337,31 +337,127 @@ namespace :past do
 			return href[11..href.index(".")-1]
 		end
 
-		url = "http://www.baseball-reference.com/boxes/NYA/NYA201504100.shtml"
-		doc = Nokogiri::HTML(open(url))
-
-		index = table = 0
-		int = 22
-		doc.css(".normal_text td").each do |stat|
-			text = stat.text
-			case index%int
-			when 0
-
-				if text != 'Team Totals'
-					href = getHref(stat)
-					puts Hitter.find_by_alias(href).name
-				else
-					puts text
-					table += 1
-				end
-
-			when 21
-				if table == 2 && int == 22
-					int = 25
-					index = -1
-				end
+		def getName(text)
+			if text.include?("-")
+				index = text.index("-")
+				return text[0...index-1]
+			elsif text.include?("(")
+				index = text.index("(")
+				return text[0...index-1]
+			else
+				return text
 			end
-			index += 1
+		end
+
+		def getfangraphID(stat)
+			href = stat.child['href']
+			index = href.index("=")
+			href = href[index+1..-1]
+			index = href.index("&")
+			href = href[0...index]
+			return href.to_i
+		end
+
+		games = Game.where("month < '07' OR (month < '07' AND day = '07')")
+		nil_pitchers = Pitcher.where(:game_id => nil)
+		nil_hitters = Hitter.where(:game_id => nil)
+
+		games.each do |game|
+
+			url = "http://www.fangraphs.com/boxscore.aspx?date=#{game.year}-#{game.month}-#{game.day}&team=#{game.home_team}&dh=#{game.num}&season=#{game.year}"
+			doc = Nokogiri::HTML(open(url))
+			puts url
+
+			if doc == nil
+				puts 'game did not work'
+				next
+			end
+
+			array = ["#WinsBox1_dgab_ctl00 .grid_line_regular", "#WinsBox1_dghb_ctl00 .grid_line_regular", "#WinsBox1_dgap_ctl00 .grid_line_regular", "#WinsBox1_dghp_ctl00 .grid_line_regular"]
+
+			array.each_with_index do |css, css_index|
+
+				if css_index < 2
+					int = 12
+				else
+					int = 11
+				end
+
+				if css_index%2 == 0
+					home = false
+				else
+					home = true
+				end
+
+				hitter = pitcher = href = bo = pa = h = hr = r = rbi = bb = so = woba = pli = wpa = nil
+				doc.css(css).each_with_index do |stat, index|
+					text = stat.text
+					case index%int
+					when 0
+						name = getName(text)
+						href = 0
+						if name != 'Total'
+							href = getfangraphID(stat)
+							if css_index < 2
+								if hitter = nil_hitters.find_by_fangraph_id(href)
+								elsif hitter = nil_hitters.find_by_name(name)
+									hitter.update_attributes(:fangraph_id => href)
+								else
+									puts 'hitter ' + name + ' not found, fix fangraph_id'
+								end
+							else
+								if pitcher = nil_pitchers.find_by_fangraph_id(href)
+								elsif pitcher = nil_pitchers.find_by_name(name)
+									pitcher.update_attributes(:fangraph_id => href)
+								else
+									puts 'pitcher ' + name + ' not found, fix fangraph_id'
+								end
+							end
+
+						end
+					when 1
+						bo = text.to_i
+					when 2
+						pa = text.to_i
+					when 3
+						h = text.to_i
+					when 4
+						hr = text.to_i
+					when 5
+						r = text.to_i
+					when 6
+						rbi = text.to_i
+					when 7
+						bb = text.to_i
+					when 8
+						so = text.to_i
+					when 9
+						woba = text.to_i
+					when 10
+						pli = text.to_i
+						if css_index >= 2
+							if pitcher != nil
+								PitcherScore.create(:game_id => game.id, :pitcher_id => pitcher.id, :name => pitcher.name, :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
+									:SO => bb, :FIP => so, :pLI => woba, :wPA => pli)
+							else
+								PitcherScore.create(:game_id => game.id, :pitcher_id => nil, :name => '', :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
+									:SO => bb, :FIP => so, :pLI => woba, :wPA => pli)
+							end
+						end
+					when 11
+						wpa = text.to_i
+						if hitter != nil
+							BatterScore.create(:game_id => game.id, :hitter_id => hitter.id, :name => hitter.name, :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
+									:SO => so, :wOBA => woba, :pLI => pli, :WPA => wpa)
+						else
+							BatterScore.create(:game_id => game.id, :hitter_id => nil, :name => '', :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
+									:SO => so, :wOBA => woba, :pLI => pli, :WPA => wpa)
+						end
+					end
+
+				end
+
+			end
 		end
 	end
 
@@ -379,6 +475,44 @@ namespace :past do
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
 		end
+	end
+
+	task :null => :environment do
+		Hitter.where(:game_id => nil).each do |hitter|
+			hitter.update_attributes(:fangraph_id => 0)
+		end
+
+		Pitcher.where(:game_id => nil).each do |pitcher|
+			pitcher.update_attributes(:fangraph_id => 0)
+		end
+	end
+
+	task :test => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+		games = Game.all
+		games.each do |game|
+
+			if game.innings.size != 0
+				next
+			end
+
+			url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
+			doc = Nokogiri::HTML(open(url))
+
+			docs = doc.css("#linescore").first
+
+			if docs == nil
+				puts url + ' deleted'
+				game.pitchers.destroy_all
+				game.hitters.destroy_all
+				game.destroy
+			else
+				puts url
+			end
+
+		end
+
 	end
 
 end
