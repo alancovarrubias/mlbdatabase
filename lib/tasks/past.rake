@@ -241,6 +241,73 @@ namespace :past do
 
 	end
 
+	task :boxscores => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		games = Game.all
+
+		games.each do |game|
+
+			url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
+			doc = Nokogiri::HTML(open(url))
+
+			puts url
+
+			text = doc.css("#linescore").first.text
+
+			newline = text.index("\n")
+			innings = text[0...newline]
+			text = text[newline+1..-1]
+			newline = text.index("\n")
+			dashes = text[0...newline]
+			text = text[newline+1..-1]
+			newline = text.index("\n")
+			away = text[0...newline]
+			text = text[newline+1..-1]
+			newline = text.index("\n")
+			home = text[0...newline]
+
+
+			num = 15
+			innings = innings[num..-1]
+			dashes = dashes[num..-1]
+			away = away[num..-1]
+			home = home[num..-1]
+
+			inning_array = Array.new
+			away_array = Array.new
+			home_array = Array.new
+
+			(0...innings.size).each do |i|
+				if dashes[i] == '-'
+					if innings[i-1] != ' '
+						inning_array << innings[i-1] + innings[i]
+					else
+						inning_array << innings[i]
+					end
+					if away[i-1] != ' '
+						away_array << away[i-1] + away[i]
+					else
+						away_array << away[i]
+					end
+					if home[i-1] != ' '
+						home_array << home[i-1] + home[i]
+					else
+						home_array << home[i]
+					end
+				end
+			end
+
+			(0...inning_array.size).each do |i|
+				Inning.create(:game_id => game.id, :number => inning_array[i], :away => away_array[i], :home => home_array[i])
+			end
+
+		end
+
+		
+	end
+
 	task :delete_games => :environment do
 		# games = Game.where("month < '07' OR (month = '07' AND day < '06')").each do |game|
 		games = Game.where(:year => '2015', :month => '07', :day => '07').each do |game|
