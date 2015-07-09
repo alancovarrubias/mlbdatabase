@@ -245,9 +245,26 @@ namespace :past do
 		require 'nokogiri'
 		require 'open-uri'
 
-		games = Game.where("year = '2015' AND month < '07' AND day < '08'")
+		today = Time.now
+		year = today.year.to_s
+		month = today.month.to_s
+		day = today.day.to_s
+
+		if month.size == 1
+			month = "0" + month
+		end
+
+		if day.size == 1
+			day = "0" + day
+		end
+
+		games = Game.where("month < '07' OR (month = '07' AND day < '08')")
 
 		games.each do |game|
+
+			if game.innings.size != 0
+				next
+			end
 
 			url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
 			doc = Nokogiri::HTML(open(url))
