@@ -258,7 +258,7 @@ namespace :past do
 			day = "0" + day
 		end
 
-		games = Game.where(:year => year, :month => month)
+		games = Game.where(:year => year, :month => month, :day => day)
 
 		games.each do |game|
 
@@ -332,8 +332,37 @@ namespace :past do
 		require 'nokogiri'
 		require 'open-uri'
 
+		def getHref(stat)
+			href = stat.last_element_child['href']
+			return href[11..href.index(".")-1]
+		end
+
 		url = "http://www.baseball-reference.com/boxes/NYA/NYA201504100.shtml"
 		doc = Nokogiri::HTML(open(url))
+
+		index = table = 0
+		int = 22
+		doc.css(".normal_text td").each do |stat|
+			text = stat.text
+			case index%int
+			when 0
+
+				if text != 'Team Totals'
+					href = getHref(stat)
+					puts Hitter.find_by_alias(href).name
+				else
+					puts text
+					table += 1
+				end
+
+			when 21
+				if table == 2 && int == 22
+					int = 25
+					index = -1
+				end
+			end
+			index += 1
+		end
 	end
 
 	task :delete_games => :environment do
