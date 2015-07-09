@@ -437,7 +437,6 @@ namespace :past do
 					when 10
 						pli = text.to_f
 						if css_index >= 2
-							puts pli
 							if pitcher != nil
 								PitcherBoxScore.create(:game_id => game.id, :pitcher_id => pitcher.id, :name => pitcher.name, :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
 									:SO => bb, :FIP => so, :pLI => woba, :WPA => pli)
@@ -449,7 +448,6 @@ namespace :past do
 						end
 					when 11
 						wpa = text.to_f
-						puts name
 						if hitter != nil
 							HitterBoxScore.create(:game_id => game.id, :hitter_id => hitter.id, :name => hitter.name, :home => home, :BO => bo, :PA => pa, :H => h, :HR => hr, :R => r, :RBI => rbi, :BB => bb,
 									:SO => so, :wOBA => woba, :pLI => pli, :WPA => wpa)
