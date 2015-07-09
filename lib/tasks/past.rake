@@ -337,18 +337,6 @@ namespace :past do
 			return href[11..href.index(".")-1]
 		end
 
-		def getName(text)
-			if text.include?("-")
-				index = text.index("-")
-				return text[0...index-1]
-			elsif text.include?("(")
-				index = text.index("(")
-				return text[0...index-1]
-			else
-				return text
-			end
-		end
-
 		def getfangraphID(stat)
 			href = stat.child['href']
 			index = href.index("=")
@@ -394,7 +382,7 @@ namespace :past do
 					text = stat.text
 					case index%int
 					when 0
-						name = getName(text)
+						name = stat.child.text
 						href = 0
 						if name != 'Total'
 							href = getfangraphID(stat)
@@ -438,10 +426,10 @@ namespace :past do
 						if css_index >= 2
 							if pitcher != nil
 								PitcherBoxScore.create(:game_id => game.id, :pitcher_id => pitcher.id, :name => pitcher.name, :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
-									:SO => bb, :FIP => so, :pLI => woba, :wPA => pli)
+									:SO => bb, :FIP => so, :pLI => woba, :WPA => pli)
 							else
 								PitcherBoxScore.create(:game_id => game.id, :pitcher_id => nil, :name => '', :home => home, :IP => bo, :TBF => pa, :H => h, :HR => hr, :ER => r, :BB => rbi,
-									:SO => bb, :FIP => so, :pLI => woba, :wPA => pli)
+									:SO => bb, :FIP => so, :pLI => woba, :WPA => pli)
 							end
 						end
 					when 11

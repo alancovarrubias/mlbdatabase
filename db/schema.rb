@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150708234723) do
+ActiveRecord::Schema.define(version: 20150709185817) do
 
   create_table "games", force: true do |t|
     t.integer  "away_team_id"
@@ -37,6 +37,26 @@ ActiveRecord::Schema.define(version: 20150708234723) do
     t.string   "pressure_3",      default: ""
     t.string   "temperature_3",   default: ""
     t.string   "precipitation_3", default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "hitter_box_scores", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "hitter_id"
+    t.boolean  "home",                  default: false
+    t.string   "name",                  default: ""
+    t.integer  "BO",                    default: 0
+    t.integer  "PA",                    default: 0
+    t.integer  "H",                     default: 0
+    t.integer  "HR",                    default: 0
+    t.integer  "R",                     default: 0
+    t.integer  "RBI",                   default: 0
+    t.integer  "BB",                    default: 0
+    t.integer  "SO",                    default: 0
+    t.integer  "wOBA",                  default: 0
+    t.float    "pLI",        limit: 24, default: 0.0
+    t.float    "WPA",        limit: 24, default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -109,6 +129,25 @@ ActiveRecord::Schema.define(version: 20150708234723) do
     t.string   "number",     default: ""
     t.string   "away",       default: ""
     t.string   "home",       default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "pitcher_box_scores", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "pitcher_id"
+    t.boolean  "home",                  default: false
+    t.string   "name",                  default: ""
+    t.float    "IP",         limit: 24, default: 0.0
+    t.integer  "TBF",                   default: 0
+    t.integer  "H",                     default: 0
+    t.integer  "HR",                    default: 0
+    t.integer  "ER",                    default: 0
+    t.integer  "BB",                    default: 0
+    t.integer  "SO",                    default: 0
+    t.float    "FIP",        limit: 24, default: 0.0
+    t.float    "pLI",        limit: 24, default: 0.0
+    t.float    "WPA",        limit: 24, default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
