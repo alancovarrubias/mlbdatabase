@@ -1509,6 +1509,14 @@ namespace :setup do
 				bat_index = text.index("Bats:")
 				throw_index = text.index("Throws:")
 
+				if bat_index == nil
+					puts player.name + ' bathand'
+				end
+
+				if throw_index == nil
+					puts player.name + ' throwhand'
+				end
+
 				puts text[bat_index]
 				puts text[throw_index]
 
