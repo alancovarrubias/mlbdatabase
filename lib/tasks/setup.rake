@@ -1460,4 +1460,69 @@ namespace :setup do
 
 	end
 
+	task :find => :environment do
+
+		pitchers = Pitcher.where(:alias => nil, :game_id => nil)
+
+		pitchers.each do |pitcher|
+			puts pitcher.name
+		end
+
+		puts ""
+		puts ""
+		puts ""
+		puts ""
+		puts ""
+
+		hitters = Hitter.where(:alias => nil, :game_id => nil).each do |hitter|
+			puts hitter.name
+		end
+
+	end
+
+
+
+	task :handedness => :environment do
+
+		require 'nokogiri'
+		require 'open-uri'
+
+		players = Player.where(:game_id => nil)
+		players.each do |player|
+
+			url = "http://www.baseball-reference.com/players/#{player.alias[0]}/#{player.alias}.shtml"
+			doc = Nokogiri::HTML(open(url))
+
+			doc.css("p+ p").each_with_index do |stat, index|
+
+				text = stat.text
+
+				bat_index = text.index("Bats:")
+				throw_index = text.index("Throws:")
+
+				bathand = text[bat_index+6]
+				throwhand = text[throw_index+8]
+
+				player.update_attributes(:bathand => bathand, :throwhand => throwhand)
+
+			end
+
+			bathand = player.bathand
+			throwhand = player.throwhand
+
+			other_players = Player.where(:alias => player.alias)
+
+			other_players.each do |player|
+				player.update_attributes(:bathand => bathand, :throwhand => throwhand)
+			end
+
+		end
+
+		players.each do |player|
+
+		end
+
+	end
+
+
 end
