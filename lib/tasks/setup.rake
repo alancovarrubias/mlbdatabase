@@ -1460,7 +1460,7 @@ namespace :setup do
 
 	end
 
-	task :find => :environment do
+	task :find_nil => :environment do
 
 		pitchers = Pitcher.where(:alias => nil, :game_id => nil)
 
@@ -1512,13 +1512,9 @@ namespace :setup do
 
 			other_players = Player.where(:alias => player.alias)
 
-			other_players.each do |player|
-				player.update_attributes(:bathand => bathand, :throwhand => throwhand)
+			other_players.each do |other_player|
+				other_player.update_attributes(:bathand => bathand, :throwhand => throwhand)
 			end
-
-		end
-
-		players.each do |player|
 
 		end
 
