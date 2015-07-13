@@ -1504,6 +1504,8 @@ namespace :setup do
 
 				text = stat.text
 
+				puts text
+
 				bat_index = text.index("Bats:")
 				throw_index = text.index("Throws:")
 
@@ -1514,8 +1516,8 @@ namespace :setup do
 					puts player.name + ' index not found'
 				end
 
-				bathand = text[bat_index+6]
-				throwhand = text[throw_index+8]
+				bathand = text[bat_index + 6]
+				throwhand = text[throw_index + 8]
 
 				player.update_attributes(:bathand => bathand, :throwhand => throwhand)
 
