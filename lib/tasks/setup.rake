@@ -1494,6 +1494,8 @@ namespace :setup do
 				next
 			end
 
+			puts player.name
+
 			url = "http://www.baseball-reference.com/players/#{player.alias[0]}/#{player.alias}.shtml"
 			doc = Nokogiri::HTML(open(url))
 
@@ -1504,6 +1506,9 @@ namespace :setup do
 
 				bat_index = text.index("Bats:")
 				throw_index = text.index("Throws:")
+
+				puts text[bat_index]
+				puts text[throw_index]
 
 				if bat_index == nil || throw_index == nil
 					puts player.name + ' index not found'
