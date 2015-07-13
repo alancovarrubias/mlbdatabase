@@ -1499,6 +1499,8 @@ namespace :setup do
 			url = "http://www.baseball-reference.com/players/#{player.alias[0]}/#{player.alias}.shtml"
 			doc = Nokogiri::HTML(open(url))
 
+			puts url
+
 
 			doc.css("p+ p").each_with_index do |stat, index|
 
