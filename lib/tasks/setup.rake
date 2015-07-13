@@ -1497,6 +1497,11 @@ namespace :setup do
 			url = "http://www.baseball-reference.com/players/#{player.alias[0]}/#{player.alias}.shtml"
 			doc = Nokogiri::HTML(open(url))
 
+			if doc.css("p+ p") == nil
+				puts player.name + ' handedness not found'
+				next
+			end
+
 			doc.css("p+ p").each_with_index do |stat, index|
 
 				text = stat.text
