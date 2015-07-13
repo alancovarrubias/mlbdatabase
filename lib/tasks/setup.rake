@@ -1487,8 +1487,12 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 
-		players = Player.where(:game_id => nil)
+		players = Pitcher.where(:game_id => nil) + Hitter.where(:game_id => nil)
 		players.each do |player|
+
+			if player.alias == nil
+				next
+			end
 
 			url = "http://www.baseball-reference.com/players/#{player.alias[0]}/#{player.alias}.shtml"
 			doc = Nokogiri::HTML(open(url))
@@ -1510,7 +1514,7 @@ namespace :setup do
 			bathand = player.bathand
 			throwhand = player.throwhand
 
-			other_players = Player.where(:alias => player.alias)
+			other_players = Hitter.where(:alias => player.alias) + Pitcher.where(:alias => player.alias)
 
 			other_players.each do |other_player|
 				other_player.update_attributes(:bathand => bathand, :throwhand => throwhand)
