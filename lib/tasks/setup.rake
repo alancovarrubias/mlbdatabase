@@ -1504,6 +1504,10 @@ namespace :setup do
 
 			doc.css("p+ p").each_with_index do |stat, index|
 
+				if index != 0
+					next
+				end
+
 				text = stat.text
 
 				puts text
@@ -1553,17 +1557,6 @@ namespace :setup do
 			end
 
 		end
-
-	end
-
-	task :whoo => :environment do
-		require 'nokogiri'
-		require 'open-uri'
-
-		url = "http://www.baseball-reference.com/players/s/storedr01.shtml"
-
-		doc = Nokogiri::HTML(open(url))
-
 
 	end
 

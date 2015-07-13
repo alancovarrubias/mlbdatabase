@@ -6,9 +6,9 @@
 <tbody>
 	<tr>
 		<% if hitter.lineup != 0 %>
-			<td><%= hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.throwhand + ")"%></td>
+			<td><%= hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.bathand + ")"%></td>
 		<% else %>
-			<td><%= hitter.name + " (" + hitter.throwhand + ")"%></td>
+			<td><%= hitter.name + " (" + hitter.bathand + ")"%></td>
 		<% end %>
 <% end %>
 	<td bgcolor="#7FFFD4"><%= hitter.wOBA_R %></td>
