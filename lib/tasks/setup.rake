@@ -1513,10 +1513,12 @@ namespace :setup do
 
 				if bat_index == nil
 					puts player.name + ' bathand'
+					next
 				end
 
 				if throw_index == nil
 					puts player.name + ' throwhand'
+					next
 				end
 
 				puts text[bat_index]
@@ -1551,6 +1553,17 @@ namespace :setup do
 			end
 
 		end
+
+	end
+
+	task :whoo => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		url = "http://www.baseball-reference.com/players/s/storedr01.shtml"
+
+		doc = Nokogiri::HTML(open(url))
+
 
 	end
 
