@@ -1514,7 +1514,15 @@ namespace :setup do
 			bathand = player.bathand
 			throwhand = player.throwhand
 
-			other_players = Hitter.where(:alias => player.alias) + Pitcher.where(:alias => player.alias)
+			other_hitters = Hitter.where(:alias => player.alias)
+			other_pitchers = Pitcher.where(:alias => player.alias)
+
+			other_players = other_hitters
+
+			if other_pitchers != nil
+				other_players += other_pitchers
+			end
+
 
 			other_players.each do |other_player|
 				other_player.update_attributes(:bathand => bathand, :throwhand => throwhand)
