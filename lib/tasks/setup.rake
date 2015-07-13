@@ -1521,8 +1521,8 @@ namespace :setup do
 					next
 				end
 
-				puts text[bat_index]
-				puts text[throw_index]
+				puts text[bat_index+6]
+				puts text[throw_index+8]
 
 				if bat_index == nil || throw_index == nil
 					puts player.name + ' index not found'
