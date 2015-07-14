@@ -888,10 +888,10 @@ namespace :setup do
 		end
 
 		today = Time.now
-		year = today.yesterday.yesterday.year.to_s
-		month = today.yesterday.yesterday.month.to_s
-		day = today.yesterday.yesterday.day.to_s
-		hour = today.yesterday.yesterday.hour
+		year = today.year.to_s
+		month = today.month.to_s
+		day = today.day.to_s
+		hour = today.hour
 
 		if month.size == 1
 			month = '0' + month
@@ -1425,9 +1425,9 @@ namespace :setup do
 
 	task :test => :environment do
 
-		year = Time.now.yesterday.yesterday.year.to_s
-		month = Time.now.yesterday.yesterday.month.to_s
-		day = Time.now.yesterday.yesterday.day.to_s
+		year = Time.now.year.to_s
+		month = Time.now.month.to_s
+		day = Time.now.day.to_s
 
 		if month.size == 1
 			month = "0" + month

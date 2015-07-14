@@ -346,11 +346,15 @@ namespace :past do
 			return href.to_i
 		end
 
-		games = Game.where("month < '07' OR (month < '07' AND day = '07')")
+		games = Game.all
 		nil_pitchers = Pitcher.where(:game_id => nil)
 		nil_hitters = Hitter.where(:game_id => nil)
 
 		games.each do |game|
+
+			if game.pitcher_box_scores.size != 0
+				next
+			end
 
 			url = "http://www.fangraphs.com/boxscore.aspx?date=#{game.year}-#{game.month}-#{game.day}&team=#{game.home_team.fangraph_abbr}&dh=#{game.num}&season=#{game.year}"
 			doc = Nokogiri::HTML(open(url))
