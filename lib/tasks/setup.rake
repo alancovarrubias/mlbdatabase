@@ -844,6 +844,14 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 
+		def getFangraphID(text)
+
+			index = text.index("player/")
+			text = text[index+7..-1]
+			index = text.index("/")
+			return text[0...index]
+		end
+
 		def starters(pitchers, hitters)
 			pitchers.where(:starter => true).each do |pitcher|
 				pitcher.update_attributes(:starter => false)
@@ -880,10 +888,10 @@ namespace :setup do
 		end
 
 		today = Time.now
-		year = today.year.to_s
-		month = today.month.to_s
-		day = today.day.to_s
-		hour = today.hour
+		year = today.yesterday.yesterday.year.to_s
+		month = today.yesterday.yesterday.month.to_s
+		day = today.yesterday.yesterday.day.to_s
+		hour = today.yesterday.yesterday.hour
 
 		if month.size == 1
 			month = '0' + month
@@ -896,7 +904,7 @@ namespace :setup do
 		nil_hitters = Hitter.where(:game_id => nil)
 		todays_games = Game.where(:year => year, :month => month, :day => day)
 
-		url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
+		url = "http://www.baseballpress.com/lineups/#{DateTime.now.yesterday.yesterday.to_date}"
 		doc = Nokogiri::HTML(open(url))
 
 		home = Array.new
@@ -946,35 +954,45 @@ namespace :setup do
 
 			starters(nil_pitchers, nil_hitters)
 			
+			# Set pitchers starters true
 			doc.css(".team-name+ div").each do |player|
-				text = player.text
-				href = player.child['data-bref']
 
-				if text == "TBD"
+				name = player.text
+				href = player.child['data-bref']
+				fangraph_id = getFangraphID(player.child['data-razz'])
+
+				if name == "TBD"
 					next
 				end
 
-				text = text[0...-4]
+				name = name[0...-4]
 				if href != "" && pitcher = nil_pitchers.find_by_alias(href)
-					pitcher.update_attributes(:starter => true)
-				elsif pitcher = nil_pitchers.find_by_name(text)
+					pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id)
+				elsif fangraph_id != 0 && pitcher = nil_pitchers.find_by_fangraph_id(fangraph_id)
 					pitcher.update_attributes(:starter => true, :alias => href)
+				elsif pitcher = nil_pitchers.find_by_name(name)
+					pitcher.update_attributes(:starter => true, :alias => href, :fangraph_id => fangraph_id)
 					puts pitcher.name + ' found by name'
 				else
 					text + ' not found'
 				end
+
 			end
 
+			# Set hitters starter true
 			doc.css(".players div").each_with_index do |player, index|
 				text = player.text
 				lineup = text[0].to_i
 				name = player.last_element_child.child.to_s
 				href = player.last_element_child['data-bref']
+				fangraph_id = getFangraphID(player.last_element_child['data-razz'])
 
 				if href != "" && hitter = nil_hitters.find_by_alias(href)
-					hitter.update_attributes(:starter => true, :lineup => lineup)
+					hitter.update_attributes(:starter => true, :lineup => lineup, :fangraph_id => fangraph_id)
+				elsif fangraph_id != 0 && hitter = nil_hitters.find_by_fangraph_id(fangraph_id)
+					hitter.update_attributes(:starter => true, :lineup => lineup, :alias => href)
 				elsif hitter = nil_hitters.find_by_name(name)
-					hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup)
+					hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup, :fangraph_id => fangraph_id)
 					puts hitter.name + ' found by name'
 				else
 					puts name + ' not found'
@@ -990,6 +1008,7 @@ namespace :setup do
 				text = player.text
 				var += 1
 				if store = Team.find_by_name(text)
+					puts text
 					if team_index%2 == 0
 						game_index += 1
 					end
@@ -998,9 +1017,6 @@ namespace :setup do
 					var = 0
 					next
 				end
-				name = player.child
-				puts name
-				href = player['data-bref']
 
 				game = todays_games[game_index]
 
@@ -1009,6 +1025,8 @@ namespace :setup do
 
 				case var
 				when 1
+					name = player.text
+					href = player.child['data-bref']
 					if game_pitchers.find_by_alias(href) == nil
 						pitcher = nil_pitchers.find_by_alias(href)
 						if pitcher == nil
@@ -1029,9 +1047,14 @@ namespace :setup do
 						end
 					end
 				when 2..19
+					name = player.child
+					href = player['data-bref']
 					if game_hitters.find_by_alias(href) == nil
 						hitter = nil_hitters.find_by_alias(href)
 						if hitter == nil
+							if name.class != "String"
+								name = name.text
+							end
 							hitter = nil_hitters.find_by_name(name)
 						end
 						if hitter != nil
@@ -1050,7 +1073,7 @@ namespace :setup do
 									:OBP_previous_R => hitter.OBP_previous_R, :SLG_previous_R => hitter.SLG_previous_R, :AB_previous_R => hitter.AB_previous_R, :BB_previous_R => hitter.BB_previous_R,
 									:SO_previous_R => hitter.SO_previous_R, :LD_previous_R => hitter.LD_previous_R, :wRC_previous_R => hitter.wRC_previous_R)
 						else
-							puts name + ' not found'
+							puts name+ ' not found'
 						end
 					end
 				end
@@ -1460,103 +1483,24 @@ namespace :setup do
 
 	end
 
-	task :find_nil => :environment do
-
-		pitchers = Pitcher.where(:alias => nil, :game_id => nil)
-
-		pitchers.each do |pitcher|
-			puts pitcher.name
-		end
-
-		puts ""
-		puts ""
-		puts ""
-		puts ""
-		puts ""
-
-		hitters = Hitter.where(:alias => nil, :game_id => nil).each do |hitter|
-			puts hitter.name
-		end
-
-	end
-
-
-
-	task :handedness => :environment do
-
-		require 'nokogiri'
+	task :iwantitnow => :environment do
 		require 'open-uri'
+		require 'mechanize'
 
-		players = Pitcher.where(:game_id => nil) + Hitter.where(:game_id => nil)
-		players.each do |player|
-
-			if player.alias == nil
-				next
+		agent = Mechanize.new
+		agent.add_auth("http://iwantitnow.parseapp.com/customers", "michele", "jeffers")
+		agent.get("http://iwantitnow.parseapp.com/customers")
+		var = 0
+		agent.page.search("td").each_with_index do |stat, index|
+			if index > 6
+				var += 1
 			end
-
-			puts player.name
-
-			url = "http://www.baseball-reference.com/players/#{player.alias[0]}/#{player.alias}.shtml"
-			doc = Nokogiri::HTML(open(url))
-
-			puts url
-
-
-			doc.css("p+ p").each_with_index do |stat, index|
-
-				if index != 0
-					next
-				end
-
-				text = stat.text
-
-				puts text
-
-				bat_index = text.index("Bats:")
-				throw_index = text.index("Throws:")
-
-				if bat_index == nil
-					puts player.name + ' bathand'
-					next
-				end
-
-				if throw_index == nil
-					puts player.name + ' throwhand'
-					next
-				end
-
-				puts text[bat_index+6]
-				puts text[throw_index+8]
-
-				if bat_index == nil || throw_index == nil
-					puts player.name + ' index not found'
-				end
-
-				bathand = text[bat_index + 6]
-				throwhand = text[throw_index + 8]
-
-				player.update_attributes(:bathand => bathand, :throwhand => throwhand)
-
+			case var%8
+			when 3
+				puts stat.text
 			end
-
-			bathand = player.bathand
-			throwhand = player.throwhand
-
-			other_hitters = Hitter.where(:alias => player.alias)
-			other_pitchers = Pitcher.where(:alias => player.alias)
-
-			other_players = other_hitters
-
-			if other_pitchers != nil
-				other_players += other_pitchers
-			end
-
-
-			other_players.each do |other_player|
-				other_player.update_attributes(:bathand => bathand, :throwhand => throwhand)
-			end
-
 		end
+
 
 	end
 
