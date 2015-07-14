@@ -1425,9 +1425,9 @@ namespace :setup do
 
 	task :test => :environment do
 
-		year = Time.now.year.to_s
-		month = Time.now.month.to_s
-		day = Time.now.day.to_s
+		year = Time.now.yesterday.yesterday.year.to_s
+		month = Time.now.yesterday.yesterday.month.to_s
+		day = Time.now.yesterday.yesterday.day.to_s
 
 		if month.size == 1
 			month = "0" + month
