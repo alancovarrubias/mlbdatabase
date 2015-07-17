@@ -479,9 +479,9 @@ namespace :past do
 
 	task :delete_players => :environment do
 		today = Time.now
-		year = today.year
-		month = today.month
-		day = today.day
+		year = today.year.to_s
+		month = today.month.to_s
+		day = today.day.to_s
 		if month.size == 1
 			month = "0" + month
 		end
