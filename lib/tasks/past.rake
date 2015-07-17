@@ -491,6 +491,7 @@ namespace :past do
 		games = Game.where(:year => year, :month => month, :day => day).each do |game|
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
+			game.destroy
 		end
 	end
 
