@@ -45,6 +45,7 @@ class ApplicationController < ActionController::Base
 				return Array.new
 			end
 			throwhand = away_pitcher.throwhand
+			pitcher = home_pitcher
 			team = home_team
 			games = Game.where("home_team_id = #{home_team.id} OR away_team_id = #{home_team.id}").order("id DESC")
 		else
@@ -52,6 +53,7 @@ class ApplicationController < ActionController::Base
 				return Array.new
 			end
 			throwhand = home_pitcher.throwhand
+			pitcher = away_pitcher
 			team = away_team
 			games = Game.where("home_team_id = #{away_team.id} OR away_team_id = #{away_team.id}").order("id DESC")
 		end
@@ -72,8 +74,8 @@ class ApplicationController < ActionController::Base
 			end
 
 			if opp_pitcher.throwhand == throwhand
-				hitter = Hitter.find_by_name(home_pitcher.name)
-				array = game.hitters.where(:team_id => team.id).order("lineup")
+				hitter = Hitter.find_by_name(pitcher.name)
+				array = game.hitters
 				if home_team.league == 'NL'
 					array = array[0...-1]
 					array << hitter
