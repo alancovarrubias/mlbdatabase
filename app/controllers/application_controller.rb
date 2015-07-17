@@ -75,7 +75,7 @@ class ApplicationController < ActionController::Base
 
 			if opp_pitcher.throwhand == throwhand
 				hitter = Hitter.find_by_name(pitcher.name)
-				array = game.hitters
+				array = game.hitters.where(:team_id => team.id)
 				if home_team.league == 'NL'
 					array = array[0...-1]
 					array << hitter
