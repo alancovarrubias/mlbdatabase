@@ -105,7 +105,7 @@ namespace :past do
 		require 'open-uri'
 
 
-		games = Game.where("month < '07' OR (month = '07' AND day < '06')")
+		games = Game.where(:month => '07', :day => '10')
 
 		games.each do |game|
 			url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
