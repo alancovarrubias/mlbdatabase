@@ -30,102 +30,51 @@ class ApplicationController < ActionController::Base
 
 	end
 
+
+
+
 	def findProjectedLineup(today_game, home, away_pitcher, home_pitcher)
 
-		today = Time.now
-
-		# store the teams of the game
 		home_team = today_game.home_team
 		away_team = today_game.away_team
 		home_pitcher = home_pitcher.first
 		away_pitcher = away_pitcher.first
 
-		while true
-			# find the previous day's games
-			today = today.yesterday
-			year = today.year.to_s
-			month = today.month.to_s
-			day = today.day.to_s
-
-			if month.size == 1
-				month = "0" + month
+		if home
+			if away_pitcher == nil
+				return Array.new
 			end
-
-			if day.size == 1
-				day = "0" + day
+			games = Game.where("home_team_id = #{home_team.id} OR away_team_id = #{home_team.id}").order("id DESC")
+		else
+			if home_pitcher == nil
+				return Array.new
 			end
+			games = Game.where("home_team_id = #{away_team.id} OR away_team_id = #{away_team.id}").order("id DESC")
+		end
 
-			games = Game.where(:year => year, :month => month, :day => day)
-			# if it's the home team we're looking for
-			if home
-				if away_pitcher == nil
-					return []
-				end
-				# find the games with the same home_team_id
-				game = games.where("home_team_id = #{home_team.id} OR away_team_id = #{home_team.id}").first
-				if game == nil
-					next
-				end
-				# find the opposing pitcher
-				if home_team == game.home_team
-					opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
-				else
-					opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
-				end
-
-				if opp_pitcher == nil
-					next
-				end
-
-				if opp_pitcher.throwhand == ''
-					opp_pitcher = Pitcher.where(:game_id => nil, :alias => opp_pitcher.alias).first
-				end
-				# if the throwhand is the same, return the hitters of the home team
-				if opp_pitcher.throwhand == away_pitcher.throwhand
-					hitter = Hitter.find_by_name(home_pitcher.name)
-					array = game.hitters.where(:team_id => home_team.id).order("lineup")
-					if home_team.league == 'NL'
-						array = array[0...-1]
-						array << hitter
-					end
-					return array
-				end
-
+		games.each do |game|
+			if home_team == game.home_team
+				opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
 			else
-				if home_pitcher == nil
-					return []
-				end
-				# find the games with the same home_team_id
-				game = games.where("home_team_id = #{away_team.id} OR away_team_id = #{away_team.id}").first
-				if game == nil
-					next
-				end
-				# find the opposing pitcher
-				if away_team == game.away_team
-					opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
-				else
-					opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
-				end
+				opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
+			end
 
-				if opp_pitcher == nil
-					next
-				end
+			if opp_pitcher == nil
+				next
+			end
 
-				if opp_pitcher.throwhand == ''
-					opp_pitcher = Pitcher.where(:game_id => nil, :alias => opp_pitcher.alias).first
-				end
+			if opp_pitcher.throwhand == ''
+				opp_pitcher = Pitcher.where(:game_id => nil, :alias => opp_pitcher.alias).first
+			end
 
-				# if the throwhand is the same, return the hitters of the away team
-				if opp_pitcher.throwhand == home_pitcher.throwhand
-					hitter = Hitter.find_by_name(away_pitcher.name)
-					array = game.hitters.where(:team_id => away_team.id).order("lineup")
-					if home_team.league == 'NL'
-						array = array[0...-1]
-						array << hitter
-					end
-					return array
+			if opp_pitcher.throwhand == away_pitcher.throwhand
+				hitter = Hitter.find_by_name(home_pitcher.name)
+				array = game.hitters.where(:team_id => home_team.id).order("lineup")
+				if home_team.league == 'NL'
+					array = array[0...-1]
+					array << hitter
 				end
-
+				return array
 			end
 		end
 	end
