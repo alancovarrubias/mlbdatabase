@@ -478,7 +478,17 @@ namespace :past do
 	end
 
 	task :delete_players => :environment do
-		games = Game.where(:year => '2015', :month => '07', :day => '06').each do |game|
+		today = Time.now
+		year = today.year
+		month = today.month
+		day = today.day
+		if month.size == 1
+			month = "0" + month
+		end
+		if day.size == 1
+			day = "0" + day
+		end
+		games = Game.where(:year => year, :month => month, :day => day).each do |game|
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
 		end
