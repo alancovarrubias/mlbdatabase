@@ -545,4 +545,19 @@ namespace :past do
 
 	end
 
+	task :test => :environment do
+
+		Game.where(:year => '2015', :month => '07', :day => '10').each do |game|
+			home_pitchers = game.pitchers.where(:team_id => game.home_team.id)
+			if home_pitchers.size == 2
+				home_pitchers.second.destroy
+			end
+			away_pitchers = game.pitchers.where(:team_id => game.away_team.id)
+			if away_pitchers.size == 2
+				away_pitchers.second.destroy
+			end
+		end
+
+	end
+
 end
