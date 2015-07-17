@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
 			games = Game.where("(home_team_id = #{home_team.id} OR away_team_id = #{home_team.id}) AND id < #{today_game.id}").order("id DESC")
 		else
 			if home_pitcher == nil
-				return [nil, Array.new]
+				return Array.new
 			end
 			throwhand = home_pitcher.throwhand
 			pitcher = away_pitcher
@@ -80,7 +80,7 @@ class ApplicationController < ActionController::Base
 					array = array[0...-1]
 					array << hitter
 				end
-				return [game, array]
+				return array
 			end
 		end
 	end
