@@ -1068,95 +1068,100 @@ namespace :setup do
 		url = "http://www.statfox.com/mlb/umpiremain.asp"
 		doc = Nokogiri::HTML(open(url))
 
-		year = Time.now.year.to_s
-		month = Time.now.month.to_s
-		day = Time.now.day.to_s
-		if month.size == 1
-			month = "0" + month
-		end
-		if day.size == 1
-			day = "0" + day
-		end
-		id = var = 0
-		team = nil
-		doc.css(".datatable a").each do |data|
-			var += 1
-			if var%3 == 2
-				id = data['href']
-			elsif var%3 == 0
-				if data.text.size == 3
-					var = 1
-					next
-				end
-				ump = data.text
-				case id
-				when /ANGELS/
-					team = "Angels"
-				when /HOUSTON/
-					team = "Astros"
-				when /OAKLAND/
-					team = "Athletics"
-				when /TORONTO/
-					team = "Blue Jays"
-				when /ATLANTA/
-					team = "Braves"
-				when /MILWAUKEE/
-					team = "Brewers"
-				when /LOUIS/
-					team = "Cardinals"
-				when /CUBS/
-					team = "Cubs"
-				when /ARIZONA/
-					team = "Diamondbacks"
-				when /DODGERS/
-					team = "Dodgers"
-				when /FRANCISCO/
-					team = "Giants"
-				when /CLEVELAND/
-					team = "Indians"
-				when /SEATTLE/
-					team = "Mariners"
-				when /MIAMI/
-					team = "Marlins"
-				when /METS/
-					team = "Mets"
-				when /WASHINGTON/
-					team = "Nationals"
-				when /BALTIMORE/
-					team = "Orioles"
-				when /DIEGO/
-					team = "Padres"
-				when /PHILADELPHIA/
-					team = "Phillies"
-				when /PITTSBURGH/
-					team = "Pirates"
-				when /TEXAS/
-					team = "Rangers"
-				when /TAMPA/
-					team = "Rays"
-				when /BOSTON/
-					team = "Red Sox"
-				when /CINCINATTI/
-					team = "Reds"
-				when /COLORADO/
-					team = "Rockies"
-				when /KANSAS/
-					team = "Royals"
-				when /DETROIT/
-					team = "Tigers"
-				when /MINNESOTA/
-					team = "Twins"
-				when /WHITE/
-					team = "White Sox"
-				when /YANKEES/
-					team = "Yankees"
-				else
-					team = "Not found"
-				end
-				if team = Team.find_by_name(team)
-					puts ump
-					puts team.name
-					Game.where(:year => year, :month => month, :day => day, :home_team_id => team.id).first.update_attributes(:ump => ump)
+		today = Time.now
+		year = today.year.to_s
+		month = today.month.to_s
+		day = today.day.to_s
+		hour = today.now.hour
+
+		if hour > 6 && hour < 20
+			if month.size == 1
+				month = "0" + month
+			end
+			if day.size == 1
+				day = "0" + day
+			end
+			id = var = 0
+			team = nil
+			doc.css(".datatable a").each do |data|
+				var += 1
+				if var%3 == 2
+					id = data['href']
+				elsif var%3 == 0
+					if data.text.size == 3
+						var = 1
+						next
+					end
+					ump = data.text
+					case id
+					when /ANGELS/
+						team = "Angels"
+					when /HOUSTON/
+						team = "Astros"
+					when /OAKLAND/
+						team = "Athletics"
+					when /TORONTO/
+						team = "Blue Jays"
+					when /ATLANTA/
+						team = "Braves"
+					when /MILWAUKEE/
+						team = "Brewers"
+					when /LOUIS/
+						team = "Cardinals"
+					when /CUBS/
+						team = "Cubs"
+					when /ARIZONA/
+						team = "Diamondbacks"
+					when /DODGERS/
+						team = "Dodgers"
+					when /FRANCISCO/
+						team = "Giants"
+					when /CLEVELAND/
+						team = "Indians"
+					when /SEATTLE/
+						team = "Mariners"
+					when /MIAMI/
+						team = "Marlins"
+					when /METS/
+						team = "Mets"
+					when /WASHINGTON/
+						team = "Nationals"
+					when /BALTIMORE/
+						team = "Orioles"
+					when /DIEGO/
+						team = "Padres"
+					when /PHILADELPHIA/
+						team = "Phillies"
+					when /PITTSBURGH/
+						team = "Pirates"
+					when /TEXAS/
+						team = "Rangers"
+					when /TAMPA/
+						team = "Rays"
+					when /BOSTON/
+						team = "Red Sox"
+					when /CINCINATTI/
+						team = "Reds"
+					when /COLORADO/
+						team = "Rockies"
+					when /KANSAS/
+						team = "Royals"
+					when /DETROIT/
+						team = "Tigers"
+					when /MINNESOTA/
+						team = "Twins"
+					when /WHITE/
+						team = "White Sox"
+					when /YANKEES/
+						team = "Yankees"
+					else
+						team = "Not found"
+					end
+					if team = Team.find_by_name(team)
+						puts ump
+						puts team.name
+						Game.where(:year => year, :month => month, :day => day, :home_team_id => team.id).first.update_attributes(:ump => ump)
+					end
 				end
 			end
 		end
