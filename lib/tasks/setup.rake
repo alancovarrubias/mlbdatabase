@@ -3,7 +3,16 @@ namespace :setup do
 	# double headers may cause issues. Especially non-scheduled double headers which are most common
 	desc "setup database"
 
-	task :create => :environment do
+	task :create => [:create_teams, :create_players] do
+	end
+
+	task :daily => [:create_players, :fangraphs, :update_players, :update_weather, :tomorrow, :bullpen, :boxscores, :innings] do
+	end
+
+	task :hourly => [:matchups, :ump] do
+	end
+
+	task :create_teams => :environment do
 		require 'nokogiri'
 		require 'open-uri'
 
@@ -31,120 +40,46 @@ namespace :setup do
 			return name
 		end
 
-		def create_teams
-			name = ["Angels", "Astros", "Athletics", "Blue Jays", "Braves", "Brewers", "Cardinals",
-				"Cubs", "Diamondbacks", "Dodgers", "Giants", "Indians", "Mariners", "Marlins", "Mets",
-				"Nationals", "Orioles", "Padres", "Phillies", "Pirates", "Rangers", "Rays", "Red Sox",
-				"Reds", "Rockies", "Royals", "Tigers", "Twins", "White Sox", "Yankees"]
+		name = ["Angels", "Astros", "Athletics", "Blue Jays", "Braves", "Brewers", "Cardinals",
+			"Cubs", "Diamondbacks", "Dodgers", "Giants", "Indians", "Mariners", "Marlins", "Mets",
+			"Nationals", "Orioles", "Padres", "Phillies", "Pirates", "Rangers", "Rays", "Red Sox",
+			"Reds", "Rockies", "Royals", "Tigers", "Twins", "White Sox", "Yankees"]
 
-			stadium = ["Angels Stadium", "Minute Maid Park", "Oakland Coliseum", "Rogers Centre", "Turner Field",
-				"Miller Park", "Busch Stadium", "Wrigley Field", "Chase Field", "Dodgers Stadium", "AT&T Park",
-				"Progressive Field", "Safeco Park", "Marlins Park", "Citi Field", "Nationals Park", "Camden Yards",
-				"Petco Park", "Citizens Bank Park", "PNC Park", "Rangers Ballpark", "Tropicana Field", "Fenway Park",
-				"Great American Ball Park", "Coors Field", "Kauffman Stadium", "Comerica Park", "Target Field",
-				"U.S. Cellular Field", "Yankee Stadium"]
+		stadium = ["Angels Stadium", "Minute Maid Park", "Oakland Coliseum", "Rogers Centre", "Turner Field",
+			"Miller Park", "Busch Stadium", "Wrigley Field", "Chase Field", "Dodgers Stadium", "AT&T Park",
+			"Progressive Field", "Safeco Park", "Marlins Park", "Citi Field", "Nationals Park", "Camden Yards",
+			"Petco Park", "Citizens Bank Park", "PNC Park", "Rangers Ballpark", "Tropicana Field", "Fenway Park",
+			"Great American Ball Park", "Coors Field", "Kauffman Stadium", "Comerica Park", "Target Field",
+			"U.S. Cellular Field", "Yankee Stadium"]
 
-			abbr = ["LAA", "HOU", "OAK", "TOR", "ATL", "MIL", "STL", "CHC", "ARI", "LAD", "SFG", "CLE", "SEA", "MIA", "NYM",
-				"WSN", "BAL", "SDP", "PHI", "PIT", "TEX", "TBR", "BOS", "CIN", "COL", "KCR", "DET", "MIN", "CHW", "NYY"]
+		abbr = ["LAA", "HOU", "OAK", "TOR", "ATL", "MIL", "STL", "CHC", "ARI", "LAD", "SFG", "CLE", "SEA", "MIA", "NYM",
+			"WSN", "BAL", "SDP", "PHI", "PIT", "TEX", "TBR", "BOS", "CIN", "COL", "KCR", "DET", "MIN", "CHW", "NYY"]
 
-			game_abbr = ["ANA", "HOU", "OAK", "TOR", "ATL", "MIL", "SLN", "CHN", "ARI", "LAN", "SFN", "CLE", "SEA", "MIA", "NYN",
-				"WAS", "BAL", "SDN", "PHI", "PIT", "TEX", "TBA", "BOS", "CIN", "COL", "KCA", "DET", "MIN", "CHA", "NYA"]
+		game_abbr = ["ANA", "HOU", "OAK", "TOR", "ATL", "MIL", "SLN", "CHN", "ARI", "LAN", "SFN", "CLE", "SEA", "MIA", "NYN",
+			"WAS", "BAL", "SDN", "PHI", "PIT", "TEX", "TBA", "BOS", "CIN", "COL", "KCA", "DET", "MIN", "CHA", "NYA"]
 
-			zipcode = ["92806", "77002", "94621", "M5V 1J1", "30315", "53214", "63102", "60613", "85004", "90012", "94107",
-				"44115", "98134", "33125", "11368", "20003", "21201", "92101", "19148", "15212", "76011", "33705", "02215", "45202",
-				"80205", "64129", "48201", "55403", "60616", "10451"]
+		zipcode = ["92806", "77002", "94621", "M5V 1J1", "30315", "53214", "63102", "60613", "85004", "90012", "94107",
+			"44115", "98134", "33125", "11368", "20003", "21201", "92101", "19148", "15212", "76011", "33705", "02215", "45202",
+			"80205", "64129", "48201", "55403", "60616", "10451"]
 
-			league = ["AL", "AL", "AL", "AL", "NL", "NL", "NL", "NL", "NL", "NL", "NL", "AL", "AL", "NL", "NL", "NL", "AL", "NL",
-				"NL", "NL", "AL", "AL", "AL", "NL", "NL", "AL", "AL", "AL", "AL", "AL"]
+		league = ["AL", "AL", "AL", "AL", "NL", "NL", "NL", "NL", "NL", "NL", "NL", "AL", "AL", "NL", "NL", "NL", "AL", "NL",
+			"NL", "NL", "AL", "AL", "AL", "NL", "NL", "AL", "AL", "AL", "AL", "AL"]
 
-			fangraph_id = [1, 21, 10, 14, 16, 23, 28, 17, 15, 22, 30, 5, 11, 20, 25, 24, 2, 29, 26, 27, 13, 12, 3, 18, 19, 7, 6, 8, 4, 9]
+		fangraph_id = [1, 21, 10, 14, 16, 23, 28, 17, 15, 22, 30, 5, 11, 20, 25, 24, 2, 29, 26, 27, 13, 12, 3, 18, 19, 7, 6, 8, 4, 9]
 
 
-			(0...name.size).each{|i|
-				team = Team.create(:name => name[i], :abbr => abbr[i], :game_abbr => game_abbr[i], :stadium => stadium[i], :zipcode => zipcode[i], :fangraph_id => fangraph_id[i], :league => league[i])
-				if team.name == "Angels" || team.name == "Athletics" || team.name == "Diamondbacks" || team.name == "Dodgers" || team.name == "Giants" || team.name == "Mariners" || team.name == "Padres"
-					team.update_attributes(:timezone => -3)
-				elsif team.name == "Rockies"
-					team.update_attributes(:timezone => -2)
-				elsif team.name == "Astros" || team.name == "Braves" || team.name == "Brewers" || team.name == "Cardinals" || team.name == "Cubs" || team.name == "Rangers" || team.name == "Royals" || team.name == "Twins" || team.name == "White Sox"
-					team.update_attributes(:timezone => -1)
-				else
-					team.update_attributes(:timezone => 0)
-				end
-			}
-		end
-
-		def create_players
-			teams = Team.all
-			teams.each do |team|
-				url = "http://www.baseball-reference.com/teams/#{team.abbr}/2015-roster.shtml"
-				puts url
-				doc = Nokogiri::HTML(open(url))
-				pitcher = hitter = href = name = bathand = throwhand = nil
-				pitcher_bool = false
-			 	doc.css("#appearances td").each_with_index do |stat, index|
-			 		text = stat.text
-			 		case index%29
-			 		when 0
-			 			name = text
-			 			href = getHref(stat)
-			 			puts name
-			 			puts href
-			 		when 3
-			 			bathand = text
-			 		when 4
-			 			throwhand = text
-			 		when 13
-			 			if text.to_i > 0
-			 				pitcher_bool = true
-			 			end
-			 			if !hitter = Hitter.find_by_alias(href)
-							Hitter.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
-								:bathand => bathand, :throwhand => throwhand)
-						end
-						if pitcher_bool
-							if !pitcher = Pitcher.find_by_alias(href)
-								Pitcher.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
-									:bathand => bathand, :throwhand => throwhand)
-							end
-						end
-						pitcher_bool = false
-			 		end		
-			 	end
-
-			 	hitter = pitcher = bathand = throwhand = name = nil
-			 	pitcher_bool = false
-			 	doc.css("#40man td").each_with_index do |stat, index|
-			 		text = stat.text
-			 		case index%14
-			 		when 2
-			 			name = text
-			 		when 4
-			 			if text == "Pitcher"
-			 				pitcher_bool = true
-			 			end
-			 		when 8
-			 			bathand = text
-			 		when 9
-			 			throwhand = text
-			 		when 13
-			 			if !hitter = Hitter.find_by_name(name)
-			 				Hitter.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
-									:bathand => bathand, :throwhand => throwhand)
-			 			end
-			 			if pitcher_bool
-			 				if !pitcher = Pitcher.find_by_name(name)
-			 					Pitcher.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
-									:bathand => bathand, :throwhand => throwhand)
-			 				end
-			 			end
-			 		end
-			 	end
+		(0...name.size).each{|i|
+			team = Team.create(:name => name[i], :abbr => abbr[i], :game_abbr => game_abbr[i], :stadium => stadium[i], :zipcode => zipcode[i], :fangraph_id => fangraph_id[i], :league => league[i])
+			if team.name == "Angels" || team.name == "Athletics" || team.name == "Diamondbacks" || team.name == "Dodgers" || team.name == "Giants" || team.name == "Mariners" || team.name == "Padres"
+				team.update_attributes(:timezone => -3)
+			elsif team.name == "Rockies"
+				team.update_attributes(:timezone => -2)
+			elsif team.name == "Astros" || team.name == "Braves" || team.name == "Brewers" || team.name == "Cardinals" || team.name == "Cubs" || team.name == "Rangers" || team.name == "Royals" || team.name == "Twins" || team.name == "White Sox"
+				team.update_attributes(:timezone => -1)
+			else
+				team.update_attributes(:timezone => 0)
 			end
-		end
-
-		create_teams
-		create_players	
+		}
 		
 	end
 
@@ -176,74 +111,70 @@ namespace :setup do
 			return name
 		end
 
-		def create_players
-			teams = Team.all
-			teams.each do |team|
-				url = "http://www.baseball-reference.com/teams/#{team.abbr}/2015-roster.shtml"
-				puts url
-				doc = Nokogiri::HTML(open(url))
-				pitcher = hitter = href = name = bathand = throwhand = nil
-				pitcher_bool = false
-			 	doc.css("#appearances td").each_with_index do |stat, index|
-			 		text = stat.text
-			 		case index%29
-			 		when 0
-			 			name = text
-			 			href = getHref(stat)
-			 		when 3
-			 			bathand = text
-			 		when 4
-			 			throwhand = text
-			 		when 13
-			 			if text.to_i > 0
-			 				pitcher_bool = true
-			 			end
-			 			if !hitter = Hitter.find_by_alias(href)
-							Hitter.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
+		teams = Team.all
+		teams.each do |team|
+			url = "http://www.baseball-reference.com/teams/#{team.abbr}/2015-roster.shtml"
+			puts url
+			doc = Nokogiri::HTML(open(url))
+			pitcher = hitter = href = name = bathand = throwhand = nil
+			pitcher_bool = false
+		 	doc.css("#appearances td").each_with_index do |stat, index|
+		 		text = stat.text
+		 		case index%29
+		 		when 0
+		 			name = text
+		 			href = getHref(stat)
+		 		when 3
+		 			bathand = text
+		 		when 4
+		 			throwhand = text
+		 		when 13
+		 			if text.to_i > 0
+		 				pitcher_bool = true
+		 			end
+		 			if !hitter = Hitter.find_by_alias(href)
+						Hitter.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
+							:bathand => bathand, :throwhand => throwhand)
+					end
+					if pitcher_bool
+						if !pitcher = Pitcher.find_by_alias(href)
+							Pitcher.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 								:bathand => bathand, :throwhand => throwhand)
 						end
-						if pitcher_bool
-							if !pitcher = Pitcher.find_by_alias(href)
-								Pitcher.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
-									:bathand => bathand, :throwhand => throwhand)
-							end
-						end
-						pitcher_bool = false
-			 		end		
-			 	end
+					end
+					pitcher_bool = false
+		 		end		
+		 	end
 
-			 	hitter = pitcher = bathand = throwhand = name = nil
-			 	pitcher_bool = false
-			 	doc.css("#40man td").each_with_index do |stat, index|
-			 		text = stat.text
-			 		case index%14
-			 		when 2
-			 			name = text
-			 		when 4
-			 			if text == "Pitcher"
-			 				pitcher_bool = true
-			 			end
-			 		when 8
-			 			bathand = text
-			 		when 9
-			 			throwhand = text
-			 		when 13
-			 			if !hitter = Hitter.find_by_name(name)
-			 				Hitter.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
-									:bathand => bathand, :throwhand => throwhand)
-			 			end
-			 			if pitcher_bool
-			 				if !pitcher = Pitcher.find_by_name(name)
-			 					Pitcher.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
-									:bathand => bathand, :throwhand => throwhand)
-			 				end
-			 			end
-			 		end
-			 	end
-			end
+		 	hitter = pitcher = bathand = throwhand = name = nil
+		 	pitcher_bool = false
+		 	doc.css("#40man td").each_with_index do |stat, index|
+		 		text = stat.text
+		 		case index%14
+		 		when 2
+		 			name = text
+		 		when 4
+		 			if text == "Pitcher"
+		 				pitcher_bool = true
+		 			end
+		 		when 8
+		 			bathand = text
+		 		when 9
+		 			throwhand = text
+		 		when 13
+		 			if !hitter = Hitter.find_by_name(name)
+		 				Hitter.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
+								:bathand => bathand, :throwhand => throwhand)
+		 			end
+		 			if pitcher_bool
+		 				if !pitcher = Pitcher.find_by_name(name)
+		 					Pitcher.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
+								:bathand => bathand, :throwhand => throwhand)
+		 				end
+		 			end
+		 		end
+		 	end
 		end
-
-		create_players	
 		
 	end
 
@@ -408,7 +339,8 @@ namespace :setup do
 		end
 	end
 
-	task :update => :environment do
+
+	task :update_players => :environment do
 		require 'nokogiri'
 		require 'open-uri'
 
@@ -734,112 +666,107 @@ namespace :setup do
 		
 	end
 
-	task :weather => :environment do
+	task :update_weather => :environment do
 
 		require 'nokogiri'
 		require 'open-uri'
 
-		def update_weather
 
-			year = Time.now.year.to_s
-			month = Time.now.month.to_s
-			day = Time.now.day.to_s
-			if month.size == 1
-				month = "0" + month
+		year = Time.now.year.to_s
+		month = Time.now.month.to_s
+		day = Time.now.day.to_s
+		if month.size == 1
+			month = "0" + month
+		end
+		if day.size == 1
+			day = "0" + day
+		end
+
+
+
+		url_array = ["https://weather.yahoo.com/united-states/california/anaheim-2354447/", "https://weather.yahoo.com/united-states/texas/houston-2424766/", "https://weather.yahoo.com/united-states/california/oakland-2463583/",
+				"https://weather.yahoo.com/canada/ontario/toronto-4118/", "https://weather.yahoo.com/united-states/georgia/atlanta-2357024/", "https://weather.yahoo.com/united-states/wisconsin/milwaukee-2451822/",
+				"https://weather.yahoo.com/united-states/missouri/st.-louis-2486982/", "https://weather.yahoo.com/united-states/illinois/chicago-2379574/", "https://weather.yahoo.com/united-states/arizona/phoenix-2471390/",
+				"https://weather.yahoo.com/united-states/california/los-angeles-2442047/", "https://weather.yahoo.com/united-states/california/san-francisco-2487956/", "https://weather.yahoo.com/united-states/ohio/cleveland-2381475/",
+				"https://weather.yahoo.com/united-states/washington/seattle-2490383/", "https://weather.yahoo.com/united-states/florida/miami-2450022/", "https://weather.yahoo.com/united-states/new-york/new-york-2459115/",
+				"https://weather.yahoo.com/united-states/district-of-columbia/washington-2514815/", "https://weather.yahoo.com/united-states/maryland/baltimore-2358820/", "https://weather.yahoo.com/united-states/california/san-diego-2487889/",
+				"https://weather.yahoo.com/united-states/pennsylvania/philadelphia-2471217/", "https://weather.yahoo.com/united-states/pennsylvania/pittsburgh-2473224/", "https://weather.yahoo.com/united-states/texas/arlington-2355944/",
+				"https://weather.yahoo.com/united-states/florida/st.-petersburg-2487180/", "https://weather.yahoo.com/united-states/massachusetts/boston-2367105/", "https://weather.yahoo.com/united-states/ohio/cincinnati-2380358/",
+				"https://weather.yahoo.com/united-states/colorado/denver-2391279/", "https://weather.yahoo.com/united-states/kansas/kansas-city-2430632/", "https://weather.yahoo.com/united-states/michigan/detroit-2391585/",
+				"https://weather.yahoo.com/united-states/minnesota/minneapolis-2452078/", "https://weather.yahoo.com/united-states/illinois/chicago-2379574/", "https://weather.yahoo.com/united-states/new-york/bronx-91801630/"]
+
+
+		url_hourly = ["http://www.intellicast.com/Local/Hourly.aspx?location=USCA0027", "http://www.intellicast.com/Local/Hourly.aspx?location=USTX0617", "http://www.intellicast.com/Local/Hourly.aspx?location=USCA0791",
+				"http://www.intellicast.com/Local/Hourly.aspx?location=CAXX0504", "http://www.intellicast.com/Local/Hourly.aspx?location=USGA0028","http://www.intellicast.com/Local/Hourly.aspx?location=USWI0455",
+				"http://www.intellicast.com/Local/Hourly.aspx?location=USMO0787", "http://www.intellicast.com/Local/Hourly.aspx?location=USIL0225", "http://www.intellicast.com/Local/Hourly.aspx?location=USAZ0166",
+				"http://www.intellicast.com/Local/Hourly.aspx?location=USCA0638", "http://www.intellicast.com/Local/Hourly.aspx?location=USCA0987", "http://www.intellicast.com/Local/Hourly.aspx?location=USOH0195",
+				"http://www.intellicast.com/Local/Hourly.aspx?location=USWA0395", "http://www.intellicast.com/Local/Hourly.aspx?location=USFL0316", "http://www.intellicast.com/Local/Hourly.aspx?location=USNY0339",
+				"http://www.intellicast.com/Local/Hourly.aspx?location=USDC0001", "http://www.intellicast.com/Local/Hourly.aspx?location=USMD0018", "http://www.intellicast.com/Local/Hourly.aspx?location=USCA0982",
+				"http://www.intellicast.com/Local/Hourly.aspx?location=USPA1276", "http://www.intellicast.com/Local/Hourly.aspx?location=USPA1290", "http://www.intellicast.com/Local/Hourly.aspx?location=USTX0045",
+				"http://www.intellicast.com/Local/Hourly.aspx?location=USFL0438", "http://www.intellicast.com/Local/Hourly.aspx?location=USMA0046", "http://www.intellicast.com/Local/Hourly.aspx?location=USOH0188",
+				"http://www.intellicast.com/Local/Hourly.aspx?location=USCO0105", "http://www.intellicast.com/Local/Hourly.aspx?location=USMO0460", "http://www.intellicast.com/Local/Hourly.aspx?location=USMI0229",
+				"http://www.intellicast.com/Local/Hourly.aspx?location=USMN0503", "http://www.intellicast.com/Local/Hourly.aspx?location=USIL0225", "http://www.intellicast.com/Local/Hourly.aspx?location=USNY0172"]
+
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+
+			puts game.url
+
+			array_index = game.home_team_id-1
+			url = url_array[array_index]
+			doc = Nokogiri::HTML(open(url))
+			pressure = nil
+			doc.css(".second").each_with_index do |weather, index|
+				if index == 2
+					pressure = weather.text[0..4] + ' in'
+					break
+				end
 			end
-			if day.size == 1
-				day = "0" + day
-			end
+			game.update_attributes(:pressure_1 => pressure, :pressure_2 => pressure, :pressure_3 => pressure)
 
-
-
-			url_array = ["https://weather.yahoo.com/united-states/california/anaheim-2354447/", "https://weather.yahoo.com/united-states/texas/houston-2424766/", "https://weather.yahoo.com/united-states/california/oakland-2463583/",
-					"https://weather.yahoo.com/canada/ontario/toronto-4118/", "https://weather.yahoo.com/united-states/georgia/atlanta-2357024/", "https://weather.yahoo.com/united-states/wisconsin/milwaukee-2451822/",
-					"https://weather.yahoo.com/united-states/missouri/st.-louis-2486982/", "https://weather.yahoo.com/united-states/illinois/chicago-2379574/", "https://weather.yahoo.com/united-states/arizona/phoenix-2471390/",
-					"https://weather.yahoo.com/united-states/california/los-angeles-2442047/", "https://weather.yahoo.com/united-states/california/san-francisco-2487956/", "https://weather.yahoo.com/united-states/ohio/cleveland-2381475/",
-					"https://weather.yahoo.com/united-states/washington/seattle-2490383/", "https://weather.yahoo.com/united-states/florida/miami-2450022/", "https://weather.yahoo.com/united-states/new-york/new-york-2459115/",
-					"https://weather.yahoo.com/united-states/district-of-columbia/washington-2514815/", "https://weather.yahoo.com/united-states/maryland/baltimore-2358820/", "https://weather.yahoo.com/united-states/california/san-diego-2487889/",
-					"https://weather.yahoo.com/united-states/pennsylvania/philadelphia-2471217/", "https://weather.yahoo.com/united-states/pennsylvania/pittsburgh-2473224/", "https://weather.yahoo.com/united-states/texas/arlington-2355944/",
-					"https://weather.yahoo.com/united-states/florida/st.-petersburg-2487180/", "https://weather.yahoo.com/united-states/massachusetts/boston-2367105/", "https://weather.yahoo.com/united-states/ohio/cincinnati-2380358/",
-					"https://weather.yahoo.com/united-states/colorado/denver-2391279/", "https://weather.yahoo.com/united-states/kansas/kansas-city-2430632/", "https://weather.yahoo.com/united-states/michigan/detroit-2391585/",
-					"https://weather.yahoo.com/united-states/minnesota/minneapolis-2452078/", "https://weather.yahoo.com/united-states/illinois/chicago-2379574/", "https://weather.yahoo.com/united-states/new-york/bronx-91801630/"]
-
-
-			url_hourly = ["http://www.intellicast.com/Local/Hourly.aspx?location=USCA0027", "http://www.intellicast.com/Local/Hourly.aspx?location=USTX0617", "http://www.intellicast.com/Local/Hourly.aspx?location=USCA0791",
-					"http://www.intellicast.com/Local/Hourly.aspx?location=CAXX0504", "http://www.intellicast.com/Local/Hourly.aspx?location=USGA0028","http://www.intellicast.com/Local/Hourly.aspx?location=USWI0455",
-					"http://www.intellicast.com/Local/Hourly.aspx?location=USMO0787", "http://www.intellicast.com/Local/Hourly.aspx?location=USIL0225", "http://www.intellicast.com/Local/Hourly.aspx?location=USAZ0166",
-					"http://www.intellicast.com/Local/Hourly.aspx?location=USCA0638", "http://www.intellicast.com/Local/Hourly.aspx?location=USCA0987", "http://www.intellicast.com/Local/Hourly.aspx?location=USOH0195",
-					"http://www.intellicast.com/Local/Hourly.aspx?location=USWA0395", "http://www.intellicast.com/Local/Hourly.aspx?location=USFL0316", "http://www.intellicast.com/Local/Hourly.aspx?location=USNY0339",
-					"http://www.intellicast.com/Local/Hourly.aspx?location=USDC0001", "http://www.intellicast.com/Local/Hourly.aspx?location=USMD0018", "http://www.intellicast.com/Local/Hourly.aspx?location=USCA0982",
-					"http://www.intellicast.com/Local/Hourly.aspx?location=USPA1276", "http://www.intellicast.com/Local/Hourly.aspx?location=USPA1290", "http://www.intellicast.com/Local/Hourly.aspx?location=USTX0045",
-					"http://www.intellicast.com/Local/Hourly.aspx?location=USFL0438", "http://www.intellicast.com/Local/Hourly.aspx?location=USMA0046", "http://www.intellicast.com/Local/Hourly.aspx?location=USOH0188",
-					"http://www.intellicast.com/Local/Hourly.aspx?location=USCO0105", "http://www.intellicast.com/Local/Hourly.aspx?location=USMO0460", "http://www.intellicast.com/Local/Hourly.aspx?location=USMI0229",
-					"http://www.intellicast.com/Local/Hourly.aspx?location=USMN0503", "http://www.intellicast.com/Local/Hourly.aspx?location=USIL0225", "http://www.intellicast.com/Local/Hourly.aspx?location=USNY0172"]
-
-			Game.where(:year => year, :month => month, :day => day).each do |game|
-
-				puts game.url
-
-				array_index = game.home_team_id-1
-				url = url_array[array_index]
-				doc = Nokogiri::HTML(open(url))
-				pressure = nil
-				doc.css(".second").each_with_index do |weather, index|
-					if index == 2
-						pressure = weather.text[0..4] + ' in'
-						break
+			url = url_hourly[array_index]
+			puts url
+			doc = Nokogiri::HTML(open(url))
+			found = false
+			var = int = 0
+			temperature = humidity = precipitation = wind = nil
+			doc.css("#forecastHours td").each_with_index do |weather, index|
+				text = weather.text
+				if index%14 == 0
+					time = game.time
+					if time[1] == ':'
+						time = time[0] + ' PM'
+					else
+						time = time[0..1] + ' PM'
+					end
+					if text.include? time
+						found = true
 					end
 				end
-				game.update_attributes(:pressure_1 => pressure, :pressure_2 => pressure, :pressure_3 => pressure)
-
-				url = url_hourly[array_index]
-				puts url
-				doc = Nokogiri::HTML(open(url))
-				found = false
-				var = int = 0
-				temperature = humidity = precipitation = wind = nil
-				doc.css("#forecastHours td").each_with_index do |weather, index|
-					text = weather.text
-					if index%14 == 0
-						time = game.time
-						if time[1] == ':'
-							time = time[0] + ' PM'
-						else
-							time = time[0..1] + ' PM'
-						end
-						if text.include? time
-							found = true
-						end
+				if found
+					case index%14
+					when 2
+						temperature = text+"F"
+					when 6
+						humidity = text
+					when 7
+						precipitation = text
+					when 11
+						wind = text
 					end
-					if found
-						case index%14
-						when 2
-							temperature = text+"F"
-						when 6
-							humidity = text
-						when 7
-							precipitation = text
-						when 11
-							wind = text
-						end
+				end
+				if found && index%14 == 13
+					if int == 0
+						game.update_attributes(:humidity_1 => humidity, :precipitation_1 => precipitation, :wind_1 => wind, :temperature_1 => temperature)
+					elsif int == 1
+						game.update_attributes(:humidity_2 => humidity, :precipitation_2 => precipitation, :wind_2 => wind, :temperature_2 => temperature)
+					elsif int == 2
+						game.update_attributes(:humidity_3 => humidity, :precipitation_3 => precipitation, :wind_3 => wind, :temperature_3 => temperature)
+						break
 					end
-					if found && index%14 == 13
-						if int == 0
-							game.update_attributes(:humidity_1 => humidity, :precipitation_1 => precipitation, :wind_1 => wind, :temperature_1 => temperature)
-						elsif int == 1
-							game.update_attributes(:humidity_2 => humidity, :precipitation_2 => precipitation, :wind_2 => wind, :temperature_2 => temperature)
-						elsif int == 2
-							game.update_attributes(:humidity_3 => humidity, :precipitation_3 => precipitation, :wind_3 => wind, :temperature_3 => temperature)
-							break
-						end
-						int += 1
-					end
+					int += 1
 				end
 			end
 		end
-
-		update_weather
-
 	end
 
 	task :matchups => :environment do
@@ -1132,7 +1059,107 @@ namespace :setup do
 				end
 			end
 		end
+	end
 
+	task :ump => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		url = "http://www.statfox.com/mlb/umpiremain.asp"
+		doc = Nokogiri::HTML(open(url))
+
+		year = Time.now.year.to_s
+		month = Time.now.month.to_s
+		day = Time.now.day.to_s
+		if month.size == 1
+			month = "0" + month
+		end
+		if day.size == 1
+			day = "0" + day
+		end
+		id = var = 0
+		team = nil
+		doc.css(".datatable a").each do |data|
+			var += 1
+			if var%3 == 2
+				id = data['href']
+			elsif var%3 == 0
+				if data.text.size == 3
+					var = 1
+					next
+				end
+				ump = data.text
+				case id
+				when /ANGELS/
+					team = "Angels"
+				when /HOUSTON/
+					team = "Astros"
+				when /OAKLAND/
+					team = "Athletics"
+				when /TORONTO/
+					team = "Blue Jays"
+				when /ATLANTA/
+					team = "Braves"
+				when /MILWAUKEE/
+					team = "Brewers"
+				when /LOUIS/
+					team = "Cardinals"
+				when /CUBS/
+					team = "Cubs"
+				when /ARIZONA/
+					team = "Diamondbacks"
+				when /DODGERS/
+					team = "Dodgers"
+				when /FRANCISCO/
+					team = "Giants"
+				when /CLEVELAND/
+					team = "Indians"
+				when /SEATTLE/
+					team = "Mariners"
+				when /MIAMI/
+					team = "Marlins"
+				when /METS/
+					team = "Mets"
+				when /WASHINGTON/
+					team = "Nationals"
+				when /BALTIMORE/
+					team = "Orioles"
+				when /DIEGO/
+					team = "Padres"
+				when /PHILADELPHIA/
+					team = "Phillies"
+				when /PITTSBURGH/
+					team = "Pirates"
+				when /TEXAS/
+					team = "Rangers"
+				when /TAMPA/
+					team = "Rays"
+				when /BOSTON/
+					team = "Red Sox"
+				when /CINCINATTI/
+					team = "Reds"
+				when /COLORADO/
+					team = "Rockies"
+				when /KANSAS/
+					team = "Royals"
+				when /DETROIT/
+					team = "Tigers"
+				when /MINNESOTA/
+					team = "Twins"
+				when /WHITE/
+					team = "White Sox"
+				when /YANKEES/
+					team = "Yankees"
+				else
+					team = "Not found"
+				end
+				if team = Team.find_by_name(team)
+					puts ump
+					puts team.name
+					Game.where(:year => year, :month => month, :day => day, :home_team_id => team.id).first.update_attributes(:ump => ump)
+				end
+			end
+		end
 	end
 
 
@@ -1326,107 +1353,6 @@ namespace :setup do
 	end
 
 
-	task :ump => :environment do
-		require 'nokogiri'
-		require 'open-uri'
-
-		url = "http://www.statfox.com/mlb/umpiremain.asp"
-		doc = Nokogiri::HTML(open(url))
-
-		year = Time.now.year.to_s
-		month = Time.now.month.to_s
-		day = Time.now.day.to_s
-		if month.size == 1
-			month = "0" + month
-		end
-		if day.size == 1
-			day = "0" + day
-		end
-		id = var = 0
-		team = nil
-		doc.css(".datatable a").each do |data|
-			var += 1
-			if var%3 == 2
-				id = data['href']
-			elsif var%3 == 0
-				if data.text.size == 3
-					var = 1
-					next
-				end
-				ump = data.text
-				case id
-				when /ANGELS/
-					team = "Angels"
-				when /HOUSTON/
-					team = "Astros"
-				when /OAKLAND/
-					team = "Athletics"
-				when /TORONTO/
-					team = "Blue Jays"
-				when /ATLANTA/
-					team = "Braves"
-				when /MILWAUKEE/
-					team = "Brewers"
-				when /LOUIS/
-					team = "Cardinals"
-				when /CUBS/
-					team = "Cubs"
-				when /ARIZONA/
-					team = "Diamondbacks"
-				when /DODGERS/
-					team = "Dodgers"
-				when /FRANCISCO/
-					team = "Giants"
-				when /CLEVELAND/
-					team = "Indians"
-				when /SEATTLE/
-					team = "Mariners"
-				when /MIAMI/
-					team = "Marlins"
-				when /METS/
-					team = "Mets"
-				when /WASHINGTON/
-					team = "Nationals"
-				when /BALTIMORE/
-					team = "Orioles"
-				when /DIEGO/
-					team = "Padres"
-				when /PHILADELPHIA/
-					team = "Phillies"
-				when /PITTSBURGH/
-					team = "Pirates"
-				when /TEXAS/
-					team = "Rangers"
-				when /TAMPA/
-					team = "Rays"
-				when /BOSTON/
-					team = "Red Sox"
-				when /CINCINATTI/
-					team = "Reds"
-				when /COLORADO/
-					team = "Rockies"
-				when /KANSAS/
-					team = "Royals"
-				when /DETROIT/
-					team = "Tigers"
-				when /MINNESOTA/
-					team = "Twins"
-				when /WHITE/
-					team = "White Sox"
-				when /YANKEES/
-					team = "Yankees"
-				else
-					team = "Not found"
-				end
-				if team = Team.find_by_name(team)
-					puts ump
-					puts team.name
-					Game.where(:year => year, :month => month, :day => day, :home_team_id => team.id).first.update_attributes(:ump => ump)
-				end
-			end
-		end
-	end
-
 	task :boxscores => :environment do
 		require 'nokogiri'
 		require 'open-uri'
@@ -1445,7 +1371,7 @@ namespace :setup do
 			return href.to_i
 		end
 
-		yesterday = Time.now.yesterday
+		yesterday = Time.now.yesterday.yesterday
 		year = yesterday.year.to_s
 		month = yesterday.month.to_s
 		day = yesterday.day.to_s
@@ -1580,6 +1506,93 @@ namespace :setup do
 		end
 	end
 
+	task :innings => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		yesterday = Time.now.yesterday.yesterday
+		year = yesterday.year.to_s
+		month = yesterday.month.to_s
+		day = yesterday.day.to_s
+
+		if month.size == 1
+			month = "0" + month
+		end
+
+		if day.size == 1
+			day = "0" + day
+		end
+
+		games = Game.where(:year => year, :month => month, :day => day)
+
+		games.each do |game|
+
+			if game.innings.size != 0
+				next
+			end
+
+			url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
+			doc = Nokogiri::HTML(open(url))
+
+			docs = doc.css("#linescore").first
+
+			if docs == nil
+				puts url + ' did not work'
+				next
+			else
+				puts url
+				text = docs.text
+			end
+
+			newline = text.index("\n")
+			innings = text[0...newline]
+			text = text[newline+1..-1]
+			newline = text.index("\n")
+			dashes = text[0...newline]
+			text = text[newline+1..-1]
+			newline = text.index("\n")
+			away = text[0...newline]
+			text = text[newline+1..-1]
+			newline = text.index("\n")
+			home = text[0...newline]
+
+
+			num = 15
+			innings = innings[num..-1]
+			dashes = dashes[num..-1]
+			away = away[num..-1]
+			home = home[num..-1]
+
+			inning_array = Array.new
+			away_array = Array.new
+			home_array = Array.new
+
+			(0...innings.size).each do |i|
+				if dashes[i] == '-'
+					if innings[i-1] != ' '
+						inning_array << innings[i-1] + innings[i]
+					else
+						inning_array << innings[i]
+					end
+					if away[i-1] != ' '
+						away_array << away[i-1] + away[i]
+					else
+						away_array << away[i]
+					end
+					if home[i-1] != ' '
+						home_array << home[i-1] + home[i]
+					else
+						home_array << home[i]
+					end
+				end
+			end
+
+			(0...inning_array.size).each do |i|
+				Inning.create(:game_id => game.id, :number => inning_array[i], :away => away_array[i], :home => home_array[i])
+			end
+		end
+	end
+
 	task :test => :environment do
 
 		year = Time.now.year.to_s
@@ -1623,21 +1636,6 @@ namespace :setup do
 				puts game.home_team.name + ' have ' + pitchers_size.to_s + ' tomorrow pitchers'
 			end
 		end
-	end
-
-	task :see_multiples => :environment do
-
-		nil_pitchers = Pitcher.where(:game_id => nil)
-		href = Array.new
-		nil_pitchers.each do |pitcher|
-			if !href.include?(pitcher.name)
-				href << pitcher.name
-			else
-				puts pitcher.name
-			end
-		end
-
-
 	end
 
 	task :iwantitnow => :environment do
