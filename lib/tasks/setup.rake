@@ -16,30 +16,6 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 
-		def getHref(stat)
-			href = stat.child.child['href']
-			if href == nil
-				href = stat.child['href']
-			end
-			return href[11..href.index(".")-1]
-		end
-
-		def getName(text)
-			if text.include?("(")
-				char = text.index("(")
-				if text[char-2].match(/^[[:alpha:]]$/)
-					name = text[0..char-2]
-				else
-					name = text[0..char-3]
-				end
-			elsif text.include?("*") || text.include?("#")
-				name = text[0..-2]
-			else
-				name = text
-			end
-			return name
-		end
-
 		name = ["Angels", "Astros", "Athletics", "Blue Jays", "Braves", "Brewers", "Cardinals",
 			"Cubs", "Diamondbacks", "Dodgers", "Giants", "Indians", "Mariners", "Marlins", "Mets",
 			"Nationals", "Orioles", "Padres", "Phillies", "Pirates", "Rangers", "Rays", "Red Sox",
@@ -182,156 +158,92 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 
-		def nicknames(text)
-			case text
-			when 'Phil Gosselin'
-				return 'Philip Gosselin'
-			when 'Thomas Pham'
-				return 'Tommy Pham'
-			when 'Zachary Heathcott'
-				return 'Slade Heathcott'
-			when 'Daniel Burawa'
-				return 'Danny Burawa'
-			when 'Kenneth Roberts'
-				return 'Kenny Roberts'
-			when 'Dennis Tepera' 
-				return 'Ryan Tepera'
-			when 'John Leathersich'
-				return 'Jack Leathersich'
-			when 'Hyun-Jin Ryu'
-				return 'Hyun-jin Ryu'
-			when 'Tom Layne'
-				return 'Tommy Layne'
-			when 'Nathan Karns'
-				return 'Nate Karns'
-			when 'Matt Joyce'
-				return 'Matthew Joyce'
-			when 'Michael Morse'
-				return 'Mike Morse'
-			when 'Jackie Bradley Jr.'
-				return 'Jackie Bradley'
-			when 'Jackie Bradley Jr'
-				return 'Jackie Bradley'
-			when 'Steven Souza Jr.'
-				return 'Steven Souza'
-			when 'Reynaldo Navarro'
-				return 'Rey Navarro'
-			when 'Jung-ho Kang'
-				return 'Jung Ho Kang'
-			when 'Edward Easley'
-				return 'Ed Easley'
-			when 'JR Murphy'
-				return 'John Ryan Murphy'
-			when 'Delino Deshields Jr.'
-				return 'Delino DeShields'
-			when 'Steve Tolleson'
-				return 'Steven Tolleson'
-			when 'Daniel Dorn'
-				return 'Danny Dorn'
-			when 'Nicholas Tropeano'
-				return 'Nick Tropeano'
-			when 'Michael Montgomery'
-				return 'Mike Montgomery'
-			when 'Matthew Tracy'
-				return 'Matt Tracy'
-			when 'Andrew Schugel'
-				return 'A.J. Schugel'
-			when 'Matthew Wisler'
-				return 'Matt Wisler'
-			when 'Sugar Marimon'
-				return 'Sugar Ray Marimon'
-			when 'Nate Adcock'
-				return 'Nathan Adcock'
-			when 'Samuel Deduno'
-				return 'Sam Deduno'
-			when 'Joshua Ravin'
-				return 'Josh Ravin'
-			when 'Michael Strong'
-				return 'Mike Strong'
-			when 'Samuel Tuivailala'
-				return 'Sam Tuivailala'
-			when 'Joseph Donofrio'
-				return 'Joey Donofrio'
-			when 'Mitchell Harris'
-				return 'Mitch Harris'
-			when 'Christopher Rearick'
-				return 'Chris Rearick'
-			when 'Jeremy Mcbryde'
-				return 'Jeremy McBryde'
-			when 'Jorge de la Rosa'
-				return 'Jorge De La Rosa'
-			when 'Rubby de la Rosa'
-				return 'Rubby De La Rosa'
-			when 'Hyun-Jin Ryu'
-				return 'Hyun-jin Ryu'
-			end
-		end
-
 		def getFangraph(stat)
 			href = stat.child['href']
-			if href != nil
-				first = href.index('=')+1
-				last = href.index('&')
-				return href[first...last]
+			first = href.index('=')+1
+			last = href.index('&')
+			return href[first...last].to_i
+		end
+
+		def updatePlayer(stat, nil_players, nicknames)
+			name = stat.child.child.to_s
+			fangraph_id = getFangraph(stat)
+			if player = nil_players.find_by_name(name)
+				player.update_attributes(:fangraph_id => fangraph_id)
+			elsif player = nil_players.find_by_name(nicknames[name])
+				player.update_attributes(:fangraph_id => fangraph_id)
+			else
+				puts name + ' not found'
+				puts fangraph_id
 			end
 		end
 
-		def letter?(lookAhead)
-			lookAhead =~ /[[:alpha:]]/
-		end
+		nicknames = {
+			"Phil Gosselin" => "Philip Gosselin",
+			"Thomas Pham" => "Tommy Pham",
+			"Zachary Heathcott" => "Slade Heathcott",
+			"Daniel Burawa" => "Danny Burawa",
+			"Kenneth Roberts" => "Kenny Roberts",
+			"Dennis Tepera" => "Ryan Tepera",
+			"John Leathersich" => "Jack Leathersich",
+			"Hyun-Jin Ryu" => "Hyun-jin Ryu",
+			"Tom Layne" => "Tommy Layne",
+			"Nathan Karns" => "Nate Karns",
+			"Matt Joyce" => "Matthew Joyce",
+			"Michael Morse" => "Mike Morse",
+			"Jackie Bradley Jr." => "Jackie Bradley",
+			"Steven Souza Jr." => "Steven Souza",
+			"Reynaldo Navarro" => "Rey Navarro",
+			"Jung-ho Kang" => "Jung Ho Kang",
+			"Edward Easley" => "Ed Easley",
+			"JR Murphy" => "John Ryan Murphy",
+			"Deline Deshields Jr." => "Delin DeShields",
+			"Steve Tolleson" => "Steven Tolleson",
+			"Daniel Dorn" => "Dan Dorn",
+			"Nicholas Tropeano" => "Nick Tropeano",
+			"Michael Montgomery" => "Mike Montgomery",
+			"Matthew Tracy" => "Matt Tracy",
+			"Andrew Schugel" => "A.J. Schugel",
+			"Matthew Wisler" => "Matt Wisler",
+			"Sugar Marimon" => "Sugar Ray Marimon",
+			"Nate Adcock" => "Nathan Adcock",
+			"Samuel Deduno" => "Sam Deduno",
+			"Joshua Ravin" => "Josh Ravin",
+			"Michael Strong" => "Mike Strong",
+			"Samuel Tuivailala" => "Sam Tuivailala",
+			"Joseph Donofrio" => "Joey Donofrio",
+			"Mitchell Harris" => "Mitch Harris",
+			"Christopher Rearick" => "Chris Rearick",
+			"Jeremy Mcbryde" => "Jeremy McBryde",
+			"Jorge de la Rosa" => "Jorge De La Rosa",
+			"Rubby de la Rosa" => "Rubby De La Rosa"
+		}
 
+
+		nil_hitters = Hitter.where(:game_id => nil)
+		nil_pitchers = Pitcher.where(:game_id => nil)
 		(1..30).each do |i|
+
 			url = "http://www.fangraphs.com/depthcharts.aspx?position=ALL&teamid=#{i}"
 			doc = Nokogiri::HTML(open(url))
 
-			hitters = Hitter.where(:game_id => nil)
 			doc.css(".depth_chart:nth-child(58) td").each_with_index do |stat, index|
 				case index%10
 				when 0
-					name = stat.text
-					while !letter?(name[-1])
-						name = name[0...-1]
-					end
-					fangraph_id = getFangraph(stat)
-					if hitter = hitters.find_by_name(name)
-						hitter.update_attributes(:fangraph_id => fangraph_id)
-					elsif hitter = hitters.find_by_name(nicknames(name))
-						hitter.update_attributes(:fangraph_id => fangraph_id)
-					else
-						if name != 'Total'
-							puts name + ' not found'
-						end
+					name = stat.child.child
+					if name != nil
+						updatePlayer(stat, nil_hitters, nicknames)
 					end
 				end
 			end
 
-			pitchers = Pitcher.where(:game_id => nil)
 			doc.css(".depth_chart:nth-child(76) td").each_with_index do |stat, index|
 				case index%10
 				when 0
-					name = stat.text
-					while !letter?(name[-1])
-						name = name[0...-1]
-					end
-					fangraph_id = getFangraph(stat)
-					if pitcher = pitchers.find_by_name(name)
-						pitcher.update_attributes(:fangraph_id => fangraph_id)
-					elsif pitcher = pitchers.find_by_name(nicknames(name))
-						pitcher.update_attributes(:fangraph_id => fangraph_id)
-					else
-						if name != 'Total' && name != 'The Others'
-							puts name + ' not found'
-						end
-					end
-
-					if hitter = hitters.find_by_name(name)
-						hitter.update_attributes(:fangraph_id => fangraph_id)
-					elsif hitter = hitters.find_by_name(nicknames(name))
-						hitter.update_attributes(:fangraph_id => fangraph_id)
-					else
-						if name != 'Total' && name != 'The Others'
-							puts name + ' not found'
-						end
+					name = stat.child.child
+					if name != nil
+						updatePlayer(stat, nil_hitters, nicknames)
+						updatePlayer(stat, nil_pitchers, nicknames)
 					end
 
 				end
