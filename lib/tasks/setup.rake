@@ -215,6 +215,7 @@ namespace :setup do
 			"Mitchell Harris" => "Mitch Harris",
 			"Christopher Rearick" => "Chris Rearick",
 			"Jeremy Mcbryde" => "Jeremy McBryde",
+			"Daniel Robertson" => "Dan Robertson",
 			"Jorge de la Rosa" => "Jorge De La Rosa",
 			"Rubby de la Rosa" => "Rubby De La Rosa"
 		}
