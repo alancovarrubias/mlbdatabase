@@ -20,9 +20,6 @@ class ApplicationController < ActionController::Base
 		current_lineup = Array.new
 
 		lineup.each_with_index do |hitter, index|
-			if hitter.class == Array || hitter.class == NilClass
-				next
-			end
 			current_hitter = Hitter.where(:game_id => nil, :alias => hitter.alias).first
 			if hitter.team.id == current_hitter.team.id
 				current_hitter.update_attributes(:lineup => index+1)
@@ -41,12 +38,10 @@ class ApplicationController < ActionController::Base
 
 		home_team = today_game.home_team
 		away_team = today_game.away_team
-		home_pitcher = home_pitcher.first
-		away_pitcher = away_pitcher.first
 
 		if home
 			if away_pitcher == nil
-				return [nil, Array.new]
+				return Array.new
 			end
 			throwhand = away_pitcher.throwhand
 			pitcher = home_pitcher
@@ -63,6 +58,7 @@ class ApplicationController < ActionController::Base
 		end
 
 		games.each do |game|
+
 			if home_team == game.home_team
 				opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
 			else
