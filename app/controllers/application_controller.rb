@@ -16,9 +16,13 @@ class ApplicationController < ActionController::Base
 	end
 
 	def getCurrentStats(lineup)
+
 		current_lineup = Array.new
 
 		lineup.each_with_index do |hitter, index|
+			if hitter.class == Array || hitter.class == NilClass
+				next
+			end
 			current_hitter = Hitter.where(:game_id => nil, :alias => hitter.alias).first
 			if hitter.team.id == current_hitter.team.id
 				current_hitter.update_attributes(:lineup => index+1)

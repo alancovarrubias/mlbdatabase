@@ -985,7 +985,7 @@ namespace :setup do
 		year = today.year.to_s
 		month = today.month.to_s
 		day = today.day.to_s
-		hour = today.now.hour
+		hour = today.hour
 
 		if hour > 6 && hour < 20
 			if month.size == 1

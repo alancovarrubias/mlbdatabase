@@ -1,6 +1,7 @@
 class GameController < ApplicationController
 
 	def matchup
+		
 		require 'date'
 
 
