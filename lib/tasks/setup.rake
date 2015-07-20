@@ -874,10 +874,7 @@ namespace :setup do
 				case var
 				when 1
 					name = player.child.to_s
-					puts game.url
-					puts name
 					href = player['data-bref']
-					puts href
 					if game_pitchers.find_by_alias(href) == nil
 						puts name + ' no game pitcher'
 						pitcher = nil_pitchers.find_by_alias(href)
@@ -901,9 +898,7 @@ namespace :setup do
 					end
 				when 2..19
 					name = player.child.to_s
-					puts name
 					href = player['data-bref']
-					puts href
 					if game_hitters.find_by_alias(href) == nil
 						puts name + ' no game hitter'
 						hitter = nil_hitters.find_by_alias(href)
