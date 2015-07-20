@@ -53,20 +53,12 @@
 		</tr>
 		<%= render(:partial => "pitcherheader") %>
 
-		<% if !@away_pitchers.empty? %>
-
-			<% @away_pitchers.each do |pitcher| %>
-				<%= render(:partial => "pitcher", :locals => {:pitcher => pitcher}) %>
-			<% end %>
-
+		<% if @away_pitchers != nil %>
+			<%= render(:partial => "pitcher", :locals => {:pitcher => @away_pitchers}) %>
 		<% end %>
 
-		<% if !@home_pitchers.empty? %>
-
-			<% @home_pitchers.each do |pitcher| %>
-				<%= render(:partial => "pitcher", :locals => {:pitcher => pitcher}) %>
-			<% end %>
-
+		<% if @home_pitchers != nil %>
+			<%= render(:partial => "pitcher", :locals => {:pitcher => @home_pitchers}) %>
 		<% end %>
 
 		<tr>

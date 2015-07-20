@@ -3,6 +3,13 @@ namespace :setup do
 	# double headers may cause issues. Especially non-scheduled double headers which are most common
 	desc "setup database"
 
+	task :whoo => :environment do
+		Game.where(:year => "2015", :month => "07", :day => "20").each do |game|
+			game.pitchers.destroy_all
+			game.hitters.destroy_all
+		end
+	end
+
 	task :create => [:create_teams, :create_players] do
 	end
 

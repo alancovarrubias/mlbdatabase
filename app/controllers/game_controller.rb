@@ -47,27 +47,27 @@ class GameController < ApplicationController
 
 
 		if @tomorrow_bool
-			@away_pitchers = Pitcher.where(:game_id => nil, :team_id => @away.id, :tomorrow_starter => true)
-			@home_pitchers = Pitcher.where(:game_id => nil, :team_id => @home.id, :tomorrow_starter => true)
+			@away_pitchers = Pitcher.where(:game_id => nil, :team_id => @away.id, :tomorrow_starter => true).first
+			@home_pitchers = Pitcher.where(:game_id => nil, :team_id => @home.id, :tomorrow_starter => true).first
 			@away_bullpen_pitchers = Array.new
 			@home_bullpen_pitchers = Array.new
 		else
-			@away_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :starter => true)
-			@home_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :starter => true)
+			@away_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :starter => true).first
+			@home_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :starter => true).first
 			@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :bullpen => true)
 			@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :bullpen => true)
 		end
 
-		if @away_pitchers.first != nil
-			if @away_pitchers.first.throwhand == 'L'
+		if @away_pitchers != nil
+			if @away_pitchers.throwhand == 'L'
 				@home_left = true
 			else
 				@home_left = false
 			end
 		end
 
-		if @home_pitchers.first != nil
-			if @home_pitchers.first.throwhand == 'L'
+		if @home_pitchers != nil
+			if @home_pitchers.throwhand == 'L'
 				@away_left = true
 			else
 				@away_left = false
@@ -102,13 +102,13 @@ class GameController < ApplicationController
 		if today_bool || @tomorrow_bool
 
 			if @away_hitters.size == 0
-				@away_hitters = findProjectedLineup(@game, false, @away_pitchers.first, @home_pitchers.first)
+				@away_hitters = findProjectedLineup(@game, false, @away_pitchers, @home_pitchers)
 				@away_hitters = getCurrentStats(@away_hitters)
 				@away_projected = true
 			end
 
 			if @home_hitters.size == 0
-				@home_hitters = findProjectedLineup(@game, true, @away_pitchers.first, @home_pitchers.first)
+				@home_hitters = findProjectedLineup(@game, true, @away_pitchers, @home_pitchers)
 				@home_hitters = getCurrentStats(@home_hitters)
 				@home_projected = true
 			end
