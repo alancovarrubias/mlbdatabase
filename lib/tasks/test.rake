@@ -11,9 +11,10 @@ namespace :test do
 				if pitcher.alias != "" || pitcher.alias != nil
 					hitter = nil_hitters.find_by_alias(pitcher.alias)
 					if hitter == nil
-						puts pitcher.nam
+						puts pitcher.alias
+					else
+						pitcher.update_attributes(:fangraph_id => hitter.fangraph_id)
 					end
-					pitcher.update_attributes(:fangraph_id => hitter.fangraph_id)
 				end
 			end
 		end
