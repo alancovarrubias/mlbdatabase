@@ -886,7 +886,8 @@ namespace :setup do
 					if pitcher == nil
 						if href != ""
 							pitcher = nil_pitchers.find_by_alias(href)
-						else
+						end
+						if pitcher == nil
 							pitcher = nil_pitchers.find_by_name(name)
 						end
 						if pitcher != nil
@@ -911,12 +912,13 @@ namespace :setup do
 					if href != ""
 						hitter = game_hitters.find_by_alias(href)
 					else
-						pitcher = game_hitters.find_by_name(name)
+						hitter = game_hitters.find_by_name(name)
 					end
 					if hitter == nil
 						if href != ""
 							hitter = nil_hitters.find_by_alias(href)
-						else
+						end
+						if hitter == nil
 							hitter = nil_hitters.find_by_name(name)
 						end
 						if hitter != nil

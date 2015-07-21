@@ -19,8 +19,9 @@ class ApplicationController < ActionController::Base
 
 		current_lineup = Array.new
 
+		nil_hitters = Hitter.where(:game_id => nil)
 		lineup.each_with_index do |hitter, index|
-			current_hitter = Hitter.where(:game_id => nil, :alias => hitter.alias).first
+			current_hitter = nil_hitters.where(:alias => hitter.alias).first
 			if hitter.team.id == current_hitter.team.id
 				current_hitter.update_attributes(:lineup => index+1)
 				current_lineup << current_hitter
@@ -80,6 +81,7 @@ class ApplicationController < ActionController::Base
 					array = array[0...-1]
 					array << hitter
 				end
+				puts array
 				return array
 			end
 		end
