@@ -800,9 +800,13 @@ namespace :setup do
 			# Set pitchers starters true
 			doc.css(".team-name+ div").each do |player|
 
-				name = player.child.child
-				href = player.child['data-bref']
-				fangraph_id = getFangraphID(player.child['data-razz'])
+				name = player.child.child.to_s
+				href = player.child['data-bref'].to_s
+				fangraph_text = player.child['data-razz'].to_s
+				fangraph_id = 0
+				if fangraph_text != ''
+					fangraph_id = getFangraphID(fangraph_text)
+				end
 
 				if name == "TBD"
 					next
