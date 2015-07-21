@@ -1294,7 +1294,7 @@ namespace :setup do
 			return href.to_i
 		end
 
-		hour, day, month, year = findDate(Time.now.yesterday.yesterday.yesterday)
+		hour, day, month, year = findDate(Time.now.yesterday)
 
 		games = Game.where(:year => year, :month => month, :day => day)
 		nil_pitchers = Pitcher.where(:game_id => nil)
@@ -1422,7 +1422,7 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 
-		hour, day, month, year = findDate(Time.now.yesterday.yesterday.yesterday)
+		hour, day, month, year = findDate(Time.now.yesterday)
 
 		games = Game.where(:year => year, :month => month, :day => day)
 
