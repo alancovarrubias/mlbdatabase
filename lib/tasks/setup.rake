@@ -1,14 +1,27 @@
 namespace :setup do
 
-	# double headers may cause issues. Especially non-scheduled double headers which are most common
-	desc "setup database"
-
-	task :whoo => :environment do
-		Game.where(:year => "2015", :month => "07", :day => "20").each do |game|
+	task :delete => :environment do
+		hour, day, month, year = findDate(Time.now)
+		Game.where(:year => year, :month => month, :day => day).each do |game|
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
 			game.destroy
 		end
+	end
+
+	def findDate(today)
+		year = today.year.to_s
+		month = today.month.to_s
+		day = today.day.to_s
+		hour = today.hour
+
+		if month.size == 1
+			month = '0' + month
+		end
+		if day.size == 1
+			day = '0' + day
+		end
+		return hour, day, month, year
 	end
 
 	task :create => [:create_teams, :create_players] do
@@ -592,16 +605,7 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 
-
-		year = Time.now.year.to_s
-		month = Time.now.month.to_s
-		day = Time.now.day.to_s
-		if month.size == 1
-			month = "0" + month
-		end
-		if day.size == 1
-			day = "0" + day
-		end
+		hour, day, month, year = findDate(Time.now)
 
 
 
@@ -737,18 +741,7 @@ namespace :setup do
 
 		end
 
-		today = Time.now
-		year = today.year.to_s
-		month = today.month.to_s
-		day = today.day.to_s
-		hour = today.hour
-
-		if month.size == 1
-			month = '0' + month
-		end
-		if day.size == 1
-			day = '0' + day
-		end
+		hour, day, month, year = findDate(Time.now)
 
 		nil_pitchers = Pitcher.where(:game_id => nil)
 		nil_hitters = Hitter.where(:game_id => nil)
@@ -876,7 +869,6 @@ namespace :setup do
 					name = player.child.to_s
 					href = player['data-bref']
 					if game_pitchers.find_by_alias(href) == nil
-						puts name + ' no game pitcher'
 						pitcher = nil_pitchers.find_by_alias(href)
 						if pitcher == nil
 							pitcher = nil_pitchers.find_by_name(name)
@@ -900,7 +892,6 @@ namespace :setup do
 					name = player.child.to_s
 					href = player['data-bref']
 					if game_hitters.find_by_alias(href) == nil
-						puts name + ' no game hitter'
 						hitter = nil_hitters.find_by_alias(href)
 						if hitter == nil
 							hitter = nil_hitters.find_by_name(name)
@@ -983,11 +974,7 @@ namespace :setup do
 		url = "http://www.statfox.com/mlb/umpiremain.asp"
 		doc = Nokogiri::HTML(open(url))
 
-		today = Time.now
-		year = today.year.to_s
-		month = today.month.to_s
-		day = today.day.to_s
-		hour = today.hour
+		hour, day, month, year = findDate(Time.now)
 
 		if hour > 6 && hour < 20
 			if month.size == 1
@@ -1141,16 +1128,7 @@ namespace :setup do
 			end
 		end
 
-		year = Time.now.tomorrow.year.to_s
-		month = Time.now.tomorrow.month.to_s
-		day = Time.now.tomorrow.day.to_s
-
-		if month.size == 1
-			month = '0' + month
-		end
-		if day.size == 1
-			day = '0' + day
-		end
+		hour, day, month, year = findDate(Time.now)
 
 		count = 1
 		todays_games = Game.where(:year => year, :month => month, :day => day)
@@ -1291,18 +1269,7 @@ namespace :setup do
 			return href.to_i
 		end
 
-		yesterday = Time.now.yesterday.yesterday
-		year = yesterday.year.to_s
-		month = yesterday.month.to_s
-		day = yesterday.day.to_s
-
-		if month.size == 1
-			month = "0" + month
-		end
-
-		if day.size == 1
-			day = "0" + day
-		end
+		hour, day, month, year = findDate(Time.now.yesterday)
 
 		games = Game.where(:year => year, :month => month, :day => day)
 		nil_pitchers = Pitcher.where(:game_id => nil)
@@ -1430,18 +1397,7 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 
-		yesterday = Time.now.yesterday.yesterday
-		year = yesterday.year.to_s
-		month = yesterday.month.to_s
-		day = yesterday.day.to_s
-
-		if month.size == 1
-			month = "0" + month
-		end
-
-		if day.size == 1
-			day = "0" + day
-		end
+		hour, day, month, year = findDate(Time.now.yesterday.yesterday)
 
 		games = Game.where(:year => year, :month => month, :day => day)
 
@@ -1515,17 +1471,7 @@ namespace :setup do
 
 	task :test => :environment do
 
-		year = Time.now.year.to_s
-		month = Time.now.month.to_s
-		day = Time.now.day.to_s
-
-		if month.size == 1
-			month = "0" + month
-		end
-
-		if day.size == 1
-			day = "0" + day
-		end
+		hour, day, month, year = findDate(Time.now)
 
 		Game.where(:year => year, :month => month, :day => day).each do |game|
 			pitchers_size = game.pitchers.where(:starter => true).size
@@ -1538,17 +1484,7 @@ namespace :setup do
 			end
 		end
 
-		year = Time.now.tomorrow.year.to_s
-		month = Time.now.tomorrow.month.to_s
-		day = Time.now.tomorrow.day.to_s
-
-		if month.size == 1
-			month = "0" + month
-		end
-
-		if day.size == 1
-			day = "0" + day
-		end
+		hour, day, month, year = findDate(Time.now.tomorrow)
 
 		Game.where(:year => year, :month => month, :day => day).each do |game|
 			pitchers_size = (Pitcher.where(:tomorrow_starter => true, :team_id => game.home_team.id) + Pitcher.where(:tomorrow_starter => true, :team_id => game.away_team.id)).size
