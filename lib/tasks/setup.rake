@@ -813,12 +813,12 @@ namespace :setup do
 				end
 
 				if href != "" && pitcher = nil_pitchers.find_by_alias(href)
-					pitcher.update_attributes(:starter => true, :fangraph_id => fangraph_id)
+					pitcher.update_attributes(:starter => true)
 				elsif fangraph_id != 0 && pitcher = nil_pitchers.find_by_fangraph_id(fangraph_id)
-					pitcher.update_attributes(:starter => true, :alias => href)
+					pitcher.update_attributes(:starter => true)
+					puts pitcher.name
 				elsif pitcher = nil_pitchers.find_by_name(name)
-					pitcher.update_attributes(:starter => true, :alias => href, :fangraph_id => fangraph_id)
-					puts pitcher.name + ' found by name'
+					pitcher.update_attributes(:starter => true)
 				else
 					puts text + ' not found'
 				end
@@ -831,14 +831,18 @@ namespace :setup do
 				lineup = text[0].to_i
 				name = player.last_element_child.child.to_s
 				href = player.last_element_child['data-bref']
-				fangraph_id = getFangraphID(player.last_element_child['data-razz'])
+				fangraph_text = player.last_element_child['data-razz']
+				fangraph_id = 0
+				if fangraph_text != ''
+					fangraph_id = getFangraphID(fangraph_text)
+				end
 
 				if href != "" && hitter = nil_hitters.find_by_alias(href)
-					hitter.update_attributes(:starter => true, :lineup => lineup, :fangraph_id => fangraph_id)
+					hitter.update_attributes(:starter => true, :lineup => lineup)
 				elsif fangraph_id != 0 && hitter = nil_hitters.find_by_fangraph_id(fangraph_id)
-					hitter.update_attributes(:starter => true, :lineup => lineup, :alias => href)
+					hitter.update_attributes(:starter => true, :lineup => lineup)
 				elsif hitter = nil_hitters.find_by_name(name)
-					hitter.update_attributes(:starter => true, :alias => href, :lineup => lineup, :fangraph_id => fangraph_id)
+					hitter.update_attributes(:starter => true, :lineup => lineup)
 					puts hitter.name + ' found by name'
 				else
 					puts name + ' not found'
@@ -871,10 +875,18 @@ namespace :setup do
 				case var
 				when 1
 					name = player.child.to_s
-					href = player['data-bref']
-					if game_pitchers.find_by_alias(href) == nil
-						pitcher = nil_pitchers.find_by_alias(href)
-						if pitcher == nil
+					href = player['data-bref'].to_s
+					# Look for pitcher in the games.
+					if href != ""
+						pitcher = game_pitchers.find_by_alias(href)
+					else
+						pitcher = game_pitchers.find_by_name(name)
+					end
+
+					if pitcher == nil
+						if href != ""
+							pitcher = nil_pitchers.find_by_alias(href)
+						else
 							pitcher = nil_pitchers.find_by_name(name)
 						end
 						if pitcher != nil
@@ -894,10 +906,17 @@ namespace :setup do
 					end
 				when 2..19
 					name = player.child.to_s
-					href = player['data-bref']
-					if game_hitters.find_by_alias(href) == nil
-						hitter = nil_hitters.find_by_alias(href)
-						if hitter == nil
+					href = player['data-bref'].to_s
+					# Look for pitcher in the games.
+					if href != ""
+						hitter = game_hitters.find_by_alias(href)
+					else
+						pitcher = game_hitters.find_by_name(name)
+					end
+					if hitter == nil
+						if href != ""
+							hitter = nil_hitters.find_by_alias(href)
+						else
 							hitter = nil_hitters.find_by_name(name)
 						end
 						if hitter != nil
