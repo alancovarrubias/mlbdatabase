@@ -129,12 +129,12 @@ namespace :setup do
 		 			if text.to_i > 0
 		 				pitcher_bool = true
 		 			end
-		 			if !hitter = Hitter.find_by_alias(href)
+		 			if !hitter = Hitter.where(:alias => href, :game_id => nil).first
 						Hitter.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 							:bathand => bathand, :throwhand => throwhand)
 					end
 					if pitcher_bool
-						if !pitcher = Pitcher.find_by_alias(href)
+						if !pitcher = Pitcher.where(:alias => href, :game_id => nil).first
 							Pitcher.create(:name => name, :alias => href, :team_id => team.id, :game_id => nil,
 								:bathand => bathand, :throwhand => throwhand)
 						end
@@ -159,12 +159,12 @@ namespace :setup do
 		 		when 9
 		 			throwhand = text
 		 		when 13
-		 			if !hitter = Hitter.find_by_name(name)
+		 			if !hitter = Hitter.where(:name => name, :game_id => nil).first
 		 				Hitter.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
 								:bathand => bathand, :throwhand => throwhand)
 		 			end
 		 			if pitcher_bool
-		 				if !pitcher = Pitcher.find_by_name(name)
+		 				if !pitcher = Pitcher.where(:name => name, :game_id => nil).first
 		 					Pitcher.create(:name => name, :alias => nil, :team_id => team.id, :game_id => nil,
 								:bathand => bathand, :throwhand => throwhand)
 		 				end
@@ -312,8 +312,8 @@ namespace :setup do
 		end
 
 		year = Time.now.year
-		hitters = Hitter.where(:game_id => nil)
-		pitchers = Pitcher.where(:game_id => nil)
+		nil_hitters = Hitter.where(:game_id => nil)
+		nil_pitchers = Pitcher.where(:game_id => nil)
 		teams = Team.all
 
 		teams.each do |team|
@@ -328,7 +328,7 @@ namespace :setup do
 				when 2
 					name = getName(text)
 					href = getHref(stat)
-					if hitter = hitters.find_by_name(name)
+					if hitter = nil_hitters.find_by_name(name)
 						if hitter.alias == ""
 							hitter.update_attributes(:alias => href)
 						end
@@ -346,7 +346,7 @@ namespace :setup do
 				when 2
 					name = getName(text)
 					href = getHref(stat)
-					if pitcher = pitchers.find_by_name(name)
+					if pitcher = nil_pitchers.find_by_name(name)
 						if pitcher.alias == nil
 							pitcher.update_attributes(:alias => href)
 						end
@@ -378,9 +378,9 @@ namespace :setup do
 					when 1
 						name = text
 						fangraph_id = getFangraph(stat).to_i
-						hitter = hitters.find_by_fangraph_id(fangraph_id)
+						hitter = nil_hitters.find_by_fangraph_id(fangraph_id)
 						if hitter == nil
-							hitter = hitters.find_by_name(name)
+							hitter = nil_hitters.find_by_name(name)
 						end
 					when 3
 						ab = text.to_i
@@ -403,15 +403,15 @@ namespace :setup do
 						if hitter != nil
 							case url_index
 							when 0
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_L => ab, :SB_L => sb, :BB_L => bb, :SO_L => so, :SLG_L => slg, :OBP_L => obp, :wOBA_L => wOBA, :LD_L => ld, :wRC_L => wRC)
+								hitter.update_attributes(:team_id => team.id, :AB_L => ab, :SB_L => sb, :BB_L => bb, :SO_L => so, :SLG_L => slg, :OBP_L => obp, :wOBA_L => wOBA, :LD_L => ld, :wRC_L => wRC)
 							when 1
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_R => ab, :SB_R => sb, :BB_R => bb, :SO_R => so, :SLG_R => slg, :OBP_R => obp, :wOBA_R => wOBA, :LD_R => ld, :wRC_R => wRC)
+								hitter.update_attributes(:team_id => team.id, :AB_R => ab, :SB_R => sb, :BB_R => bb, :SO_R => so, :SLG_R => slg, :OBP_R => obp, :wOBA_R => wOBA, :LD_R => ld, :wRC_R => wRC)
 							when 2
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_14 => ab, :SB_14 => sb, :BB_14 => bb, :SO_14 => so, :SLG_14 => slg, :OBP_14 => obp, :wOBA_14 => wOBA, :LD_14 => ld, :wRC_14 => wRC)
+								hitter.update_attributes(:team_id => team.id, :AB_14 => ab, :SB_14 => sb, :BB_14 => bb, :SO_14 => so, :SLG_14 => slg, :OBP_14 => obp, :wOBA_14 => wOBA, :LD_14 => ld, :wRC_14 => wRC)
 							when 3
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_previous_L => ab, :SB_previous_L => sb, :BB_previous_L => bb, :SO_previous_L => so, :SLG_previous_L => slg, :OBP_previous_L => obp, :wOBA_previous_L => wOBA, :LD_previous_L => ld, :wRC_previous_L => wRC)
+								hitter.update_attributes(:team_id => team.id, :AB_previous_L => ab, :SB_previous_L => sb, :BB_previous_L => bb, :SO_previous_L => so, :SLG_previous_L => slg, :OBP_previous_L => obp, :wOBA_previous_L => wOBA, :LD_previous_L => ld, :wRC_previous_L => wRC)
 							when 4
-								hitter.update_attributes(:team_id => team.id, :fangraph_id => fangraph_id, :AB_previous_R => ab, :SB_previous_R => sb, :BB_previous_R => bb, :SO_previous_R => so, :SLG_previous_R => slg, :OBP_previous_R => obp, :wOBA_previous_R => wOBA, :LD_previous_R => ld, :wRC_previous_R => wRC)
+								hitter.update_attributes(:team_id => team.id, :AB_previous_R => ab, :SB_previous_R => sb, :BB_previous_R => bb, :SO_previous_R => so, :SLG_previous_R => slg, :OBP_previous_R => obp, :wOBA_previous_R => wOBA, :LD_previous_R => ld, :wRC_previous_R => wRC)
 							end
 						else
 							puts name + ' not found'
@@ -445,9 +445,9 @@ namespace :setup do
 					when 1
 						name = text
 						fangraph_id = getFangraph(stat).to_i
-						pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+						pitcher = nil_pitchers.find_by_fangraph_id(fangraph_id)
 						if pitcher == nil
-							pitcher = pitchers.find_by_name(name)
+							pitcher = nil_pitchers.find_by_name(name)
 						end
 					when 3
 						fip = text.to_i
@@ -479,9 +479,9 @@ namespace :setup do
 					when 1
 						name = text
 						fangraph_id = getFangraph(stat).to_i
-						pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+						pitcher = nil_pitchers.find_by_fangraph_id(fangraph_id)
 						if pitcher == nil
-							pitcher = pitchers.find_by_name(name)
+							pitcher = nil_pitchers.find_by_name(name)
 						end
 					when 3
 						ld = text[0...-2].to_f
@@ -527,9 +527,9 @@ namespace :setup do
 				when 1
 					name = text
 					fangraph_id = getFangraph(stat).to_i
-					pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+					pitcher = nil_pitchers.find_by_fangraph_id(fangraph_id)
 					if pitcher == nil
-						pitcher = pitchers.find_by_name(name)
+						pitcher = nil_pitchers.find_by_name(name)
 					end
 				when 3
 					ld = text[0...-2].to_f
@@ -563,9 +563,9 @@ namespace :setup do
 					when 1
 						name = text
 						fangraph_id = getFangraph(stat).to_i
-						pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+						pitcher = nil_pitchers.find_by_fangraph_id(fangraph_id)
 						if pitcher == nil
-							pitcher = pitchers.find_by_name(name)
+							pitcher = nil_pitchers.find_by_name(name)
 						end
 					when 3
 						whip = text.to_f
@@ -1189,7 +1189,7 @@ namespace :setup do
 		puts url
 		doc = Nokogiri::HTML(open(url))
 		
-		pitchers = Pitcher.where(:game_id => nil)
+		nil_pitchers = Pitcher.where(:game_id => nil)
 		doc.css(".team-name+ div").each_with_index do |player, index|
 			text = player.text
 			href = player.child['data-bref']
@@ -1198,11 +1198,11 @@ namespace :setup do
 				next
 			end
 			name = text[0...-4]
-			if pitcher = pitchers.find_by_fangraph_id(fangraph_id)
+			if pitcher = nil_pitchers.find_by_fangraph_id(fangraph_id)
 				pitcher.update_attributes(:tomorrow_starter => true)
-			elsif pitcher = pitchers.find_by_alias(href)
+			elsif pitcher = nil_pitchers.find_by_alias(href)
 				pitcher.update_attributes(:tomorrow_starter => true)
-			elsif pitcher = pitchers.find_by_name(text)
+			elsif pitcher = nil_pitchers.find_by_name(text)
 				pitcher.update_attributes(:tomorrow_starter => true)
 			else
 				pitcher = Pitcher.create(:name => name, :tomorrow_starter => true, :alias => href, :fangraph_id => fangraph_id)
@@ -1214,7 +1214,6 @@ namespace :setup do
 				puts pitcher.name + ' created'
 			end
 		end
-
 	end
 
 	task :bullpen => :environment do
@@ -1241,7 +1240,7 @@ namespace :setup do
 		doc = Nokogiri::HTML(open(url))
 		bool = false
 		pitcher = nil
-		pitchers = Pitcher.where(:game_id => nil)
+		nil_pitchers = Pitcher.where(:game_id => nil)
 		var = one = two = three = 0
 		doc.css(".league td").each do |bullpen|
 			text = bullpen.text
@@ -1263,9 +1262,9 @@ namespace :setup do
 				text = text[0...-4]
 				href = bullpen.child['data-bref']
 				fangraph_id = bullpen.child['data-mlb']
-				if pitcher = pitchers.find_by_name(text)
-				elsif pitcher = pitchers.find_by_fangraph_id(fangraph_id)
-				elsif pitcher = pitchers.find_by_alias(href)
+				if pitcher = nil_pitchers.find_by_name(text)
+				elsif pitcher = nil_pitchers.find_by_fangraph_id(fangraph_id)
+				elsif pitcher = nil_pitchers.find_by_alias(href)
 				else
 					puts 'Bullpen pitcher ' + text + ' not found'
 					pitcher = nil
