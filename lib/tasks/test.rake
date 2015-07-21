@@ -7,9 +7,13 @@ namespace :test do
 
 		nil_pitchers.each do |pitcher|
 			id = pitcher.fangraph_id
-			if id == nil || id == 0
+			if id =
+				= nil || id == 0
 				if pitcher.alias != "" || pitcher.alias != nil
 					hitter = nil_hitters.find_by_alias(pitcher.alias)
+					if hitter == nil
+						puts pitcher.name
+					end
 					pitcher.update_attributes(:fangraph_id => hitter.fangraph_id)
 				end
 			end
