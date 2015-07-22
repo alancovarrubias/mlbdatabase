@@ -759,57 +759,58 @@ namespace :setup do
 
 		hour, day, month, year = findDate(Time.now)
 
-		nil_pitchers = Pitcher.where(:game_id => nil)
-		nil_hitters = Hitter.where(:game_id => nil)
-		todays_games = Game.where(:year => year, :month => month, :day => day)
+		if hour > 7 && hour < 20
 
-		url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
-		doc = Nokogiri::HTML(open(url))
+			nil_pitchers = Pitcher.where(:game_id => nil)
+			nil_hitters = Hitter.where(:game_id => nil)
+			todays_games = Game.where(:year => year, :month => month, :day => day)
 
-		home = Array.new
-		away = Array.new
-		gametime = Array.new
+			url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
+			doc = Nokogiri::HTML(open(url))
 
-		# Find the games occurring today
-		doc.css(".game-time").each do |time|
-			gametime << time.text
-		end
+			home = Array.new
+			away = Array.new
+			gametime = Array.new
 
-		doc.css(".team-name").each_with_index do |stat, index|
-			team = Team.find_by_name(stat.text)
-			if index%2 == 0
-				away << team
-			else
-				home << team
-			end
-		end
-
-		# find team duplicates to find double headers
-		teams = home + away
-		duplicates = teams.select{ |e| teams.count(e) > 1 }.uniq
-
-		(0...gametime.size).each{ |i|
-
-			games = todays_games.where(:home_team_id => home[i].id, :away_team_id => away[i].id)
-
-			# Check for double headers
-			if games.size == 1 && duplicates.include?(home[i])
-				game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '2')
-			elsif games.size == 0 && duplicates.include?(home[i])
-				game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '1')
-			elsif games.size == 0
-				game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '0')
+			# Find the games occurring today
+			doc.css(".game-time").each do |time|
+				gametime << time.text
 			end
 
-			if game != nil
-				time = convertTime(game, gametime[i])
-				game.update_attributes(:time => time)
-				puts 'Game ' + game.url + ' created'
+			doc.css(".team-name").each_with_index do |stat, index|
+				team = Team.find_by_name(stat.text)
+				if index%2 == 0
+					away << team
+				else
+					home << team
+				end
 			end
 
-		}
+			# find team duplicates to find double headers
+			teams = home + away
+			duplicates = teams.select{ |e| teams.count(e) > 1 }.uniq
 
-		if hour > 6 && hour < 20
+			(0...gametime.size).each{ |i|
+
+				games = todays_games.where(:home_team_id => home[i].id, :away_team_id => away[i].id)
+
+				# Check for double headers
+				if games.size == 1 && duplicates.include?(home[i])
+					game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '2')
+				elsif games.size == 0 && duplicates.include?(home[i])
+					game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '1')
+				elsif games.size == 0
+					game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '0')
+				end
+
+				if game != nil
+					time = convertTime(game, gametime[i])
+					game.update_attributes(:time => time)
+					puts 'Game ' + game.url + ' created'
+				end
+
+			}
+
 
 			starters(nil_pitchers, nil_hitters)
 			
