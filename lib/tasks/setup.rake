@@ -816,6 +816,7 @@ namespace :setup do
 			
 			# Set pitchers starters true
 			doc.css(".team-name+ div").each do |player|
+				text = player.text
 
 				name = player.child.child.to_s
 				href = player.child['data-bref'].to_s
