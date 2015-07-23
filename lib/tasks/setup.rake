@@ -838,7 +838,7 @@ namespace :setup do
 				elsif pitcher = nil_pitchers.find_by_name(name)
 					pitcher.update_attributes(:starter => true)
 				else
-					puts text + ' not found'
+					puts name + ' not found'
 				end
 
 			end
