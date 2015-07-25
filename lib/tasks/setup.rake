@@ -759,7 +759,7 @@ namespace :setup do
 
 		hour, day, month, year = findDate(Time.now)
 
-		if hour > 9 && hour < 20
+		if hour > 8 && hour < 20
 
 			nil_pitchers = Pitcher.where(:game_id => nil)
 			nil_hitters = Hitter.where(:game_id => nil)
