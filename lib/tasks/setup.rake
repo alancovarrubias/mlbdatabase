@@ -1019,7 +1019,7 @@ namespace :setup do
 
 		hour, day, month, year = findDate(Time.now)
 
-		if hour > 6 && hour < 20
+		if hour > 4 && hour < 20
 			if month.size == 1
 				month = "0" + month
 			end
@@ -1171,7 +1171,7 @@ namespace :setup do
 			end
 		end
 
-		hour, day, month, year = findDate(Time.now)
+		hour, day, month, year = findDate(Time.now.tomorrow)
 
 		count = 1
 		todays_games = Game.where(:year => year, :month => month, :day => day)
