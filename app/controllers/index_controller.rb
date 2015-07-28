@@ -6,6 +6,7 @@ class IndexController < ApplicationController
 	end
 
 	def game
+		
 		require 'date'
 		@year = params[:year]
 		month = params[:month]

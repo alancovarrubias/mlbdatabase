@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
 				opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
 			end
 
-			if opp_pitcher == nil
+			if opp_pitcher == nil || game.hitters.size < 18
 				next
 			end
 
@@ -85,6 +85,7 @@ class ApplicationController < ActionController::Base
 				end
 				return array
 			end
+
 		end
 	end
 
