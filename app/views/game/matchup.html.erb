@@ -50,7 +50,7 @@
 
 	<table>
 		<tr>
-			<th colspan="39"><%= "Starting Pitchers" %></th>
+			<th colspan="43"><%= "Starting Pitchers" %></th>
 		</tr>
 		<%= render(:partial => "pitcherheader") %>
 
@@ -109,7 +109,7 @@
 		<% if !@tomorrow_bool %>
 			<table>
 				<tr>
-					<th colspan="37"><%= @away.name + " Bullpen"%></th>
+					<th colspan="41"><%= @away.name + " Bullpen"%></th>
 				</tr>
 				<%= render(:partial => "bullpenpitchingheader") %>
 				<% @away_bullpen_pitchers.each do |pitcher| %>
@@ -119,7 +119,7 @@
 
 			<table>
 				<tr>
-					<th colspan="37"><%= @home.name + " Bullpen"%></th>
+					<th colspan="41"><%= @home.name + " Bullpen"%></th>
 				</tr>
 				<%= render(:partial => "bullpenpitchingheader") %>
 				<% @home_bullpen_pitchers.each do |pitcher| %>

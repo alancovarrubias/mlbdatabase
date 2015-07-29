@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150709185817) do
+ActiveRecord::Schema.define(version: 20150729230118) do
 
   create_table "games", force: true do |t|
     t.integer  "away_team_id"
@@ -203,6 +203,10 @@ ActiveRecord::Schema.define(version: 20150709185817) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "tomorrow_starter"
+    t.float    "GB_R",             limit: 24, default: 0.0
+    t.float    "GB_L",             limit: 24, default: 0.0
+    t.float    "GB_previous_R",    limit: 24, default: 0.0
+    t.float    "GB_previous_L",    limit: 24, default: 0.0
   end
 
   add_index "pitchers", ["alias"], name: "index_pitchers_on_alias", using: :btree
