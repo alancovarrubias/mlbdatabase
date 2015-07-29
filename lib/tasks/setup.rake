@@ -23,6 +23,12 @@ namespace :setup do
 			game.hitters.destroy_all
 			game.destroy
 		end
+		hour, day, month, year = findDate(Time.now.tomorrow)
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+			game.pitchers.destroy_all
+			game.hitters.destroy_all
+			game.destroy
+		end
 	end
 
 	def findDate(today)
@@ -1003,7 +1009,7 @@ namespace :setup do
 									:KBB_R => pitcher.KBB_R, :GB_R => pitcher.GB_R, :GB_L => pitcher.GB_L, :LD_30 => pitcher.LD_30, :WHIP_30 => pitcher.WHIP_30, :IP_30 => pitcher.IP_30, :SO_30 => pitcher.SO_30, :BB_30 => pitcher.BB_30, 
 									:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
 									:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
-									:wOBA_previous_R => pitcher.wOBA_previous_R, :GB_previous_L => pitcher.GB_previous_L, :GB_previous_R => pitcher.GB_previous_r)
+									:wOBA_previous_R => pitcher.wOBA_previous_R, :GB_previous_L => pitcher.GB_previous_L, :GB_previous_R => pitcher.GB_previous_R)
 							puts name + ' created'
 						else
 							puts name + ' not found'
