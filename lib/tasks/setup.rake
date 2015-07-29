@@ -613,7 +613,6 @@ namespace :setup do
 				end
 			end
 		end
-		
 	end
 
 	task :update_weather => :environment do
@@ -622,6 +621,27 @@ namespace :setup do
 		require 'open-uri'
 
 		hour, day, month, year = findDate(Time.now)
+
+		def row(row, text)
+			case row
+			when 2
+				@temperature << text
+			when 4
+				@humidity << text
+			when 6
+				@precipitation << text
+			when 10
+				@wind << text
+			end	
+		end
+
+		def convertToFahr(celsius)
+			symbol = celsius[-1]
+			celsius = celsius[0...-1].to_f
+			fahr = (celsius * 9.0 / 5.0 + 32.0).round.to_s
+			fahr += symbol
+			return fahr
+		end
 
 
 
@@ -636,24 +656,30 @@ namespace :setup do
 				"https://weather.yahoo.com/united-states/colorado/denver-2391279/", "https://weather.yahoo.com/united-states/kansas/kansas-city-2430632/", "https://weather.yahoo.com/united-states/michigan/detroit-2391585/",
 				"https://weather.yahoo.com/united-states/minnesota/minneapolis-2452078/", "https://weather.yahoo.com/united-states/illinois/chicago-2379574/", "https://weather.yahoo.com/united-states/new-york/bronx-91801630/"]
 
+		url_hourly = ["http://www.accuweather.com/en/us/anaheim-ca/92805/hourly-weather-forecast/327150", "http://www.accuweather.com/en/us/houston-tx/77002/hourly-weather-forecast/351197", "http://www.accuweather.com/en/us/oakland-ca/94612/hourly-weather-forecast/347626",
+				"http://www.accuweather.com/en/ca/toronto/m5g/hourly-weather-forecast/55488", "http://www.accuweather.com/en/us/atlanta-ga/30303/hourly-weather-forecast/348181", "http://www.accuweather.com/en/us/milwaukee-wi/53202/hourly-weather-forecast/351543",
+				"http://www.accuweather.com/en/us/st-louis-mo/63101/hourly-weather-forecast/349084", "http://www.accuweather.com/en/us/chicago-il/60608/hourly-weather-forecast/348308", "http://www.accuweather.com/en/us/phoenix-az/85004/hourly-weather-forecast/346935",
+				"http://www.accuweather.com/en/us/los-angeles-ca/90012/hourly-weather-forecast/347625", "http://www.accuweather.com/en/us/san-francisco-ca/94103/hourly-weather-forecast/347629", "http://www.accuweather.com/en/us/cleveland-oh/44113/hourly-weather-forecast/350127",
+				"http://www.accuweather.com/en/us/seattle-wa/98104/hourly-weather-forecast/351409", "http://www.accuweather.com/en/us/miami-fl/33128/hourly-weather-forecast/347936", "http://www.accuweather.com/en/us/queens-borough-ny/11414/hourly-weather-forecast/2623321",
+				"http://www.accuweather.com/en/us/washington-dc/20006/hourly-weather-forecast/327659", "http://www.accuweather.com/en/us/baltimore-md/21202/hourly-weather-forecast/348707", "http://www.accuweather.com/en/us/san-diego-ca/92101/hourly-weather-forecast/347628",
+				"http://www.accuweather.com/en/us/philadelphia-pa/19107/hourly-weather-forecast/350540", "http://www.accuweather.com/en/us/pittsburgh-pa/15219/hourly-weather-forecast/1310", "http://www.accuweather.com/en/us/arlington-tx/76010/hourly-weather-forecast/331134",
+				"http://www.accuweather.com/en/us/st-petersburg-fl/33712/hourly-weather-forecast/332287", "http://www.accuweather.com/en/us/boston-ma/02108/hourly-weather-forecast/348735", "http://www.accuweather.com/en/us/cincinnati-oh/45229/hourly-weather-forecast/350126",
+				"http://www.accuweather.com/en/us/denver-co/80203/hourly-weather-forecast/347810", "http://www.accuweather.com/en/us/kansas-city-mo/64106/hourly-weather-forecast/329441", "http://www.accuweather.com/en/us/detroit-mi/48226/hourly-weather-forecast/348755",
+				"http://www.accuweather.com/en/us/minneapolis-mn/55415/hourly-weather-forecast/348794", "http://www.accuweather.com/en/us/chicago-il/60608/hourly-weather-forecast/348308", "http://www.accuweather.com/en/us/bronx-borough-ny/10461/hourly-weather-forecast/334650"]
 
-		url_hourly = ["http://www.intellicast.com/Local/Hourly.aspx?location=USCA0027", "http://www.intellicast.com/Local/Hourly.aspx?location=USTX0617", "http://www.intellicast.com/Local/Hourly.aspx?location=USCA0791",
-				"http://www.intellicast.com/Local/Hourly.aspx?location=CAXX0504", "http://www.intellicast.com/Local/Hourly.aspx?location=USGA0028","http://www.intellicast.com/Local/Hourly.aspx?location=USWI0455",
-				"http://www.intellicast.com/Local/Hourly.aspx?location=USMO0787", "http://www.intellicast.com/Local/Hourly.aspx?location=USIL0225", "http://www.intellicast.com/Local/Hourly.aspx?location=USAZ0166",
-				"http://www.intellicast.com/Local/Hourly.aspx?location=USCA0638", "http://www.intellicast.com/Local/Hourly.aspx?location=USCA0987", "http://www.intellicast.com/Local/Hourly.aspx?location=USOH0195",
-				"http://www.intellicast.com/Local/Hourly.aspx?location=USWA0395", "http://www.intellicast.com/Local/Hourly.aspx?location=USFL0316", "http://www.intellicast.com/Local/Hourly.aspx?location=USNY0339",
-				"http://www.intellicast.com/Local/Hourly.aspx?location=USDC0001", "http://www.intellicast.com/Local/Hourly.aspx?location=USMD0018", "http://www.intellicast.com/Local/Hourly.aspx?location=USCA0982",
-				"http://www.intellicast.com/Local/Hourly.aspx?location=USPA1276", "http://www.intellicast.com/Local/Hourly.aspx?location=USPA1290", "http://www.intellicast.com/Local/Hourly.aspx?location=USTX0045",
-				"http://www.intellicast.com/Local/Hourly.aspx?location=USFL0438", "http://www.intellicast.com/Local/Hourly.aspx?location=USMA0046", "http://www.intellicast.com/Local/Hourly.aspx?location=USOH0188",
-				"http://www.intellicast.com/Local/Hourly.aspx?location=USCO0105", "http://www.intellicast.com/Local/Hourly.aspx?location=USMO0460", "http://www.intellicast.com/Local/Hourly.aspx?location=USMI0229",
-				"http://www.intellicast.com/Local/Hourly.aspx?location=USMN0503", "http://www.intellicast.com/Local/Hourly.aspx?location=USIL0225", "http://www.intellicast.com/Local/Hourly.aspx?location=USNY0172"]
+
 
 		Game.where(:year => year, :month => month, :day => day).each do |game|
 
-			puts game.url
+			team = game.home_team
+			time = game.time
+			amorpm = game.time[-2..-1]
+			time = time[0...time.index(":")].to_i
+			if amorpm == "PM" && time != 12
+				time += 12
+			end
 
-			array_index = game.home_team_id-1
-			url = url_array[array_index]
+			url = url_array[team.id-1]
 			doc = Nokogiri::HTML(open(url))
 			pressure = nil
 			doc.css(".second").each_with_index do |weather, index|
@@ -664,47 +690,87 @@ namespace :setup do
 			end
 			game.update_attributes(:pressure_1 => pressure, :pressure_2 => pressure, :pressure_3 => pressure)
 
-			url = url_hourly[array_index]
+
+			url = url_hourly[team.id-1]
+			url += "?hour=#{time}"
 			puts url
 			doc = Nokogiri::HTML(open(url))
-			found = false
-			var = int = 0
-			temperature = humidity = precipitation = wind = nil
-			doc.css("#forecastHours td").each_with_index do |weather, index|
-				text = weather.text
-				if index%14 == 0
-					time = game.time
-					if time[1] == ':'
-						time = time[0] + ' PM'
-					else
-						time = time[0..1] + ' PM'
-					end
-					if text.include? time
-						found = true
-					end
+			var = row = 0
+			@temperature = Array.new
+			@humidity = Array.new
+			@precipitation = Array.new
+			@wind = Array.new
+			doc.css("td").each_with_index do |stat, index|
+				if stat.children.size == 1
+					text = stat.text
+				elsif stat.children.size == 2
+					text = stat.children[-1].text
+				elsif stat.children.size == 3
+					text = stat.last_element_child.text
+				else
+					text = stat.text
 				end
-				if found
-					case index%14
-					when 2
-						temperature = text+"F"
-					when 6
-						humidity = text
-					when 7
-						precipitation = text
-					when 11
-						wind = text
-					end
+				if index == 40 || index == 73
+					var = 0
+					next
 				end
-				if found && index%14 == 13
-					if int == 0
-						game.update_attributes(:humidity_1 => humidity, :precipitation_1 => precipitation, :wind_1 => wind, :temperature_1 => temperature)
-					elsif int == 1
-						game.update_attributes(:humidity_2 => humidity, :precipitation_2 => precipitation, :wind_2 => wind, :temperature_2 => temperature)
-					elsif int == 2
-						game.update_attributes(:humidity_3 => humidity, :precipitation_3 => precipitation, :wind_3 => wind, :temperature_3 => temperature)
-						break
-					end
-					int += 1
+					
+				case var%8
+				when 0
+					row(row, text)
+				when 1
+					row(row, text)
+				when 2
+					row(row, text)
+					row += 1
+				end
+				var += 1
+			end
+
+			@temperature.each_with_index do |temperature, index|
+				if team.id == 4
+					temperature = convertToFahr(temperature)
+				end
+				case index
+				when 0
+					game.update_attributes(:temperature_1 => temperature)
+				when 1
+					game.update_attributes(:temperature_2 => temperature)
+				when 2
+					game.update_attributes(:temperature_3 => temperature)
+				end
+			end
+
+			@humidity.each_with_index do |humidity, index|
+				case index
+				when 0
+					game.update_attributes(:humidity_1 => humidity)
+				when 1
+					game.update_attributes(:humidity_2 => humidity)
+				when 2
+					game.update_attributes(:humidity_3 => humidity)
+				end
+			end
+
+			@precipitation.each_with_index do |precipitation, index|
+				case index
+				when 0
+					game.update_attributes(:precipitation_1 => precipitation)
+				when 1
+					game.update_attributes(:precipitation_2 => precipitation)
+				when 2
+					game.update_attributes(:precipitation_3 => precipitation)
+				end
+			end
+
+			@wind.each_with_index do |wind, index|
+				case index
+				when 0
+					game.update_attributes(:wind_1 => wind)
+				when 1
+					game.update_attributes(:wind_2 => wind)
+				when 2
+					game.update_attributes(:wind_3 => wind)
 				end
 			end
 		end
