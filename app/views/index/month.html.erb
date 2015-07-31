@@ -14,12 +14,12 @@
 
 		<div id="main">
 			<div id="content">
-				<p>
-					<h4>Months</h4>
-					<% @months.each do |month| %>
-						<%= link_to(Date::MONTHNAMES[month.to_i], {:controller => "index", :action => "day", :year => params[:year], :month => month}) %> <br />
-					<% end %>
-				</p>
+				<h4>Months</h4>
+				<%= form_tag({controller: "index", action: "day"}, method: "get") do %>
+					<%= hidden_field_tag(:year, params[:year]) %>
+			 		<%= select_tag(:month, options_for_select(@months)) %>
+					<%= submit_tag("Submit") %>
+				<% end %>
 			</div>
 		</div>
 

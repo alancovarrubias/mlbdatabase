@@ -38,6 +38,7 @@ class IndexController < ApplicationController
 				year = year - 1
 			end
 		end
+		@years = @years.map{|y| [y, y]}
 	end
 
 	def month
@@ -54,15 +55,13 @@ class IndexController < ApplicationController
 				@months << month
 			end
 		end
+		@months = @months.map{|m| [Date::MONTHNAMES[m.to_i], m]}
 	end
 
 	def day
+		require 'date'
 		@days = Array.new
-		month = params[:month]
-		if month.size == 1
-			month = "0" + month
-		end
-		games = Game.where(:year => params[:year], :month => month)
+		games = Game.where(:year => params[:year], :month => params[:month])
 
 		(1..31).each do |i|
 			day = i.to_s
@@ -73,6 +72,16 @@ class IndexController < ApplicationController
 				@days << day
 			end
 		end
+
+		@days = @days.map{|d| 
+			if d[0] == '0'
+				d_show = d[-1]
+			else
+				d_show = d
+			end
+
+			[d_show, d]
+		}
 	end
 
 	def teams

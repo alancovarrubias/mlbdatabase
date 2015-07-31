@@ -16,8 +16,11 @@
 			<div id="content">
 				<p>
 					<h4>Days</h4>
-					<% @days.each do |day| %>
-						<%= link_to(day, {:controller => "index", :action => "game", :year => params[:year], :month => params[:month], :day => day}) %> <br />
+					<%= form_tag({controller: "index", action: "game"}, method: "get") do %>
+						<%= hidden_field_tag(:year, params[:year]) %>
+						<%= hidden_field_tag(:month, params[:month]) %>
+						<%= select_tag(:day, options_for_select(@days)) %>
+						<%= submit_tag("Submit") %>
 					<% end %>
 				</p>
 			</div>

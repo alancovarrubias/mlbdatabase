@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150729230118) do
+ActiveRecord::Schema.define(version: 20150730010833) do
 
   create_table "games", force: true do |t|
     t.integer  "away_team_id"
@@ -39,6 +39,10 @@ ActiveRecord::Schema.define(version: 20150729230118) do
     t.string   "precipitation_3", default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "away_money_line"
+    t.string   "home_money_line"
+    t.string   "away_total"
+    t.string   "home_total"
   end
 
   create_table "hitter_box_scores", force: true do |t|
