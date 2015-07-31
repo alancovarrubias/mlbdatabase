@@ -58,6 +58,10 @@ namespace :past do
 						abbr = "WSN"
 					end
 					team = Team.find_by_abbr(abbr)
+					if team == nil
+						game_array << nil
+						next
+					end
 					games = today_games.where(:home_team_id => team.id)
 					if games.size == 2
 						if game_array.include?(games.first)
