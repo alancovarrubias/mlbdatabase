@@ -49,7 +49,7 @@ namespace :setup do
 	task :create => [:create_teams, :create_players] do
 	end
 
-	task :daily => [:create_players, :fangraphs, :update_players, :update_weather, :bullpen, :boxscores, :innings] do
+	task :daily => [:create_players, :fangraphs, :update_players, :update_weather, :bullpen, :boxscores, :innings, :closingline] do
 	end
 
 	task :hourly => [:matchups, :ump, :tomorrow] do
@@ -1598,6 +1598,94 @@ namespace :setup do
 				Inning.create(:game_id => game.id, :number => inning_array[i], :away => away_array[i], :home => home_array[i])
 			end
 		end
+	end
+
+	task :closingline => :environment do
+		require 'nokogiri'
+		require 'open-uri'
+
+		hour, day, month, year = findDate(Time.now)
+		today_games = Game.where(:year => year, :month => month, :day => day)
+		size = today_games.size
+		url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/?date=#{year}#{month}#{day}"
+		puts url
+		doc = Nokogiri::HTML(open(url))
+		doc.css(".team-name a").each_with_index do |stat, index|
+			if index == size*2
+				break
+			end
+			if index%2 == 1
+				abbr = stat.child.text[0...-3]
+				case abbr
+				when "TB"
+					abbr = "TBR"
+				when "SF"
+					abbr = "SFG"
+				when "SD"
+					abbr = "SDP"
+				when "CWS"
+					abbr = "CHW"
+				when "KC"
+					abbr = "KCR"
+				when "WSH"
+					abbr = "WSN"
+				end
+				team = Team.find_by_abbr(abbr)
+				if team == nil
+					game_array << nil
+					next
+				end
+				games = today_games.where(:home_team_id => team.id)
+				if games.size == 2
+					if game_array.include?(games.first)
+						game_array << games.second
+					else
+						game_array << games.first
+					end
+				elsif games.size == 1
+					game_array << games.first
+				else
+					game_array << nil
+				end
+					
+			end
+		end
+
+		away_money_line = Array.new
+		home_money_line = Array.new
+		doc.css(".eventLine-consensus+ .eventLine-book b").each_with_index do |stat, index|
+			if index == size*2
+				break
+			end
+			if index%2 == 0
+				away_money_line << stat.text
+			else
+				home_money_line << stat.text
+			end
+		end
+
+		away_totals = Array.new
+		home_totals = Array.new
+		url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/totals/"
+		doc = Nokogiri::HTML(open(url))
+		doc.css(".eventLine-consensus+ .eventLine-book b").each_with_index do |stat, index|
+			if index == size*2
+				break
+			end
+			if index%2 == 0
+				away_totals << stat.text
+			else
+				home_totals << stat.text
+			end
+		end
+
+		(0...size).each do |i|
+			game = game_array[i]
+			if game != nil
+				game.update_attributes(:away_money_line => away_money_line[i], :home_money_line => home_money_line[i], :away_total => away_totals[i], :home_total => home_totals[i])
+			end
+		end
+
 	end
 
 	task :test => :environment do
