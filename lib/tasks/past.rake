@@ -19,14 +19,14 @@ namespace :past do
 		require 'nokogiri'
 		require 'open-uri'
 
-		previous_date = nil
+		date_array = Array.new
 		Game.all.each do |game|
 			day, month, year = [game.day, game.month, game.year]
 			date = day + month + year
-			if date == previous_date
+			if date_array.include?(date)
 				next
 			end
-			previous_date = date
+			date_array << date
 			today_games = Game.where(:year => year, :month => month, :day => day)
 			size = today_games.size
 			url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/?date=#{year}#{month}#{day}"
