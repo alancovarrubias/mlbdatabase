@@ -49,10 +49,10 @@ namespace :setup do
 	task :create => [:create_teams, :create_players] do
 	end
 
-	task :daily => [:create_players, :fangraphs, :update_players, :update_weather, :tomorrow, :bullpen, :boxscores, :innings] do
+	task :daily => [:create_players, :fangraphs, :update_players, :update_weather, :bullpen, :boxscores, :innings] do
 	end
 
-	task :hourly => [:matchups, :ump] do
+	task :hourly => [:matchups, :ump, :tomorrow] do
 	end
 
 	task :create_teams => :environment do
