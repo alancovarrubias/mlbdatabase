@@ -34,6 +34,7 @@ namespace :past do
 			end
 			url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/?date=#{year}#{month}#{day}"
 			puts url
+			puts game.url
 			doc = Nokogiri::HTML(open(url))
 			game_array = Array.new
 			doc.css(".team-name a").each_with_index do |stat, index|
