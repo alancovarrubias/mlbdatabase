@@ -29,6 +29,9 @@ namespace :past do
 			date_array << date
 			today_games = Game.where(:year => year, :month => month, :day => day)
 			size = today_games.size
+			if size == 0
+				next
+			end
 			url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/?date=#{year}#{month}#{day}"
 			puts url
 			doc = Nokogiri::HTML(open(url))
