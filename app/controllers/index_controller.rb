@@ -31,7 +31,6 @@ class IndexController < ApplicationController
 		bool = true
 		while bool
 			games = Game.where(:year => year.to_s)
-			puts year
 			if games.empty?
 				bool = false
 			else
