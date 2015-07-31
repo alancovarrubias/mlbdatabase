@@ -15,82 +15,82 @@ namespace :past do
 		return hour, day, month, year
 	end
 
-	task :closingline => :environment do
-		require 'nokogiri'
-		require 'open-uri'
-		hour, day, month, year = findDate(Time.now)
-		today_games = Game.where(:year => year, :month => month, :day => day)
-		size = today_games.size
+	# task :closingline => :environment do
+	# 	require 'nokogiri'
+	# 	require 'open-uri'
+	# 	hour, day, month, year = findDate(Time.now)
+	# 	today_games = Game.where(:year => year, :month => month, :day => day)
+	# 	size = today_games.size
 
-		url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/"
-		doc = Nokogiri::HTML(open(url))
-		game_array = Array.new
-		doc.css(".team-name a").each_with_index do |stat, index|
-			if index == size*2
-				break
-			end
-			if index%2 == 1
-				abbr = stat.child.text[0...-3]
-				case abbr
-				when "TB"
-					abbr = "TBR"
-				when "SF"
-					abbr = "SFG"
-				when "SD"
-					abbr = "SDP"
-				when "CWS"
-					abbr = "CHW"
-				when "KC"
-					abbr = "KCR"
-				end
-				team = Team.find_by_abbr(abbr)
-				games = today_games.where(:home_team_id => team.id)
-				if games.size == 2
-					if game_array.include?(games.first)
-						game_array << games.second
-					else
-						game_array << games.first
-					end
-				end
-			end
-		end
+	# 	url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/"
+	# 	doc = Nokogiri::HTML(open(url))
+	# 	game_array = Array.new
+	# 	doc.css(".team-name a").each_with_index do |stat, index|
+	# 		if index == size*2
+	# 			break
+	# 		end
+	# 		if index%2 == 1
+	# 			abbr = stat.child.text[0...-3]
+	# 			case abbr
+	# 			when "TB"
+	# 				abbr = "TBR"
+	# 			when "SF"
+	# 				abbr = "SFG"
+	# 			when "SD"
+	# 				abbr = "SDP"
+	# 			when "CWS"
+	# 				abbr = "CHW"
+	# 			when "KC"
+	# 				abbr = "KCR"
+	# 			end
+	# 			team = Team.find_by_abbr(abbr)
+	# 			games = today_games.where(:home_team_id => team.id)
+	# 			if games.size == 2
+	# 				if game_array.include?(games.first)
+	# 					game_array << games.second
+	# 				else
+	# 					game_array << games.first
+	# 				end
+	# 			end
+	# 		end
+	# 	end
 
-		away_money_line = Array.new
-		home_money_line = Array.new
-		doc.css(".eventLine-consensus+ .eventLine-book b").each_with_index do |stat, index|
-			if index == size*2
-				break
-			end
-			if index%2 == 0
-				away_money_line << stat.text
-			else
-				home_money_line << stat.text
-			end
-		end
+	# 	away_money_line = Array.new
+	# 	home_money_line = Array.new
+	# 	doc.css(".eventLine-consensus+ .eventLine-book b").each_with_index do |stat, index|
+	# 		if index == size*2
+	# 			break
+	# 		end
+	# 		if index%2 == 0
+	# 			away_money_line << stat.text
+	# 		else
+	# 			home_money_line << stat.text
+	# 		end
+	# 	end
 
-		away_totals = Array.new
-		home_totals = Array.new
-		url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/totals/"
-		doc = Nokogiri::HTML(open(url))
-		doc.css(".eventLine-consensus+ .eventLine-book b").each_with_index do |stat, index|
-			if index == size*2
-				break
-			end
+	# 	away_totals = Array.new
+	# 	home_totals = Array.new
+	# 	url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/totals/"
+	# 	doc = Nokogiri::HTML(open(url))
+	# 	doc.css(".eventLine-consensus+ .eventLine-book b").each_with_index do |stat, index|
+	# 		if index == size*2
+	# 			break
+	# 		end
 
-			if index%2 == 0
-				away_totals << stat.text
-			else
-				home_totals << stat.text
-			end
+	# 		if index%2 == 0
+	# 			away_totals << stat.text
+	# 		else
+	# 			home_totals << stat.text
+	# 		end
 
-			puts stat.text
+	# 		puts stat.text
 
-		end
+	# 	end
 
-		(0...size).each do |i|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  )
-		end
+	# 	(0...size).each do |i|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  )
+	# 	end
 
-	end
+	# end
 
 	task :create_games => :environment do
 		require 'nokogiri'
