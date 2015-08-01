@@ -17,12 +17,12 @@ namespace :setup do
 	end
 
 	task :delete => :environment do
-		hour, day, month, year = findDate(Time.now)
-		Game.where(:year => year, :month => month, :day => day).each do |game|
-			game.pitchers.destroy_all
-			game.hitters.destroy_all
-			game.destroy
-		end
+		# hour, day, month, year = findDate(Time.now)
+		# Game.where(:year => year, :month => month, :day => day).each do |game|
+		# 	game.pitchers.destroy_all
+		# 	game.hitters.destroy_all
+		# 	game.destroy
+		# end
 		hour, day, month, year = findDate(Time.now.tomorrow)
 		Game.where(:year => year, :month => month, :day => day).each do |game|
 			game.pitchers.destroy_all
