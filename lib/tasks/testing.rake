@@ -19,7 +19,20 @@ namespace :testing do
 		require 'nokogiri'
 		require 'open-uri'
 
-		
+		Game.all.each do |game|
+			if game.away_money_line == nil
+				game.update_attributes(:away_money_line => "")
+			end
+			if game.home_money_line == nil
+				game.update_attributes(:home_money_line => "")
+			end
+			if game.away_total == nil
+				game.update_attributes(:away_total => "")
+			end
+			if game.home_total == nil
+				game.update_attributes(:home_total => "")
+			end
+		end
 		
 	end
 
