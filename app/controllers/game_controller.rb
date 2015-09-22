@@ -99,18 +99,18 @@ class GameController < ApplicationController
 
 		end
 
-		@home_projected = false
 		@away_projected = false
+		@home_projected = false
 
 		if today_bool || @tomorrow_bool
 
-			if @away_hitters.size == 0
+			if @away_hitters.size <= 1
 				@away_hitters = findProjectedLineup(@game, false, @away_pitchers, @home_pitchers)
 				@away_hitters = getCurrentStats(@away_hitters)
 				@away_projected = true
 			end
 
-			if @home_hitters.size == 0
+			if @home_hitters.size <= 1
 				@home_hitters = findProjectedLineup(@game, true, @away_pitchers, @home_pitchers)
 				@home_hitters = getCurrentStats(@home_hitters)
 				@home_projected = true
