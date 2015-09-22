@@ -6,14 +6,17 @@ class GameController < ApplicationController
 
 
 		@game = Game.find_by_id(params[:id])
-		@away = @game.away_team
-		@home = @game.home_team
+		@away_team = @game.away_team
+		@home_team = @game.home_team
 
-		@away_hitting_boxscores = @game.hitter_box_scores.where(:home => false)
-		@away_pitching_boxscores = @game.pitcher_box_scores.where(:home => false)
+		hitter_box_scores = @game.hitter_box_scores
+		pitcher_box_scores = @game.pitcher_box_scores
 
-		@home_hitting_boxscores = @game.hitter_box_scores.where(:home => true)
-		@home_pitching_boxscores = @game.pitcher_box_scores.where(:home => true)
+		@away_hitting_boxscores = hitter_box_scores.where(:home => false)
+		@away_pitching_boxscores = pitcher_box_scores.where(:home => false)
+
+		@home_hitting_boxscores = hitter_box_scores.where(:home => true)
+		@home_pitching_boxscores = pitcher_box_scores.where(:home => true)
 
 		@innings = Array.new
 		@away_score = Array.new
@@ -47,15 +50,15 @@ class GameController < ApplicationController
 
 
 		if @tomorrow_bool
-			@away_pitchers = Pitcher.where(:game_id => nil, :team_id => @away.id, :tomorrow_starter => true).first
-			@home_pitchers = Pitcher.where(:game_id => nil, :team_id => @home.id, :tomorrow_starter => true).first
+			@away_pitchers = Pitcher.where(:game_id => nil, :team_id => @away_team.id, :tomorrow_starter => true).first
+			@home_pitchers = Pitcher.where(:game_id => nil, :team_id => @home_team.id, :tomorrow_starter => true).first
 			@away_bullpen_pitchers = Array.new
 			@home_bullpen_pitchers = Array.new
 		else
-			@away_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :starter => true).first
-			@home_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :starter => true).first
-			@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away.id, :bullpen => true)
-			@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home.id, :bullpen => true)
+			@away_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :starter => true).first
+			@home_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :starter => true).first
+			@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :bullpen => true)
+			@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :bullpen => true)
 		end
 
 		if @away_pitchers != nil
@@ -86,8 +89,8 @@ class GameController < ApplicationController
 
 		if !@tomorrow_bool
 
-			@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away.id, :starter => true).order("lineup")
-			@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home.id, :starter => true).order("lineup")
+			@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away_team.id, :starter => true).order("lineup")
+			@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home_team.id, :starter => true).order("lineup")
 
 		else
 
@@ -101,13 +104,13 @@ class GameController < ApplicationController
 
 		if today_bool || @tomorrow_bool
 
-			if @away_hitters.size == 0
+			if @away_hitters.size <= 1
 				@away_hitters = findProjectedLineup(@game, false, @away_pitchers, @home_pitchers)
 				@away_hitters = getCurrentStats(@away_hitters)
 				@away_projected = true
 			end
 
-			if @home_hitters.size == 0
+			if @home_hitters.size <= 1
 				@home_hitters = findProjectedLineup(@game, true, @away_pitchers, @home_pitchers)
 				@home_hitters = getCurrentStats(@home_hitters)
 				@home_projected = true

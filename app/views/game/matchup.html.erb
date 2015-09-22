@@ -10,8 +10,8 @@
 		<%= image_tag("#{@home.id}.png", :height => '400', :width => '800', :align => 'right') %>
 	</br>
 
-		<h2><%= @away.name %> <i><%= @game.away_money_line + ' ' + @game.away_total %> </i></h2>
-		<h2><%= "@ " + @home.name %> <i><%= @game.home_money_line + ' ' + @game.home_total %></i></h2>
+		<h2><%= @away_team.name %> <i><%= @game.away_money_line + ' ' + @game.away_total %> </i></h2>
+		<h2><%= "@ " + @home_team.name %> <i><%= @game.home_money_line + ' ' + @game.home_total %></i></h2>
 		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
 		<%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %></br></br>
 
@@ -24,13 +24,13 @@
 			<% end %>
 		</tr>
 		<tr>
-			<th><%= @away.name%></th>
+			<th><%= @away_team.name%></th>
 			<% @away_score.each do |inning| %>
 				<td><%= inning %></td>
 			<% end %>
 		</tr>
 		<tr>
-			<th><%= @home.name%></th>
+			<th><%= @home_team.name%></th>
 			<% @home_score.each do |inning| %>
 				<td><%= inning %></td>
 			<% end %>
@@ -65,9 +65,9 @@
 
 		<tr>
 			<% if @away_projected %>
-				<th colspan="28" bgcolor="#DC143C"><%= @away.name + " Projected Starting Lineup" %></th>
+				<th colspan="28" bgcolor="#DC143C"><%= @away_team.name + " Projected Starting Lineup" %></th>
 			<% else %>
-				<th colspan="28"><%= @away.name + " Starting Lineup" %></th>
+				<th colspan="28"><%= @away_team.name + " Starting Lineup" %></th>
 			<% end %>
 		</tr>
 
@@ -87,9 +87,9 @@
 
 		<tr>
 			<% if @home_projected %>
-				<th colspan="28" bgcolor="#DC143C"><%= @home.name + " Projected Starting Lineup" %></th>
+				<th colspan="28" bgcolor="#DC143C"><%= @home_team.name + " Projected Starting Lineup" %></th>
 			<% else %>
-				<th colspan="28"><%= @home.name + " Starting Lineup" %></th>
+				<th colspan="28"><%= @home_team.name + " Starting Lineup" %></th>
 			<% end %>
 		</tr>
 
@@ -110,7 +110,7 @@
 		<% if !@tomorrow_bool %>
 			<table>
 				<tr>
-					<th colspan="41"><%= @away.name + " Bullpen"%></th>
+					<th colspan="41"><%= @away_team.name + " Bullpen"%></th>
 				</tr>
 				<%= render(:partial => "bullpenpitchingheader") %>
 				<% @away_bullpen_pitchers.each do |pitcher| %>
@@ -120,7 +120,7 @@
 
 			<table>
 				<tr>
-					<th colspan="41"><%= @home.name + " Bullpen"%></th>
+					<th colspan="41"><%= @home_team.name + " Bullpen"%></th>
 				</tr>
 				<%= render(:partial => "bullpenpitchingheader") %>
 				<% @home_bullpen_pitchers.each do |pitcher| %>
