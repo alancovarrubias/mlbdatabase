@@ -83,7 +83,7 @@ namespace :testing do
 
 		year, month, day = Time.now.year, Time.now.month, Time.now.day
 
-		Game.where(:year => year, :month => month, :day => day).each do |game|
+		Game.where(:year => year.to_s, :month => month.to_s, :day => day.to_s).each do |game|
 			game.update_weather_forecast(true)
 			game.update_weather
 		end
