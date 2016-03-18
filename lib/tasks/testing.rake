@@ -77,11 +77,14 @@ namespace :testing do
 		end
 	end
 
-	task :test => :environment do
+	task :weather => :environment do
 		require 'nokogiri'
 		require 'open-uri'
 
-		Game.where(:year => "2016", :month => "03", :day => "18").each do |game|
+		year, month, day = Time.now.year, Time.now.month, Time.now.day
+
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+			game.update_weather_forecast(true)
 			game.update_weather
 		end
 
