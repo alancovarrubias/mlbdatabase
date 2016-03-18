@@ -7,7 +7,7 @@
 	</head>
 
 	<body>
-		<%= image_tag("#{@home.id}.png", :height => '400', :width => '800', :align => 'right') %>
+		<%= image_tag("#{@home_team.id}.png", :height => '400', :width => '800', :align => 'right') %>
 	</br>
 
 		<h2><%= @away_team.name %> <i><%= @game.away_money_line + ' ' + @game.away_total %> </i></h2>
@@ -40,13 +40,13 @@
 
 	<h2><%= "Gametime: " + @game.time + ' Local Time' %></h2>
 
-	<% if !@tomorrow_bool %>
+	<% unless @tomorrow_bool %>
 
 		<h3><%= "Umpire    : " + @game.ump %></h3>
 		
 	<% end %>
 
-		<%= render(:partial => "weather")%>
+		<%= render(:partial => "weather_forecast")%>
 		<%= render(:partial => "weather")%>
 
 

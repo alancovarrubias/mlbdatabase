@@ -12,8 +12,9 @@ group :production do
 	gem 'pg'
 end
 group :development do
-	gem 'mysql2'
+	gem 'mysql2', '~> 0.3.13'
 end
+
 gem 'bootstrap-sass', '3.3.0.1'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
@@ -36,6 +37,7 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 gem 'spring',        group: :development
 
+gem 'rake', '10.4.2'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
