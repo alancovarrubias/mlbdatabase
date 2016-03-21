@@ -78,7 +78,7 @@
 			<%= render(:partial => "righthitterheader") %>
 		<% end %>
 
-		<% @away_hitters.each do |hitter| %>
+		<% @away_starting_hitters.each do |hitter| %>
 			<% if @away_left %>
 				<%= render(:partial => "lefthitter", :locals => {:hitter => hitter}) %>
 			<% else %>
@@ -100,11 +100,49 @@
 			<%= render(:partial => "righthitterheader") %>
 		<% end %>
 
-		<% @home_hitters.each do |hitter| %>
+		<% @home_starting_hitters.each do |hitter| %>
 			<% if @home_left %>
 				<%= render(:partial => "lefthitter", :locals => {:hitter => hitter}) %>
 			<% else %>
 				<%= render(:partial => "righthitter", :locals => {:hitter => hitter}) %>
+			<% end %>
+		<% end %>
+
+		<% if @today_bool %>
+			<tr>
+				<th colspan="28"><%= @away_team.name + " Bench" %></th>
+			</tr>
+			<% if @away_left %>
+				<%= render(:partial => "lefthitterheader") %>
+			<% else %>
+				<%= render(:partial => "righthitterheader") %>
+			<% end %>
+
+			<% @away_bench_hitters.each do |hitter| %>
+				<% if @away_left %>
+					<%= render(:partial => "lefthitter", :locals => {:hitter => hitter}) %>
+				<% else %>
+					<%= render(:partial => "righthitter", :locals => {:hitter => hitter}) %>
+				<% end %>
+			<% end %>
+		<% end %>
+
+		<% if @today_bool %>
+			<tr>
+				<th colspan="28"><%= @home_team.name + " Bench" %></th>
+			</tr>
+			<% if @home_left %>
+				<%= render(:partial => "lefthitterheader") %>
+			<% else %>
+				<%= render(:partial => "righthitterheader") %>
+			<% end %>
+
+			<% @home_bench_hitters.each do |hitter| %>
+				<% if @home_left %>
+					<%= render(:partial => "lefthitter", :locals => {:hitter => hitter}) %>
+				<% else %>
+					<%= render(:partial => "righthitter", :locals => {:hitter => hitter}) %>
+				<% end %>
 			<% end %>
 		<% end %>
 

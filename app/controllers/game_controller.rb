@@ -29,7 +29,7 @@ class GameController < ApplicationController
 			@home_score << inning.home
 		end
 
-		today_bool = false
+		@today_bool = false
 		@tomorrow_bool = false
 
 
@@ -40,7 +40,7 @@ class GameController < ApplicationController
 		day = Time.now.day.to_s
 
 		if year == params[:year] && month == params[:month] && day == params[:day]
-			today_bool = true
+			@today_bool = true
 		end
 
 
@@ -95,13 +95,13 @@ class GameController < ApplicationController
 
 		unless @tomorrow_bool
 
-			@away_hitters = Hitter.where(:game_id => @game.id, :team_id => @away_team.id, :starter => true).order("lineup")
-			@home_hitters = Hitter.where(:game_id => @game.id, :team_id => @home_team.id, :starter => true).order("lineup")
+			@away_starting_hitters = Hitter.where(:game_id => @game.id, :team_id => @away_team.id, :starter => true).order("lineup")
+			@home_starting_hitters = Hitter.where(:game_id => @game.id, :team_id => @home_team.id, :starter => true).order("lineup")
 
 		else
 
-			@away_hitters = Array.new
-			@home_hitters = Array.new
+			@away_starting_hitters = Array.new
+			@home_starting_hitters = Array.new
 
 		end
 
@@ -109,20 +109,20 @@ class GameController < ApplicationController
 		@away_projected = false
 		@home_projected = false
 
-		if today_bool || @tomorrow_bool
+		if @today_bool || @tomorrow_bool
 
-			if @away_hitters.size <= 1
-				@away_hitters = find_projected_lineup(@game, false, @away_pitchers, @home_pitchers)
-				unless @away_hitters.empty?
-					@away_hitters = get_current_stats(@away_hitters)
+			if @away_starting_hitters.size <= 1
+				@away_starting_hitters = find_projected_lineup(@game, false, @away_pitchers, @home_pitchers)
+				unless @away_starting_hitters.empty?
+					@away_starting_hitters = get_current_stats(@away_starting_hitters)
 					@away_projected = true
 				end
 			end
 
-			if @home_hitters.size <= 1
-				@home_hitters = find_projected_lineup(@game, true, @away_pitchers, @home_pitchers)
-				unless @home_hitters.empty?
-					@home_hitters = get_current_stats(@home_hitters)
+			if @home_starting_hitters.size <= 1
+				@home_starting_hitters = find_projected_lineup(@game, true, @away_pitchers, @home_pitchers)
+				unless @home_starting_hitters.empty?
+					@home_starting_hitters = get_current_stats(@home_starting_hitters)
 					@home_projected = true
 				end
 			end
@@ -130,8 +130,8 @@ class GameController < ApplicationController
 
 		# calculate the number of hitters facing the pitcher with the same handedness
 		@away_pitcher_same = @away_pitcher_diff = 0
-		if @away_pitcher && @home_hitters.size == 9
-			@home_hitters.each do |hitter|
+		if @away_pitcher && @home_starting_hitters.size == 9
+			@home_starting_hitters.each do |hitter|
 				if hitter.bathand == @away_pitcher.throwhand
 					@away_same += 1
 				end
@@ -140,8 +140,8 @@ class GameController < ApplicationController
 		end
 
 		@home_pitcher_same = @home_pitcher_diff = 0
-		if @home_pitcher && @away_hitters.size == 9
-			@away_hitters.each do |hitter|
+		if @home_pitcher && @away_starting_hitters.size == 9
+			@away_starting_hitters.each do |hitter|
 				if hitter.bathand == @home_pitcher.throwhand
 					@home_same += 1
 				end
@@ -150,16 +150,18 @@ class GameController < ApplicationController
 		end
 
 		# Add the stats of each lineup and add a total column to the array
-
-		unless @away_hitters.empty?
-			away_total = add_total_stats(@away_hitters)
-			@away_hitters << away_total
+		unless @away_starting_hitters.empty?
+			away_total = add_total_stats(@away_starting_hitters)
+			@away_starting_hitters << away_total
 		end
 
-		unless @home_hitters.empty?
-			home_total = add_total_stats(@home_hitters)
-			@home_hitters << home_total
+		unless @home_starting_hitters.empty?
+			home_total = add_total_stats(@home_starting_hitters)
+			@home_starting_hitters << home_total
 		end
+
+		@away_bench_hitters = Hitter.where(:game_id => nil, :team_id => @away_team.id, :starter => false)
+		@home_bench_hitters = Hitter.where(:game_id => nil, :team_id => @home_team.id, :starter => false)
 		
 
 	end
