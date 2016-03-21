@@ -162,9 +162,6 @@ class GameController < ApplicationController
 
 		@away_bench_hitters = Hitter.where(:game_id => nil, :team_id => @away_team.id, :starter => false)
 		@home_bench_hitters = Hitter.where(:game_id => nil, :team_id => @home_team.id, :starter => false)
-
-		@away_bench_hitters.order("AB_L DESC")
-		@home_bench_hitters.order("AB_L DESC")
 		
 
 	end
