@@ -6,7 +6,9 @@ namespace :setup do
 	task :delete => :environment do
 		include Matchup
 		hour, day, month, year = Matchup.find_date(Time.now)
-		puts Game.where(:year => year, :month => month, :day => day).size
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+			game.pitchers.where(:bullpen => true).destroy_all
+		end
 	end
 
 	task :create => [:create_teams, :create_players] do
