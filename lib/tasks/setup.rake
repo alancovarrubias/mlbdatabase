@@ -3,13 +3,19 @@ namespace :setup do
 	require 'nokogiri'
 	require 'open-uri'
 
+	task :delete => :environment do
+		include Matchup
+		hour, day, month, year = Matchup.find_date(Time.now)
+		puts Game.where(:year => year, :month => month, :day => day).size
+	end
+
 	task :create => [:create_teams, :create_players] do
 	end
 
-	task :daily => [:create_players, :fangraphs, :update_players, :bullpen, :boxscores, :innings, :closingline] do
+	task :daily => [:create_players, :fangraphs, :update_players, :boxscores, :innings, :closingline] do
 	end
 
-	task :hourly => [:update_weather, :matchups, :ump, :tomorrow] do
+	task :hourly => [:update_weather, :bullpen, :matchups, :ump, :tomorrow] do
 	end
 
 	task :create_teams => :environment do
@@ -109,12 +115,13 @@ namespace :setup do
 
 	task :bullpen => :environment do
 		include Matchup
-
-		url = "http://www.baseballpress.com/bullpenusage"
-		doc = Nokogiri::HTML(open(url))
-
-		Matchup.set_bullpen_false
-		Matchup.bullpen(doc)
+		hour, day, month, year = Mathchup.find_date(Time.now)
+		if hour > 6 && hour < 23 && hour%2 == 0 
+			url = "http://www.baseballpress.com/bullpenusage"
+			doc = Nokogiri::HTML(open(url))
+			Matchup.set_bullpen_false
+			Matchup.bullpen(doc)
+		end
 	end
 
 
