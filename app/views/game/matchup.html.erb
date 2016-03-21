@@ -56,12 +56,12 @@
 		</tr>
 		<%= render(:partial => "pitcherheader") %>
 
-		<% if @away_pitchers != nil %>
-			<%= render(:partial => "pitcher", :locals => {:pitcher => @away_pitchers}) %>
+		<% if @away_pitcher %>
+			<%= render(:partial => "pitcher", :locals => {:pitcher => @away_pitcher}) %>
 		<% end %>
 
-		<% if @home_pitchers != nil %>
-			<%= render(:partial => "pitcher", :locals => {:pitcher => @home_pitchers}) %>
+		<% if @home_pitcher %>
+			<%= render(:partial => "pitcher", :locals => {:pitcher => @home_pitcher}) %>
 		<% end %>
 
 		<tr>
@@ -108,7 +108,7 @@
 			<% end %>
 		<% end %>
 
-		<% if !@tomorrow_bool %>
+		<% unless @tomorrow_bool %>
 			<table>
 				<tr>
 					<th colspan="41"><%= @away_team.name + " Bullpen"%></th>

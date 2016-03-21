@@ -15,13 +15,13 @@ class ApplicationController < ActionController::Base
 		end
 	end
 
-	def getCurrentStats(lineup)
+	def get_current_stats(lineup)
 
 		current_lineup = Array.new
 
-		nil_hitters = Hitter.where(:game_id => nil)
+		proto_hitters = Hitter.where(:game_id => nil)
 		lineup.each_with_index do |hitter, index|
-			current_hitter = nil_hitters.where(:alias => hitter.alias).first
+			current_hitter = proto_hitters.where(:alias => hitter.alias).first
 			if hitter.team.id == current_hitter.team.id
 				current_hitter.update_attributes(:lineup => index+1)
 				current_lineup << current_hitter
@@ -32,16 +32,16 @@ class ApplicationController < ActionController::Base
 
 	end
 
-
-
-
-	def findProjectedLineup(today_game, home, away_pitcher, home_pitcher)
+	def find_projected_lineup(today_game, home, away_pitcher, home_pitcher)
+		puts today_game.url
 
 		home_team = today_game.home_team
 		away_team = today_game.away_team
 
+		# Check to see if the team is home or away and grab the previous games that team has played
+
 		if home
-			if away_pitcher == nil
+			unless away_pitcher
 				return Array.new
 			end
 			throwhand = away_pitcher.throwhand
@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
 			team = home_team
 			games = Game.where("(home_team_id = #{home_team.id} OR away_team_id = #{home_team.id}) AND id < #{today_game.id}").order("id DESC")
 		else
-			if home_pitcher == nil
+			unless home_pitcher
 				return Array.new
 			end
 			throwhand = home_pitcher.throwhand
@@ -76,7 +76,7 @@ class ApplicationController < ActionController::Base
 
 			if opp_pitcher.throwhand == throwhand
 				array = game.hitters.where(:team_id => team.id)
-				if pitcher != nil
+				if pitcher
 					hitter = Hitter.find_by_name(pitcher.name)
 					if home_team.league == 'NL'
 						array = array[0...-1]
@@ -89,7 +89,7 @@ class ApplicationController < ActionController::Base
 		end
 	end
 
-	def addTotalStats(hitters)
+	def add_total_stats(hitters)
 		total = Hitter.new(:name => 'Total')
 		sb_L = wOBA_L = obp_L = slg_L = ab_L = bb_L = so_L = ld_L = wRC_L = sb_R = wOBA_R = obp_R = slg_R = ab_R = bb_R = so_R = ld_R = wRC_R = 0
 		sb_14 = wOBA_14 = obp_14 = slg_14 = ab_14 = bb_14 = so_14 = ld_14 = wRC_14 = 0

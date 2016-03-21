@@ -5,7 +5,7 @@
 <% else %>
 <tbody>
 	<tr>
-		<% if hitter.lineup != 0%>
+		<% unless hitter.lineup == 0 %>
 			<td><%= hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.bathand + ")"%></td>
 		<% else %>
 			<td><%= hitter.name + " (" + hitter.bathand + ")"%></td>

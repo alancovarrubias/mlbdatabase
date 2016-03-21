@@ -56,6 +56,8 @@ class Team < ActiveRecord::Base
 		 	when 4
 		 		if text == "Pitcher"
 		 			is_pitcher = true
+		 		else
+		 			is_pitcher = false
 		 		end
 		 	when 8
 		 		bathand = text
@@ -95,12 +97,11 @@ class Team < ActiveRecord::Base
 				name = get_name(text)
 				identifier = get_alias(stat)
 				if hitter = proto_hitters.find_by_name(name)
-					if hitter.alias == ""
+					unless identifier == ""
 						hitter.update_attributes(:alias => identifier)
 					end
 				else
-					Hitter.create(:game_id => nil, :name => name, :alias => identifier)
-					puts 'Hitter ' + name + ' created'
+					puts 'Hitter ' + name + ' not found'
 				end
 			end
 		end
@@ -111,12 +112,11 @@ class Team < ActiveRecord::Base
 				name = get_name(text)
 				identifier = get_alias(stat)
 				if pitcher = proto_pitchers.find_by_name(name)
-					if pitcher.alias == nil
+					unless identifier == ""
 						pitcher.update_attributes(:alias => identifier)
 					end
 				else
-					Pitcher.create(:game_id => nil, :name => name, :alias => identifier)
-					puts 'Pitcher ' + name + ' created'
+					puts 'Pitcher ' + name + ' not found'
 				end
 			end
 		end
@@ -137,7 +137,6 @@ class Team < ActiveRecord::Base
 
 		ab = sb = bb = so = slg = obp = wOBA = wRC = ld = hitter = name = nil
 		urls.each_with_index do |url, url_index|
-			puts url
 			doc = Nokogiri::HTML(open(url))
 			doc.css(".grid_line_regular").each_with_index do |stat, index|
 				text = stat.text
@@ -195,7 +194,6 @@ class Team < ActiveRecord::Base
 		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,118&season=#{year-1}&month=0&season1=#{year-1}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
 		fip = name = pitcher = nil
 		urls.each_with_index do |url, url_index|
-			puts url
 			doc = Nokogiri::HTML(open(url))
 			doc.css(".grid_line_regular").each_with_index do |stat, index|
 				text = stat.text
@@ -233,7 +231,6 @@ class Team < ActiveRecord::Base
 		pitcher = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = gb = name = nil
 		urls.each_with_index do |url, url_index|
 			doc = Nokogiri::HTML(open(url))
-			puts url
 			doc.css(".grid_line_regular").each_with_index do |stat, index|
 				text = stat.text
 				case index%14
@@ -289,7 +286,6 @@ class Team < ActiveRecord::Base
 
 		pitcher = name = fb = xfip = kbb = wOBA = ld = whip = ip = so = bb = gb = nil
 		urls.each_with_index do |url, url_index|
-			puts url
 			doc = Nokogiri::HTML(open(url))
 			doc.css(".grid_line_regular").each_with_index do |stat, index|
 				text = stat.text
@@ -370,7 +366,54 @@ class Team < ActiveRecord::Base
 				end
 			end
 		end
+	end
 
+
+	def fangraphs
+		def get_fangraph_id(stat)
+			href = stat.child['href']
+			first = href.index('=')+1
+			last = href.index('&')
+			return href[first...last].to_i
+		end
+
+		def update_player(proto_players, name, fangraph_id)
+			if player = proto_players.find_by_name(name.to_s)
+				player.update_attributes(:fangraph_id => fangraph_id)
+			elsif player = proto_players.find_by_name(@@nicknames[name])
+				player.update_attributes(:fangraph_id => fangraph_id)
+			else
+				puts name + ' not found'
+				puts fangraph_id.to_s + ' id'
+			end
+
+		end
+		proto_hitters = Hitter.where(:game_id => nil)
+		proto_pitchers = Pitcher.where(:game_id => nil)
+		url = "http://www.fangraphs.com/depthcharts.aspx?position=ALL&teamid=#{self.fangraph_id}"
+		doc = Nokogiri::HTML(open(url))
+		doc.css(".depth_chart:nth-child(58) td").each_with_index do |stat, index|
+			case index%10
+			when 0
+				name = stat.child.child.to_s
+				unless name.size == 0
+					fangraph_id = get_fangraph_id(stat)
+					update_player(proto_hitters, name, fangraph_id)
+				end
+			end
+		end
+
+		doc.css(".depth_chart:nth-child(76) td").each_with_index do |stat, index|
+			case index%10
+			when 0
+				name = stat.child.child.to_s
+				unless name.size == 0
+					fangraph_id = get_fangraph_id(stat)
+					update_player(proto_hitters, name, fangraph_id)
+					update_player(proto_pitchers, name, fangraph_id)
+				end
+			end
+		end
 	end
 
 
@@ -382,7 +425,7 @@ class Team < ActiveRecord::Base
 
 	def get_fangraph(stat)
 		href = stat.child['href']
-		if href != nil
+		unless href == nil
 			first = href.index('=')+1
 			last = href.index('&')
 			return href[first...last]

@@ -115,6 +115,7 @@ class Game < ActiveRecord::Base
 		size = doc.css("#obsTable th").size
 		hour = amorpm = temp = humidity = pressure = dir = speed = precipitation = nil
 		one = two = three = false
+		# Iterate through all the rows and find the correct time and update the weather
 		doc.css("#obsTable td").each_with_index do |stat, index|
 			case index%size
 			when 0
@@ -151,9 +152,6 @@ class Game < ActiveRecord::Base
 			end
 		end
 	end
-
-
-
 
 	def url
 		return self.home_team.game_abbr + self.year + self.month + self.day + self.num

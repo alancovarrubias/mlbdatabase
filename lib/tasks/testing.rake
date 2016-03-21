@@ -1,20 +1,5 @@
 namespace :testing do
 
-	# def findDate(today)
-	# 	year = today.year.to_s
-	# 	month = today.month.to_s
-	# 	day = today.day.to_s
-	# 	hour = today.hour
-
-	# 	if month.size == 1
-	# 		month = '0' + month
-	# 	end
-	# 	if day.size == 1
-	# 		day = '0' + day
-	# 	end
-	# 	return hour, day, month, year
-	# end
-
 	task :create => [:create_teams, :create_players] do
 	end
 
@@ -78,8 +63,6 @@ namespace :testing do
 	end
 
 	task :weather => :environment do
-		require 'nokogiri'
-		require 'open-uri'
 
 		year, month, day = Time.now.year, Time.now.month, Time.now.day
 
@@ -87,16 +70,18 @@ namespace :testing do
 			game.update_weather_forecast(true)
 			game.update_weather
 		end
+	end
 
-		# url = "http://www.wunderground.com/history/airport/KFUL/2016/3/18/DailyHistory.html?req_city=Anaheim&req_state=CA&req_statename=California&reqdb.zip=92801&reqdb.magic=1&reqdb.wmo=99999"
-		# doc = Nokogiri::HTML(open(url, "Accept-Encoding" => "plain"))
-		# doc.css("#obsTable td").each_with_index do |stat, index|
-		# 	case index%12
-		# 	when 0
-		# 		puts stat.text
-		# 	end
-		# end
+	task :fangraphs => :environment do
+		Team.all.each do |team|
+			team.fangraphs
+		end
+	end
 
+	task :test => :environment do
+		include Matchup
+		hour, day, month, year = Matchup.find_date(Time.now.tomorrow)
+		puts hour
 	end
 
 
