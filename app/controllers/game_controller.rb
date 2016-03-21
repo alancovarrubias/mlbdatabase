@@ -160,8 +160,8 @@ class GameController < ApplicationController
 			@home_starting_hitters << home_total
 		end
 
-		@away_bench_hitters = Hitter.where(:game_id => nil, :team_id => @away_team.id, :starter => false).order("AB")
-		@home_bench_hitters = Hitter.where(:game_id => nil, :team_id => @home_team.id, :starter => false).order("AB")
+		@away_bench_hitters = Hitter.where(:game_id => nil, :team_id => @away_team.id, :starter => false)
+		@home_bench_hitters = Hitter.where(:game_id => nil, :team_id => @home_team.id, :starter => false)
 		
 
 	end
