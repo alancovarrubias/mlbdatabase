@@ -61,8 +61,8 @@ class GameController < ApplicationController
 		else
 			@away_pitcher = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :starter => true).first
 			@home_pitcher = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :starter => true).first
-			@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :bullpen => true)
-			@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :bullpen => true)
+			@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :bullpen => true).order("one").order("two DESC").order("three DESC")
+			@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :bullpen => true).order("one").order("two DESC").order("three DESC")
 		end
 
 		# Set the left variable depending on whether the opposing pitcher is a lefty
@@ -126,7 +126,27 @@ class GameController < ApplicationController
 					@home_projected = true
 				end
 			end
+		end
 
+		# calculate the number of hitters facing the pitcher with the same handedness
+		@away_pitcher_same = @away_pitcher_diff = 0
+		if @away_pitcher && @home_hitters.size == 9
+			@home_hitters.each do |hitter|
+				if hitter.bathand == @away_pitcher.throwhand
+					@away_same += 1
+				end
+			end
+			@away_pitcher_diff = 9 - @away_pitcher_same
+		end
+
+		@home_pitcher_same = @home_pitcher_diff = 0
+		if @home_pitcher && @away_hitters.size == 9
+			@away_hitters.each do |hitter|
+				if hitter.bathand == @home_pitcher.throwhand
+					@home_same += 1
+				end
+			end
+			@home_pitcher_diff = 9 - @home_pitcher_same
 		end
 
 		# Add the stats of each lineup and add a total column to the array
