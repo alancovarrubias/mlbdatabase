@@ -133,7 +133,7 @@ class GameController < ApplicationController
 		if @away_pitcher && @home_starting_hitters.size == 9
 			@home_starting_hitters.each do |hitter|
 				if hitter.bathand == @away_pitcher.throwhand
-					@away_same += 1
+					@away_pitcher_same += 1
 				end
 			end
 			@away_pitcher_diff = 9 - @away_pitcher_same
@@ -143,7 +143,7 @@ class GameController < ApplicationController
 		if @home_pitcher && @away_starting_hitters.size == 9
 			@away_starting_hitters.each do |hitter|
 				if hitter.bathand == @home_pitcher.throwhand
-					@home_same += 1
+					@home_pitcher_same += 1
 				end
 			end
 			@home_pitcher_diff = 9 - @home_pitcher_same
@@ -160,8 +160,8 @@ class GameController < ApplicationController
 			@home_starting_hitters << home_total
 		end
 
-		@away_bench_hitters = Array.new
-		@home_bench_hitters = Array.new
+		@away_bench_hitters = Hitter.where(:game_id => nil, :team_id => @away_team.id, :starter => false).order("AB_L")
+		@home_bench_hitters = Hitter.where(:game_id => nil, :team_id => @home_team.id, :starter => false).order("AB_L")
 		
 
 	end
