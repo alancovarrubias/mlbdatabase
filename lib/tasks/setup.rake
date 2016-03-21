@@ -81,7 +81,7 @@ namespace :setup do
 		Matchup.set_hitters(doc, proto_hitters)
 		Matchup.match_starters_to_games(doc, todays_games, proto_pitchers, proto_hitters)
 
-		if (hour > 10)
+		if hour > 6 && hour < 23
 			Matchup.create_bullpen_pitchers(todays_games, proto_pitchers, proto_hitters)
 		end
 		Matchup.remove_excess_starters(todays_games, proto_pitchers, proto_hitters)
@@ -117,8 +117,8 @@ namespace :setup do
 
 	task :bullpen => :environment do
 		include Matchup
-		hour, day, month, year = Mathchup.find_date(Time.now)
-		if hour > 6 && hour < 23 && hour%2 == 0 
+		hour, day, month, year = Matchup.find_date(Time.now)
+		if hour > 6 && hour < 23
 			url = "http://www.baseballpress.com/bullpenusage"
 			doc = Nokogiri::HTML(open(url))
 			Matchup.set_bullpen_false
