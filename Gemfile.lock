@@ -66,7 +66,6 @@ GEM
     mini_portile2 (2.0.0)
     minitest (5.8.4)
     multi_json (1.11.2)
-    mysql2 (0.3.20)
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
     nokogiri (1.6.7.2)
@@ -138,7 +137,6 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   mechanize (~> 2.6.0)
-  mysql2 (~> 0.3.13)
   pg
   rails (= 4.1.6)
   rake (= 10.4.2)

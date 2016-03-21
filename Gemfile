@@ -8,12 +8,8 @@ gem 'rails', '4.1.6'
 # 	gem 'pg'
 # end
 
-group :production do
-	gem 'pg'
-end
-group :development do
-	gem 'mysql2', '~> 0.3.13'
-end
+gem 'pg'
+
 
 gem 'bootstrap-sass', '3.3.0.1'
 # Use SCSS for stylesheets
