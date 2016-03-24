@@ -63,6 +63,7 @@ namespace :setup do
 		include Matchup
 		# Today's current lineup from baseballpress
 		url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
+		puts url
 		doc = Nokogiri::HTML(open(url))
 		hour, day, month, year = Matchup.find_date(Time.now)
 		todays_games = Game.where(:year => year, :month => month, :day => day)
