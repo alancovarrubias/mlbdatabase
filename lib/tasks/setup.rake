@@ -349,8 +349,8 @@ namespace :setup do
 	task :closingline => :environment do
 		require 'nokogiri'
 		require 'open-uri'
-
-		hour, day, month, year = find_date(Time.now)
+		include Matchup
+		hour, day, month, year = Matchup.find_date(Time.now)
 		if hour > 6 && hour < 22
 			today_games = Game.where(:year => year, :month => month, :day => day)
 			size = today_games.size
