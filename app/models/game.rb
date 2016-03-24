@@ -11,6 +11,7 @@ class Game < ActiveRecord::Base
 	has_many :hitter_box_scores
 
 	def update_weather_forecast(today)
+		require 'open_uri_redirections'
 
 		def convert_to_fahr(celsius)
 			symbol = celsius[-1]
@@ -45,7 +46,12 @@ class Game < ActiveRecord::Base
 		end
 		url = @@yahoo_urls[home_team.id-1]
 		puts url
-		doc = Nokogiri::HTML(open(url))
+		begin
+			doc = Nokogiri::HTML(open(url, :allow_redirections => :safe))
+		rescue RuntimeError => e
+			puts e
+			return
+		end
 		pressure = nil
 		doc.css(".second").each_with_index do |weather, index|
 			if index == 2

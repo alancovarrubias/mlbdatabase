@@ -11,6 +11,8 @@ gem 'rails', '4.1.6'
 gem 'pg'
 
 
+gem 'open_uri_redirections'
+
 gem 'bootstrap-sass', '3.3.0.1'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'

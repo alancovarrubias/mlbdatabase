@@ -71,6 +71,7 @@ GEM
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     ntlm-http (0.1.1)
+    open_uri_redirections (0.2.1)
     pg (0.18.4)
     rack (1.5.5)
     rack-test (0.6.3)
@@ -137,6 +138,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   mechanize (~> 2.6.0)
+  open_uri_redirections
   pg
   rails (= 4.1.6)
   rake (= 10.4.2)
