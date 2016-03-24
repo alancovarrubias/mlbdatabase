@@ -438,8 +438,9 @@ namespace :setup do
 	end
 
 	task :find_missing => :environment do
+		include Matchup
 
-		hour, day, month, year = find_date(Time.now)
+		hour, day, month, year = Matchup.find_date(Time.now)
 
 		Game.where(:year => year, :month => month, :day => day).each do |game|
 			pitchers_size = game.pitchers.where(:starter => true).size
@@ -452,7 +453,7 @@ namespace :setup do
 			end
 		end
 
-		hour, day, month, year = find_date(Time.now.tomorrow)
+		hour, day, month, year = Matchup.find_date(Time.now.tomorrow)
 
 		Game.where(:year => year, :month => month, :day => day).each do |game|
 			pitchers_size = (Pitcher.where(:tomorrow_starter => true, :team_id => game.home_team.id) + Pitcher.where(:tomorrow_starter => true, :team_id => game.away_team.id)).size
