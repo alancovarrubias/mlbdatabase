@@ -3,11 +3,23 @@ namespace :setup do
 	require 'nokogiri'
 	require 'open-uri'
 
+	task :alias => :environment do
+		Pitcher.where(:alias => "").each do |pitcher|
+			nil_pitcher = Pitcher.where(:game_id => nil, :name => pitcher.name).first
+			pitcher.update_attributes(:alias => nil_pitcher.alias)
+		end
+
+		Hitter.where(:alias => "").each do |hitter|
+			nil_hitter = Hitter.where(:game_id => nil, :name => hitter.name).first
+			hitter.update_attributes(:alias => nil_hitter.alias)
+		end
+	end
+
 	task :delete => :environment do
-		include Matchup
-		hour, day, month, year = Matchup.find_date(Time.now)
-		Hitter.where(:game_id => nil).each do |hitter|
-			hitter.update_attributes(:lineup => 0)
+		Game.where(:year => "2016", :month => "03", :day => "24").each do |game|
+			game.pitchers.destroy_all
+			game.hitters.destroy_all
+			game.destroy
 		end
 	end
 

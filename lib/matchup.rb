@@ -44,6 +44,14 @@ module Matchup
 		return hour, day, month, year
 	end
 
+	def self.is_preseason?(month, day)
+		if month < 4 || (month == 4 && day < 3)
+			true
+		else
+			false
+		end
+	end
+
 	def self.populate_arrays(doc)
 		home = Array.new
 		away = Array.new
@@ -66,20 +74,27 @@ module Matchup
 
 	def self.create_games(todays_games, gametime, home, away, duplicates, time)
 		hour, day, month, year = self.find_date(time)
+		is_preseason = self.is_preseason?(month.to_i, day.to_i)
 		# iterate through each home team and create games that have not been created yet
 		(0...gametime.size).each{ |i|
 			games = todays_games.where(:home_team_id => home[i].id, :away_team_id => away[i].id)
-			# Create games for each game and check for double headers
-			if games.size == 1 && duplicates.include?(home[i])
-				game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '2')
-			elsif games.size == 0 && duplicates.include?(home[i])
-				game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '1')
-			elsif games.size == 0
-				game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '0')
+			if is_preseason
+				if games.empty?
+					game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '0')
+				end
+			else
+				# Create games for each game and check for double headers
+				if games.size == 1 && duplicates.include?(home[i])
+					game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '2')
+				elsif games.size == 0 && duplicates.include?(home[i])
+					game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '1')
+				elsif games.size == 0
+					game = Game.create(:year => year, :month => month, :day => day, :home_team_id => home[i].id, :away_team_id => away[i].id, :num => '0')
+				end
 			end
 			# Update the local time for each game
-			unless game == nil
-				time = Matchup.convert_time(game, gametime[i])
+			if game
+				time = self.convert_time(game, gametime[i])
 				game.update_attributes(:time => time)
 				puts 'Game ' + game.url + ' created'
 			end
@@ -93,6 +108,10 @@ module Matchup
 		hitters.where(:starter => true).each do |hitter|
 			hitter.update_attributes(:starter => false)
 		end
+	end
+
+	def self.find_pitcher(proto_pitchers, identifier, fangraph_id, name)
+		proto_pitchers.find_by_alias()
 	end
 
 	def self.set_pitchers(doc, proto_pitchers)
