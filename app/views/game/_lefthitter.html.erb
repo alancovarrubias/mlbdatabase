@@ -1,0 +1,42 @@
+<% if hitter.name == 'Total' %>
+<tbody class="total">
+	<tr>
+		<td><%= hitter.name %></td>
+<% else %>
+<tbody>
+	<tr>
+		<% unless hitter.lineup == 0 %>
+			<td><%= hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.bathand + ")"%></td>
+		<% else %>
+			<td><%= hitter.name + " (" + hitter.bathand + ")"%></td>
+		<% end %>
+<% end %>
+	<td bgcolor="#7FFFD4"><%= hitter.wOBA_L %></td>
+	<td bgcolor="#7FFFD4"><%= hitter.OBP_L %></td>
+	<td bgcolor="#7FFFD4"><%= hitter.SLG_L %></td>
+	<td bgcolor="#7FFFD4"><%= hitter.AB_L %></td>
+	<td bgcolor="#7FFFD4"><%= hitter.BB_L %></td>
+	<td bgcolor="#7FFFD4"><%= hitter.SB_L %></td>
+	<td bgcolor="#7FFFD4"><%= hitter.SO_L %></td>
+	<td bgcolor="#7FFFD4"><%= hitter.LD_L %></td>
+	<td bgcolor="#EA8DFE"><%= hitter.wOBA_14%></td>
+	<td bgcolor="#EA8DFE"><%= hitter.OBP_14 %></td>
+	<td bgcolor="#EA8DFE"><%= hitter.SLG_14 %></td>
+	<td bgcolor="#EA8DFE"><%= hitter.AB_14 %></td>
+	<td bgcolor="#EA8DFE"><%= hitter.BB_14 %></td>
+	<td bgcolor="#EA8DFE"><%= hitter.SB_14 %></td>
+	<td bgcolor="#EA8DFE"><%= hitter.SO_14 %></td>
+	<td bgcolor="#EA8DFE"><%= hitter.LD_14 %></td>
+	<td bgcolor="#FFF8DC"><%= hitter.wOBA_previous_L %></td>
+	<td bgcolor="#FFF8DC"><%= hitter.OBP_previous_L %></td>
+	<td bgcolor="#FFF8DC"><%= hitter.SLG_previous_L %></td>
+	<td bgcolor="#FFF8DC"><%= hitter.AB_previous_L %></td>
+	<td bgcolor="#FFF8DC"><%= hitter.BB_previous_L %></td>
+	<td bgcolor="#FFF8DC"><%= hitter.SB_previous_L %></td>
+	<td bgcolor="#FFF8DC"><%= hitter.SO_previous_L %></td>
+	<td bgcolor="#FFF8DC"><%= hitter.LD_previous_L %></td>
+	<td bgcolor="#FF7F00"><%= hitter.wRC_L %></td>
+	<td bgcolor="#FF7F00"><%= hitter.wRC_14 %></td>
+	<td bgcolor="#FF7F00"><%= hitter.wRC_previous_L %></td>
+</tr>
+</tbody>

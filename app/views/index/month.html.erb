@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+  		<title><%= @time%> Matchups</title>
+	</head>
+	<body>
+
+		<div id="header">
+			<h2><%= params[:year] %></h2>
+		</div>
+
+		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
+		<%= link_to('Years', {:controller => 'index', :action => 'year'})%>
+
+		<div id="main">
+			<div id="content">
+				<h4>Months</h4>
+				<%= form_tag({controller: "index", action: "day"}, method: "get") do %>
+					<%= hidden_field_tag(:year, params[:year]) %>
+			 		<%= select_tag(:month, options_for_select(@months)) %>
+					<%= submit_tag("Submit") %>
+				<% end %>
+			</div>
+		</div>
+
+		<div id="footer">
+			<p id="copyright">&copy; Mike Halioua </p>
+		</div>
+
+	</body>
+</html>

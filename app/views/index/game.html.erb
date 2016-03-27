@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+  		<title><%= @time%> Matchups</title>
+	</head>
+	<body>
+
+		<div id="header">
+			<h1><%= @time %></h1>
+		</div>
+
+		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
+		<%= link_to(@month + ' ' + @year, {:controller => 'index', :action => 'day', :year => params[:year], :month => params[:month]}) %>
+
+		<div id="main">
+			<div id="content">
+				<p>
+					<u><b>Away @ Home</b></u><br/>
+					<% @games.each do |game| %>
+					<% if game.num != '0' %>
+					<% num = ' (' + game.num + ')' %>
+					<% else %>
+					<% num = '' %>
+					<% end %>
+						<%= link_to(game.away_team.name + " @ " + game.home_team.name + num, {:controller => "game", :action => "matchup", :id => game.id, :year => params[:year], :month => params[:month], :day => params[:day]}) %> <br />
+					<% end %>
+				</p>
+			</div>
+		</div>
+
+		<div id="footer">
+			<p id="copyright">&copy; Mike Halioua </p>
+		</div>
+
+	</body>
+</html>

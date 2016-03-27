@@ -1,0 +1,18 @@
+<head>
+  		<title>Teams</title>
+</head>
+
+<h1>Teams</h1>
+
+<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br></br>
+
+<% @teams.each do |team| %>
+
+	<%= link_to(team.name, {:controller => 'game', :action => 'team', :id => team.id, :left => 1})%> </br>
+
+<% end %>
+
+
+<div id="footer">
+	<p id="copyright">&copy; Mike Halioua </p>
+</div>
