@@ -93,12 +93,10 @@ namespace :setup do
 		url = "http://www.baseballpress.com/lineups/#{DateTime.now.tomorrow.to_date}"
 		puts url
 		doc = Nokogiri::HTML(open(url))
-
 		hour, day, month, year = Matchup.find_date(Time.now.tomorrow)
 		tomorrows_games = Game.where(:year => year, :month => month, :day => day)
 		home, away, gametime, duplicates = Matchup.populate_arrays(doc)
 		Matchup.create_games(tomorrows_games, gametime, home, away, duplicates, Time.now.tomorrow)
-
 		Matchup.set_tomorrow_starters_false
 		proto_pitchers = Pitcher.where(:game_id => nil)
 		Matchup.set_tomorrow_starters(doc, proto_pitchers, away, home)

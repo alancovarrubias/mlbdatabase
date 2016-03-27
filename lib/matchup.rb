@@ -102,73 +102,6 @@ module Matchup
 		end
 	end
 
-	def self.find_players(proto_players, identifier, fangraph_id, name)
-		if identifier != "" && player = proto_players.find_by_alias(identifier)
-		elsif fangraph_id != 0 && player = proto_players.find_by_fangraph_id(fangraph_id)
-		elsif player = proto_players.find_by_name(name)
-		else
-			return nil
-		end
-		player
-	end
-
-	# Find starting pitchers and set them to starting
-	def self.set_pitchers(doc, proto_pitchers, home, away)
-		doc.css(".team-name+ div").each_with_index do |player, index|
-			# Make sure the starting pitcher has been announced
-			name = player.child.child.to_s
-			if name == "TBD"
-				next
-			end
-			identifier = player.child['data-bref'].to_s
-			fangraph_text = player.child['data-razz'].to_s
-			fangraph_id = 0
-			unless fangraph_text == ''
-				fangraph_id = Matchup.get_fangraph_id(fangraph_text)
-			end
-
-			# Find what team the pitcher is pitching on
-			array_index = index/2
-			team = away[array_index] if index%2 == 0
-			team = home[array_index] if index%2 == 1
-
-			# search for each player using any available indices
-			pitcher = self.find_players(proto_pitchers, identifier, fangraph_id, name)
-			if pitcher
-				pitcher.update_attributes(:starter => true, :team_id => team.id)
-			else
-				Pitcher.create(:game_id => nil, :team_id => team.id, :starter => true, :name => name, :identifier => identifier, :fangraph_id => fangraph_id)
-			end
-
-		end
-	end
-
-	# Find starting hitters and set them to starting
-	def self.set_hitters(doc, proto_hitters)
-		team = nil
-		doc.css(".players div").each_with_index do |player, index|
-			if index%9 == 0
-				team = nil
-			end
-			text = player.text
-			lineup = text[0].to_i
-			name = player.last_element_child.child.to_s
-			identifier = player.last_element_child['data-bref'].to_s
-			fangraph_text = player.last_element_child['data-razz']
-			fangraph_id = 0
-			unless fangraph_text == ''
-				fangraph_id = Matchup.get_fangraph_id(fangraph_text)
-			end
-
-			hitter = self.find_players(proto_hitters, identifier, fangraph_id, name)
-			if hitter
-				hitter.update_attributes(:starter => true, :lineup => lineup)
-			else
-				Hitter.create(:game_id => nil, :team_id => nil, :starter => true, :lineup => lineup, :name => name, :identifier => identifier, :fangraph_id => fangraph_id)
-			end
-		end
-	end
-
 	def find_player(proto_players, identifier, fangraph_id, name)
 		if identifier.size > 0 && pitcher = proto_players.find_by_alias(identifier)
 		elsif fangraph_id && pitcher = proto_players.find_by_fangraph_id(fangraph_id)
@@ -342,102 +275,6 @@ module Matchup
 		end
 	end
 
-	def self.match_starters_to_games(doc, todays_games, proto_pitchers, proto_hitters)
-		var = team_index = 0
-		game_index = -1
-		team = nil
-		doc.css(".player-link , .team-name").each do |player|
-			name = player.child.to_s
-			var += 1
-			# Search for a team
-			if store = Team.find_by_name(name)
-				if team_index%2 == 0
-					game_index += 1
-				end
-				team = store
-				team_index += 1
-				var = 0
-				next
-			end
-
-			# Get corresponding game
-			game = todays_games[game_index]
-
-			game_pitchers = Pitcher.where(:game_id => game.id)
-			game_hitters = Hitter.where(:game_id => game.id)
-
-			case var
-			when 1
-				name = player.child.to_s
-				identifier = player['data-bref'].to_s
-				# Look for pitcher in the games.
-				unless identifier == ""
-					pitcher = game_pitchers.find_by_alias(identifier)
-				end
-				unless pitcher
-					pitcher = game_pitchers.find_by_name(name)
-				end
-
-				unless pitcher
-					unless identifier == ""
-						pitcher = proto_pitchers.find_by_alias(identifier)
-					end
-					unless pitcher
-						pitcher = proto_pitchers.find_by_name(name)
-					end
-					if pitcher
-						Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
-								:throwhand => pitcher.throwhand, :starter => true, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
-								:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
-								:KBB_L => pitcher.KBB_L, :LD_R => pitcher.LD_R, :WHIP_R => pitcher.WHIP_R, :IP_R => pitcher.IP_R,
-								:SO_R => pitcher.SO_R, :BB_R => pitcher.BB_R, :ERA_R => pitcher.ERA_R, :wOBA_R => pitcher.wOBA_R, :FB_R => pitcher.FB_R, :xFIP_R => pitcher.xFIP_R,
-								:KBB_R => pitcher.KBB_R, :GB_R => pitcher.GB_R, :GB_L => pitcher.GB_L, :LD_30 => pitcher.LD_30, :WHIP_30 => pitcher.WHIP_30, :IP_30 => pitcher.IP_30, :SO_30 => pitcher.SO_30, :BB_30 => pitcher.BB_30, 
-								:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
-								:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
-								:wOBA_previous_R => pitcher.wOBA_previous_R, :GB_previous_L => pitcher.GB_previous_L, :GB_previous_R => pitcher.GB_previous_R)
-						puts pitcher.name + ' created'
-					else
-						puts name + ' not found'
-					end
-				end
-			when 2..19
-				name = player.child.to_s
-				identifier = player['data-bref'].to_s
-				# Look for pitcher in the games.
-				unless identifier == ""
-					hitter = game_hitters.find_by_alias(identifier)
-				end
-				unless hitter
-					hitter = game_hitters.find_by_name(name)
-				end
-				unless hitter
-					unless identifier == ""
-						hitter = proto_hitters.find_by_alias(identifier)
-					end
-					unless hitter
-						hitter = proto_hitters.find_by_name(name)
-					end
-					if hitter
-						Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
-								:throwhand => hitter.throwhand, :lineup => hitter.lineup, :starter => true, :SB_L => hitter.SB_L, :wOBA_L => hitter.wOBA_L,
-								:OBP_L => hitter.OBP_L, :SLG_L => hitter.SLG_L, :AB_L => hitter.AB_L, :BB_L => hitter.BB_L, :SO_L => hitter.SO_L, :LD_L => hitter.LD_L,
-								:wRC_L => hitter.wRC_L, :SB_R => hitter.SB_R, :wOBA_R => hitter.wOBA_R, :OBP_R => hitter.OBP_R, :SLG_R => hitter.SLG_R, :AB_R => hitter.AB_R,
-								:BB_R => hitter.BB_R, :SO_R => hitter.SO_R, :LD_R => hitter.LD_R, :wRC_R => hitter.wRC_R, :SB_14 => hitter.SB_14, :wOBA_14 => hitter.wOBA_14,
-								:OBP_14 => hitter.OBP_14, :SLG_14 => hitter.SLG_14, :AB_14 => hitter.AB_14, :BB_14 => hitter.BB_14, :SO_14 => hitter.SO_14, :LD_14 => hitter.LD_14,
-								:wRC_14 => hitter.wRC_14, :SB_previous_L => hitter.SB_previous_L, :wOBA_previous_L => hitter.wOBA_previous_L, :OBP_previous_L => hitter.OBP_previous_L,
-								:SLG_previous_L => hitter.SLG_previous_L, :AB_previous_L => hitter.AB_previous_L, :BB_previous_L => hitter.BB_previous_L, :SO_previous_L => hitter.SO_previous_L,
-								:LD_previous_L => hitter.LD_previous_L, :wRC_previous_L => hitter.wRC_previous_L, :SB_previous_R => hitter.SB_previous_R, :wOBA_previous_R => hitter.wOBA_previous_R, 
-								:OBP_previous_R => hitter.OBP_previous_R, :SLG_previous_R => hitter.SLG_previous_R, :AB_previous_R => hitter.AB_previous_R, :BB_previous_R => hitter.BB_previous_R,
-								:SO_previous_R => hitter.SO_previous_R, :LD_previous_R => hitter.LD_previous_R, :wRC_previous_R => hitter.wRC_previous_R)
-						puts hitter.name + ' created'
-					else
-						puts name + ' not found'
-					end
-				end
-			end
-		end
-	end
-
 	def self.create_bullpen_pitchers(todays_games, proto_pitchers, proto_hitters) 
 		# Create bullpen pitchers and delete extra players
 		proto_bullpen_pitchers = proto_pitchers.where(:bullpen => true)
@@ -499,29 +336,21 @@ module Matchup
 	end
 
 	def self.set_tomorrow_starters(doc, proto_pitchers, away, home)
-		doc.css(".team-name+ div").each_with_index do |player, index|
-			text = player.text
-			identifier = player.child['data-bref']
-			fangraph_text = player.child['data-razz'].to_s
-			fangraph_id = 0
-			unless fangraph_text == ''
-				fangraph_id = Matchup.get_fangraph_id(fangraph_text)
+		doc.css(".team-name+ div").each_with_index do |element, index|
+			if element.text == "TBD"
+				next
 			end
-			name = text[0...-4]
-			if pitcher = proto_pitchers.find_by_fangraph_id(fangraph_id)
-				pitcher.update_attributes(:tomorrow_starter => true)
-			elsif pitcher = proto_pitchers.find_by_alias(identifier)
-				pitcher.update_attributes(:tomorrow_starter => true)
-			elsif pitcher = proto_pitchers.find_by_name(text)
-				pitcher.update_attributes(:tomorrow_starter => true)
+			if index%2 == 0
+				team = away[index/2]
 			else
-				pitcher = Pitcher.create(:name => name, :tomorrow_starter => true, :alias => identifier, :fangraph_id => fangraph_id)
-				if index%2 == 0
-					pitcher.update_attributes(:team_id => away[index/2].id)
-				else
-					pitcher.update_attributes(:team_id => home[index/2].id)
-				end
-				puts 'Pitcher ' + text + ' not found'
+				team = home[index/2]
+			end
+			identifier, fangraph_id, name, handedness = pitcher_info(element)
+			pitcher = find_player(proto_pitchers, identifier, fangraph_id, name)
+			unless pitcher
+				pitcher = Pitcher.create(:game_id => nil, :team_id => team.id, :tomorrow_starter => true, :name => name, :alias => identifier, :fangraph_id => fangraph_id, :throwhand => handedness)
+			else
+				pitcher.update_attributes(:team_id => team.id, :tomorrow_starter => true, :name => name, :alias => identifier, :fangraph_id => fangraph_id, :throwhand => handedness)
 			end
 		end
 	end
