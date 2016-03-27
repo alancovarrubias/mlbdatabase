@@ -3,20 +3,8 @@ namespace :setup do
 	require 'nokogiri'
 	require 'open-uri'
 
-	task :alias => :environment do
-		Pitcher.where(:alias => "").each do |pitcher|
-			nil_pitcher = Pitcher.where(:game_id => nil, :name => pitcher.name).first
-			pitcher.update_attributes(:alias => nil_pitcher.alias)
-		end
-
-		Hitter.where(:alias => "").each do |hitter|
-			nil_hitter = Hitter.where(:game_id => nil, :name => hitter.name).first
-			hitter.update_attributes(:alias => nil_hitter.alias)
-		end
-	end
-
 	task :delete => :environment do
-		Game.where(:year => "2016", :month => "03", :day => "24").each do |game|
+		Game.where(:year => "2016", :month => "03", :day => "26").each do |game|
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
 			game.destroy
@@ -81,18 +69,14 @@ namespace :setup do
 		todays_games = Game.where(:year => year, :month => month, :day => day)
 		proto_pitchers = Pitcher.where(:game_id => nil)
 		proto_hitters = Hitter.where(:game_id => nil)
-=begin
-	Store the times of each game and the home and away teams in arrays.
-	Find the duplicate games of each team, which will allow us to check for double headers.
-=end
 		home, away, gametime, duplicates = Matchup.populate_arrays(doc)
 		Matchup.create_games(todays_games, gametime, home, away, duplicates, Time.now)
-
 		todays_games = Game.where(:year => year, :month => month, :day => day)
 		Matchup.set_starters_false(proto_pitchers, proto_hitters)
-		Matchup.set_pitchers(doc, proto_pitchers)
-		Matchup.set_hitters(doc, proto_hitters)
-		Matchup.match_starters_to_games(doc, todays_games, proto_pitchers, proto_hitters)
+		Matchup.create_game_starters(doc, todays_games)
+		# Matchup.set_pitchers(doc, proto_pitchers, home, away)
+		# Matchup.set_hitters(doc, proto_hitters)
+		# Matchup.match_starters_to_games(doc, todays_games, proto_pitchers, proto_hitters)
 
 		if hour > 6 && hour < 23
 			Matchup.create_bullpen_pitchers(todays_games, proto_pitchers, proto_hitters)
