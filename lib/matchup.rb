@@ -216,26 +216,27 @@ module Matchup
 			when 'time'
 				game_index += 1
 				hitter_index = 0
+				next
 			when 'lineup'
 				if team_index%2 == 0
 					away_team = Team.find_by_name(element.text)
 					away_lineup = true
-					home_team = Team.find_by_name(elements[index+2].text)
 				else
 					home_team = Team.find_by_name(element.text)
 					home_lineup = true
 				end
 				team_index += 1
+				next
 			when 'no lineup'
 				if team_index%2 == 0
 					away_team = Team.find_by_name(element.text)
 					away_lineup = false
-					home_team = Team.find_by_name(elements[index+2].text)
 				else
 					home_team = Team.find_by_name(element.text)
 					home_lineup = false
 				end
 				team_index += 1
+				next
 			when 'pitcher'
 				proto_pitchers = Pitcher.where(:game_id => nil)
 				# Skip any pitchers that aren't announced, otherwise find the prototype pitcher
@@ -269,9 +270,7 @@ module Matchup
 				hitter_index += 1
 			end
 
-			if home_team && away_team
-				game = games.where(:home_team_id => home_team.id, :away_team_id => away_team.id).first
-			end
+			game = games.order("id")[game_index]
 			if pitcher
 				create_pitcher(pitcher, game)
 			end
