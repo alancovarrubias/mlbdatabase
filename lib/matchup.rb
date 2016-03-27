@@ -221,6 +221,8 @@ module Matchup
 					away_team = Team.find_by_name(element.text)
 					away_lineup = true
 					home_team = Team.find_by_name(elements[index+2].text)
+					puts away_team.name
+					puts home_team.name
 				else
 					home_team = Team.find_by_name(element.text)
 					home_lineup = true
