@@ -9,7 +9,6 @@ class GameController < ApplicationController
 		@home_team = @game.home_team
 
 		# Set the boxscores and innings of the game if information is available
-
 		hitter_box_scores = @game.hitter_box_scores
 		pitcher_box_scores = @game.pitcher_box_scores
 

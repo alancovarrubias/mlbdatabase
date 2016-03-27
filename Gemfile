@@ -8,10 +8,19 @@ gem 'rails', '4.1.6'
 # 	gem 'pg'
 # end
 
+<<<<<<< HEAD
 gem 'pg'
 
 
 gem 'open_uri_redirections'
+=======
+group :production do
+	gem 'pg'
+end
+group :development do
+	gem 'mysql2', '~> 0.3.13'
+end
+>>>>>>> e32cf0c7a2907587c6b0bed16c426c70129e8e3a
 
 gem 'bootstrap-sass', '3.3.0.1'
 # Use SCSS for stylesheets

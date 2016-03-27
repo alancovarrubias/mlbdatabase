@@ -82,7 +82,6 @@ namespace :setup do
 			Matchup.create_bullpen_pitchers(todays_games, proto_pitchers, proto_hitters)
 		end
 		Matchup.remove_excess_starters(todays_games, proto_pitchers, proto_hitters)
-
 	end
 
 
@@ -456,6 +455,5 @@ namespace :setup do
 			end
 		end
 	end
-
 
 end
