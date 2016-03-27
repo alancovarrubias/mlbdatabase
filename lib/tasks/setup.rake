@@ -4,7 +4,7 @@ namespace :setup do
 	require 'open-uri'
 
 	task :delete => :environment do
-		Game.where(:year => "2016", :month => "03", :day => "26").each do |game|
+		Game.where(:year => "2016", :month => "03", :day => "27").each do |game|
 			game.pitchers.destroy_all
 			game.hitters.destroy_all
 			game.destroy

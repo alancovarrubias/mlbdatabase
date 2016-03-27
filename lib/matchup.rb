@@ -155,7 +155,7 @@ module Matchup
 
 	def create_pitcher(pitcher, game)
 		unless game_pitcher = Pitcher.where(:game_id => game.id, :name => pitcher.name).first
-			Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
+			new_pitcher = Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
 							:throwhand => pitcher.throwhand, :starter => true, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
 							:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
 							:KBB_L => pitcher.KBB_L, :LD_R => pitcher.LD_R, :WHIP_R => pitcher.WHIP_R, :IP_R => pitcher.IP_R, :SO_R => pitcher.SO_R, :BB_R => pitcher.BB_R,
@@ -164,13 +164,13 @@ module Matchup
 							:FIP_previous => pitcher.FIP_previous, :FB_previous_L => pitcher.FB_previous_L, :xFIP_previous_L => pitcher.xFIP_previous_L, :KBB_previous_L => pitcher.KBB_previous_L,
 							:wOBA_previous_L => pitcher.wOBA_previous_L, :FB_previous_R => pitcher.FB_previous_R, :xFIP_previous_R => pitcher.xFIP_previous_R, :KBB_previous_R => pitcher.KBB_previous_R,
 							:wOBA_previous_R => pitcher.wOBA_previous_R, :GB_previous_L => pitcher.GB_previous_L, :GB_previous_R => pitcher.GB_previous_R)
-			puts pitcher.name + ' ' + pitcher.team.name
+			puts new_pitcher.name + ' ' + new_pitcher.team.name + ' ' + game.id.to_s + ' pitcher'
 		end
 	end
 
 	def create_hitter(hitter, game)
 		unless game_hitter = Hitter.where(:game_id => game.id, :name => hitter.name).first
-			Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
+			new_hitter = Hitter.create(:game_id => game.id, :team_id => hitter.team.id, :name => hitter.name, :alias => hitter.alias, :fangraph_id => hitter.fangraph_id, :bathand => hitter.bathand,
 							:throwhand => hitter.throwhand, :lineup => hitter.lineup, :starter => true, :SB_L => hitter.SB_L, :wOBA_L => hitter.wOBA_L,
 							:OBP_L => hitter.OBP_L, :SLG_L => hitter.SLG_L, :AB_L => hitter.AB_L, :BB_L => hitter.BB_L, :SO_L => hitter.SO_L, :LD_L => hitter.LD_L,
 							:wRC_L => hitter.wRC_L, :SB_R => hitter.SB_R, :wOBA_R => hitter.wOBA_R, :OBP_R => hitter.OBP_R, :SLG_R => hitter.SLG_R, :AB_R => hitter.AB_R,
@@ -181,7 +181,7 @@ module Matchup
 							:LD_previous_L => hitter.LD_previous_L, :wRC_previous_L => hitter.wRC_previous_L, :SB_previous_R => hitter.SB_previous_R, :wOBA_previous_R => hitter.wOBA_previous_R, 
 							:OBP_previous_R => hitter.OBP_previous_R, :SLG_previous_R => hitter.SLG_previous_R, :AB_previous_R => hitter.AB_previous_R, :BB_previous_R => hitter.BB_previous_R,
 							:SO_previous_R => hitter.SO_previous_R, :LD_previous_R => hitter.LD_previous_R, :wRC_previous_R => hitter.wRC_previous_R)
-			puts hitter.name + ' ' + hitter.team.name
+			puts new_hitter.name + ' ' + new_hitter.team.name + ' ' + game.id.to_s + ' hitter'
 		end
 	end
 
@@ -209,7 +209,8 @@ module Matchup
 		away_lineup = home_lineup = false
 		away_team = home_team = nil
 		team_index = pitcher_index = hitter_index = 0
-		doc.css(".players div, .team-name+ div, .team-name, .game-time").each_with_index do |element, index|
+		elements = doc.css(".players div, .team-name+ div, .team-name, .game-time")
+		elements.each_with_index do |element, index|
 			type = element_type(element)
 			case type
 			when 'time'
@@ -219,6 +220,7 @@ module Matchup
 				if team_index%2 == 0
 					away_team = Team.find_by_name(element.text)
 					away_lineup = true
+					home_team = Team.find_by_name(elements[index+2].text)
 				else
 					home_team = Team.find_by_name(element.text)
 					home_lineup = true
@@ -266,11 +268,14 @@ module Matchup
 				hitter_index += 1
 			end
 
+			if home_team && away_team
+				game = games.where(:home_team_id => home_team.id, :away_team_id => away_team.id).first
+			end
 			if pitcher
-				create_pitcher(pitcher, games[game_index])
+				create_pitcher(pitcher, game)
 			end
 			if hitter
-				create_hitter(hitter, games[game_index])
+				create_hitter(hitter, game)
 			end
 		end
 	end
