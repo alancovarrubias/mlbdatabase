@@ -37,6 +37,9 @@ class Game < ActiveRecord::Base
 		home_team = self.home_team
 		time = self.time
 		amorpm = time[-2..-1]
+		unless time.include?(":")
+			return
+		end
 		time = time[0..time.index(":")].to_i
 		if amorpm == "PM" && time != 12
 			time += 12
