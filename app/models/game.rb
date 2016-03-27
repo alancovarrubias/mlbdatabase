@@ -114,6 +114,9 @@ class Game < ActiveRecord::Base
 		# Store all the values of time for the three hours a game will most likely last
 		home_team = self.home_team
 		game_time = self.time
+		unless game_time.include?(":")
+			return
+		end
 		game_hour = game_time[0...game_time.index(":")]
 		game_amorpm = game_time[-2..-1]
 		game_next_hour, game_next_amorpm = next_hour(game_hour, game_amorpm)
