@@ -9,10 +9,6 @@ class GameController < ApplicationController
 		@home_team = @game.home_team
 
 		# Set the boxscores and innings of the game if information is available
-<<<<<<< HEAD
-=======
-
->>>>>>> 3c2734d10447e9561029a46583376717126487f1
 		hitter_box_scores = @game.hitter_box_scores
 		pitcher_box_scores = @game.pitcher_box_scores
 
@@ -64,13 +60,8 @@ class GameController < ApplicationController
 		else
 			@away_pitcher = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :starter => true).first
 			@home_pitcher = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :starter => true).first
-<<<<<<< HEAD
 			@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :bullpen => true).order("one").order("two").order("three")
 			@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :bullpen => true).order("one").order("two").order("three")
-=======
-			@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :bullpen => true).order("one").order("two DESC").order("three DESC")
-			@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :bullpen => true).order("one").order("two DESC").order("three DESC")
->>>>>>> 3c2734d10447e9561029a46583376717126487f1
 		end
 
 		# Set the left variable depending on whether the opposing pitcher is a lefty
