@@ -5,17 +5,9 @@ class Team < ActiveRecord::Base
 	has_many :pitchers
 	has_many :hitters
 
-<<<<<<< HEAD
 	def self.get_class_variable
 		p @@season_hash.size
 	end
-=======
-
-	def self.get_class_variable
-		p @@season_hash.size
-	end
-
->>>>>>> 3c2734d10447e9561029a46583376717126487f1
 	def fangraph_abbr
 		name = self.name
 		if name.include?(" ")
