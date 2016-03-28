@@ -1,3 +1,0 @@
-module Stat
-
-end

@@ -10,6 +10,10 @@ class Game < ActiveRecord::Base
 	has_many :pitcher_box_scores
 	has_many :hitter_box_scores
 
+	def self.games(time)
+		Game.where(:year => time.year.to_s, :month => "%02d" % time.month, :day => "%02d" % time.day)
+	end
+
 	def update_weather_forecast(today)
 		require 'open_uri_redirections'
 

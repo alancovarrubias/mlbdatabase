@@ -1,8 +1,8 @@
 class GameController < ApplicationController
 
+	require 'date'
+
 	def matchup
-		
-		require 'date'
 
 		@game = Game.find_by_id(params[:id])
 		@away_team = @game.away_team
@@ -89,6 +89,8 @@ class GameController < ApplicationController
 		@one = Date::DAYNAMES[day-1]
 		@two = Date::DAYNAMES[day-2]
 		@three = Date::DAYNAMES[day-3]
+		@four = Date::DAYNAMES[day-4]
+		@five = Date::DAYNAMES[day-5]
 
 		# Set the hitters variable unless this is tomorrow's game
 

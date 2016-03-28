@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160317230054) do
+ActiveRecord::Schema.define(version: 20160328182113) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -229,6 +229,8 @@ ActiveRecord::Schema.define(version: 20160317230054) do
     t.float    "GB_L",             default: 0.0
     t.float    "GB_previous_R",    default: 0.0
     t.float    "GB_previous_L",    default: 0.0
+    t.integer  "four",             default: 0
+    t.integer  "five",             default: 0
   end
 
   add_index "pitchers", ["alias"], name: "index_pitchers_on_alias", using: :btree

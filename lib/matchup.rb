@@ -1,7 +1,7 @@
 module Matchup
 
 	# Convert's Eastern Time to local time for each team
-	def self.convert_time(game, time)
+	def convert_time(game, time)
 		unless time.include?(":")
 			return ""
 		end
@@ -21,7 +21,7 @@ module Matchup
 		return hour.to_s + suffix
 	end
 
-	def self.find_date(today)
+	def find_date(today)
 		year = today.year.to_s
 		month = today.month.to_s
 		day = today.day.to_s
@@ -36,7 +36,7 @@ module Matchup
 		return hour, day, month, year
 	end
 
-	def self.populate_arrays(doc)
+	def set_game_info(doc)
 		home = Array.new
 		away = Array.new
 		gametime = Array.new
@@ -64,7 +64,7 @@ module Matchup
 		end
 	end
 
-	def self.create_games(todays_games, gametime, home, away, duplicates, time)
+	def create_games(todays_games, gametime, home, away, duplicates, time)
 		hour, day, month, year = self.find_date(time)
 		is_preseason = is_preseason?(month.to_i, day.to_i)
 		# iterate through each home team and create games that have not been created yet
@@ -86,14 +86,14 @@ module Matchup
 			end
 			# Update the local time for each game
 			if game
-				time = self.convert_time(game, gametime[i])
+				time = convert_time(game, gametime[i])
 				game.update_attributes(:time => time)
 				puts 'Game ' + game.url + ' created'
 			end
 		}
 	end
 
-	def self.set_starters_false(pitchers, hitters)
+	def set_starters_false(pitchers, hitters)
 		pitchers.where(:starter => true).each do |pitcher|
 			pitcher.update_attributes(:starter => false)
 		end
@@ -204,7 +204,7 @@ module Matchup
 	end
 
 
-	def self.create_game_starters(doc, games)
+	def create_game_starters(doc, games)
 		game_index = -1
 		away_lineup = home_lineup = false
 		away_team = home_team = nil
@@ -280,7 +280,7 @@ module Matchup
 		end
 	end
 
-	def self.create_bullpen_pitchers(todays_games, proto_pitchers, proto_hitters) 
+	def create_bullpen_pitchers(todays_games, proto_pitchers, proto_hitters) 
 		# Create bullpen pitchers and delete extra players
 		proto_bullpen_pitchers = proto_pitchers.where(:bullpen => true)
 		todays_games.each do |game|
@@ -307,7 +307,7 @@ module Matchup
 	end
 
 	# Remove any pitchers that weren't starters this iteration
-	def self.remove_excess_starters(todays_games, proto_pitchers, proto_hitters)
+	def remove_excess_starters(todays_games, proto_pitchers, proto_hitters)
 		todays_games.each do |game|
 			game_hitters = Hitter.where(:game_id => game.id)
 			game_pitchers = Pitcher.where(:game_id => game.id)
@@ -334,13 +334,13 @@ module Matchup
 		end
 	end
 
-	def self.set_tomorrow_starters_false
+	def set_tomorrow_starters_false
 		Pitcher.where(:tomorrow_starter => true, :game_id => nil).each do |pitcher|
 			pitcher.update_attributes(:tomorrow_starter => false)
 		end
 	end
 
-	def self.set_tomorrow_starters(doc, proto_pitchers, away, home)
+	def set_tomorrow_starters(doc, proto_pitchers, away, home)
 		doc.css(".team-name+ div").each_with_index do |element, index|
 			if element.text == "TBD"
 				next
@@ -360,7 +360,106 @@ module Matchup
 		end
 	end
 
-	def self.set_umpire(doc)
+	def set_matchups(time)
+		if time.day == Time.now.day
+			today = true
+			url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
+			set_starters_false
+		elsif time.day == Time.now.tomorrow.day
+			tomorrow = true
+			url = "http://www.baseballpress.com/lineups/#{DateTime.now.tomorrow.to_date}"
+			set_tomorrow_starters_false
+		else
+			return
+		end
+		doc = Nokogiri::HTML(open(url))
+		home, away, gametime, duplicates = set_game_info(doc)
+		todays_games = Game.games(Time.now)
+		create_games(todays_games, gametime, home, away, duplicates, time)
+		todays_games = Game.games(Time.now)
+	end
+
+	def set_bullpen_false
+		Pitcher.where(:bullpen => true, :game_id => nil).each do |pitcher|
+			pitcher.update_attributes(:bullpen => false)
+		end
+	end
+
+	def set_bullpen
+
+		def get_pitches(text)
+			if text == "N/G"
+				return 0
+			else
+				return text.to_i
+			end
+		end
+
+		set_bullpen_false
+		url = "http://www.baseballpress.com/bullpenusage"
+		doc = Nokogiri::HTML(open(url))
+		pitcher = nil
+		proto_pitchers = Pitcher.where(:game_id => nil)
+		var = one = two = three = 0
+		doc = Nokogiri::HTML(open(url))
+		doc.css(".league td").each do |element|
+			text = element.text
+			case var
+			when 1
+				one = get_pitches(text)
+				var += 1
+			when 2
+				two = get_pitches(text)
+				var += 1
+			when 3
+				three = get_pitches(text)
+				var = 0
+				if pitcher
+					pitcher.update_attributes(:bullpen => true, :one => one, :two => two, :three => three)
+				end
+			end
+			if element.children.size == 2
+				identifier, fangraph_id, name, handedness = pitcher_info(element)
+				pitcher = find_player(proto_pitchers, identifier, fangraph_id, name)
+				unless pitcher
+					puts 'Bullpen pitcher ' + text + ' not found'
+				end
+				var = 1
+			end
+		end
+		url = "http://www.baseballpress.com/bullpenusage/#{DateTime.now.yesterday.yesterday.yesterday.to_date}"
+		doc = Nokogiri::HTML(open(url))
+		var = four = five = 0
+		pitcher = nil
+		doc.css(".league td").each do |element|
+			text = element.text
+			# puts element
+			case var
+			when 1
+				var += 1
+			when 2
+				four = get_pitches(text)
+				var += 1
+			when 3
+				five = get_pitches(text)
+				var = 0
+				if pitcher
+					pitcher.update_attributes(:four => four, :five => five)
+					puts pitcher.name + ' ' + pitcher.one.to_s + ' ' + pitcher.two.to_s + ' ' + pitcher.three.to_s + ' ' + pitcher.four.to_s + ' ' + pitcher.five.to_s
+				end
+			end
+			if element.children.size == 2
+				identifier, fangraph_id, name, handedness = pitcher_info(element)
+				pitcher = find_player(proto_pitchers, identifier, fangraph_id, name)
+				unless pitcher
+					puts 'Bullpen pitcher ' + text + ' not found'
+				end
+				var = 1
+			end
+		end
+	end
+
+	def set_umpire(doc)
 		hour, day, month, year = Matchup.find_date(Time.now)
 		if hour > 4 && hour < 20
 			if month.size == 1
@@ -453,57 +552,6 @@ module Matchup
 				end
 			end
 		end
-	end
-
-	def self.set_bullpen_false
-		Pitcher.where(:bullpen => true, :game_id => nil).each do |pitcher|
-			pitcher.update_attributes(:bullpen => false)
-		end
-	end
-
-	def self.bullpen(doc)
-		def get_pitches(text)
-			if text == "N/G"
-				return 0
-			else
-				return text.to_i
-			end
-		end
-
-		bool = false
-		pitcher = nil
-		proto_pitchers = Pitcher.where(:game_id => nil)
-		var = one = two = three = 0
-		doc.css(".league td").each do |bullpen|
-			text = bullpen.text
-			case var
-			when 1
-				one = get_pitches(text)
-				var += 1
-			when 2
-				two = get_pitches(text)
-				var += 1
-			when 3
-				three = get_pitches(text)
-				var = 0
-				unless pitcher == nil
-					pitcher.update_attributes(:bullpen => true, :one => one, :two => two, :three => three)
-				end
-			end
-			if text.include?("(")
-				text = text[0...-4]
-				href = bullpen.child['data-bref']
-				fangraph_id = bullpen.child['data-mlb']
-				if pitcher = proto_pitchers.find_by_name(text)
-				elsif pitcher = proto_pitchers.find_by_fangraph_id(fangraph_id)
-				elsif pitcher = proto_pitchers.find_by_alias(href)
-				else
-					puts 'Bullpen pitcher ' + text + ' not found'
-					pitcher = nil
-				end
-				var = 1
-			end
-		end	
 	end
 
 end
