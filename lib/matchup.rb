@@ -284,16 +284,16 @@ module Matchup
 		# Create bullpen pitchers and delete extra players
 		proto_bullpen_pitchers = proto_pitchers.where(:bullpen => true)
 		todays_games.each do |game|
-
-			game_hitters = Hitter.where(:game_id => game.id)
+			
 			game_pitchers = Pitcher.where(:game_id => game.id)
 
 			game_bullpen_pitchers = proto_bullpen_pitchers.where(:team_id => game.home_team.id) + proto_bullpen_pitchers.where(:team_id => game.away_team.id)
 
 			game_bullpen_pitchers.each do |pitcher|
-				if game_pitchers.find_by_alias(pitcher.alias) == nil
+				unless game_pitchers.find_by_alias(pitcher.alias)
 					Pitcher.create(:game_id => game.id, :team_id => pitcher.team.id, :name => pitcher.name, :alias => pitcher.alias, :fangraph_id => pitcher.fangraph_id, :bathand => pitcher.bathand,
-						:throwhand => pitcher.throwhand, :bullpen => true, :one => pitcher.one, :two => pitcher.two, :three => pitcher.three, :FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
+						:throwhand => pitcher.throwhand, :bullpen => true, :one => pitcher.one, :two => pitcher.two, :three => pitcher.three, :four => pitcher.four, :five => pitcher.five,
+						:FIP => pitcher.FIP, :LD_L => pitcher.LD_L, :WHIP_L => pitcher.WHIP_L, :IP_L => pitcher.IP_L,
 						:SO_L => pitcher.SO_L, :BB_L => pitcher.BB_L, :ERA_L => pitcher.ERA_L, :wOBA_L => pitcher.wOBA_L, :FB_L => pitcher.FB_L, :xFIP_L => pitcher.xFIP_L,
 						:KBB_L => pitcher.KBB_L, :LD_R => pitcher.LD_R, :WHIP_R => pitcher.WHIP_R, :IP_R => pitcher.IP_R,
 						:SO_R => pitcher.SO_R, :BB_R => pitcher.BB_R, :ERA_R => pitcher.ERA_R, :wOBA_R => pitcher.wOBA_R, :FB_R => pitcher.FB_R, :xFIP_R => pitcher.xFIP_R,
