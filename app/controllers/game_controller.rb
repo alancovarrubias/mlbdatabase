@@ -60,8 +60,8 @@ class GameController < ApplicationController
 		else
 			@away_pitcher = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :starter => true).first
 			@home_pitcher = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :starter => true).first
-			@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :bullpen => true).order("one").order("two").order("three")
-			@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :bullpen => true).order("one").order("two").order("three")
+			@away_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @away_team.id, :bullpen => true).order("one").order("two").order("three").order("four").order("five")
+			@home_bullpen_pitchers = Pitcher.where(:game_id => @game.id, :team_id => @home_team.id, :bullpen => true).order("one").order("two").order("three").order("four").order("five")
 		end
 
 		# Set the left variable depending on whether the opposing pitcher is a lefty

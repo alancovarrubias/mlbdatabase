@@ -82,7 +82,9 @@ class Team < ActiveRecord::Base
 	end
 
 	def update_players
-		url = "http://www.baseball-reference.com/teams/#{self.abbr}/2015.shtml"
+		year = Time.now.year - 1
+		last_year = year - 1
+		url = "http://www.baseball-reference.com/teams/#{self.abbr}/#{year}.shtml"
 		puts url
 		doc = Nokogiri::HTML(open(url))
 
@@ -129,8 +131,6 @@ class Team < ActiveRecord::Base
 	First update the hitters, and then the pitchers.
 =end
 
-
-		year = Time.now.year
 		urls = Array.new
 		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
 		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
@@ -197,6 +197,7 @@ class Team < ActiveRecord::Base
 		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,118&season=#{year-1}&month=0&season1=#{year-1}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
 		fip = name = pitcher = nil
 		urls.each_with_index do |url, url_index|
+			puts url
 			doc = Nokogiri::HTML(open(url))
 			doc.css(".grid_line_regular").each_with_index do |stat, index|
 				text = stat.text
@@ -205,15 +206,15 @@ class Team < ActiveRecord::Base
 					name = text
 					fangraph_id = get_fangraph(stat).to_i
 					pitcher = proto_pitchers.find_by_fangraph_id(fangraph_id)
-					if pitcher == nil
+					unless pitcher
 						pitcher = proto_pitchers.find_by_name(name)
 					end
-					if pitcher == nil
+					unless pitcher
 						pitcher = proto_pitchers.find_by_name(@@nicknames[name])
 					end
 				when 3
 					fip = text.to_i
-					unless pitcher == nil
+					if pitcher
 						case url_index
 						when 0
 							pitcher.update_attributes(:team_id => self.id, :FIP => fip)
