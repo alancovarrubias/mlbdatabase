@@ -171,7 +171,7 @@ class Team < ActiveRecord::Base
 					wRC = text.to_i
 				when 11
 					ld = text[0...-2].to_f
-					unless hitter == nil
+					if hitter
 						case url_index
 						when 0
 							hitter.update_attributes(:team_id => self.id, :AB_L => ab, :SB_L => sb, :BB_L => bb, :SO_L => so, :SLG_L => slg, :OBP_L => obp, :wOBA_L => wOBA, :LD_L => ld, :wRC_L => wRC)
@@ -216,8 +216,12 @@ class Team < ActiveRecord::Base
 					if pitcher
 						case url_index
 						when 0
+							puts '2015'
+							puts fip
 							pitcher.update_attributes(:team_id => self.id, :FIP => fip)
 						when 1
+							puts '2014'
+							puts fip
 							pitcher.update_attributes(:FIP_previous => fip)
 						end
 		 			else
@@ -269,7 +273,7 @@ class Team < ActiveRecord::Base
 					woba = (text.to_f*1000).to_i
 				when 13
 					gb = text[0...-2].to_f
-					unless pitcher == nil
+					if pitcher
 						case url_index
 						when 0
 							pitcher.update_attributes(:team_id => self.id, :LD_L => ld, :WHIP_L => whip, :IP_L => ip, :SO_L => so, :BB_L => bb, :ERA_L => era, :FB_L => fb, :xFIP_L => xfip, :KBB_L => kbb, :wOBA_L => woba, :GB_L => gb)
@@ -321,7 +325,7 @@ class Team < ActiveRecord::Base
 					wOBA = (text.to_f*1000).to_i
 				when 11
 					gb = text[0...-2].to_f
-					unless pitcher == nil
+					if pitcher
 						case url_index
 						when 0
 							pitcher.update_attributes(:team_id => self.id, :FB_previous_L => fb, :xFIP_previous_L => xfip, :KBB_previous_L => kbb, :wOBA_previous_L => wOBA, :GB_previous_L => gb)
@@ -362,7 +366,7 @@ class Team < ActiveRecord::Base
 				so = text.to_i
 			when 7
 				bb = text.to_i
-				unless pitcher == nil
+				if pitcher
 					pitcher.update_attributes(:LD_30 => ld, :WHIP_30 => whip, :IP_30 => ip, :SO_30 => so, :BB_30 => bb)
 				else
 					puts name + ' not found'

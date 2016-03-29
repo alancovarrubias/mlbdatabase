@@ -95,15 +95,11 @@ class GameController < ApplicationController
 		# Set the hitters variable unless this is tomorrow's game
 
 		unless @tomorrow_bool
-
 			@away_starting_hitters = Hitter.where(:game_id => @game.id, :team_id => @away_team.id, :starter => true).order("lineup")
 			@home_starting_hitters = Hitter.where(:game_id => @game.id, :team_id => @home_team.id, :starter => true).order("lineup")
-
 		else
-
 			@away_starting_hitters = Array.new
 			@home_starting_hitters = Array.new
-
 		end
 
 		# Determine whether or not we need to project the lineup

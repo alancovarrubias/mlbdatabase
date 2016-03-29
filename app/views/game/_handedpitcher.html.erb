@@ -1,0 +1,18 @@
+<tr>
+	<td><%= pitcher.name + " (" + pitcher.throwhand + ")"%></td>
+	<td bgcolor="#DC143C"><%= same %></td>
+	<td bgcolor="#DC143C"><%= diff %></td>
+	<td colspan="5", bgcolor="#7FFFD4"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.LD_L, pitcher.LD_R) %></td>
+	<td colspan="5", bgcolor="#7FFFD4"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.WHIP_L, pitcher.WHIP_R) %></td>
+	<td colspan="5" bgcolor="#EA8DFE"></td>
+	<td colspan="3" bgcolor="#6495ED"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.FB_previous_L, pitcher.FB_previous_R) %></td>
+	<td colspan="2" bgcolor="#FF7F00"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.xFIP_previous_L, pitcher.xFIP_previous_R) %></td>
+	<td colspan="2" bgcolor="#FF7F00"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.KBB_previous_L, pitcher.KBB_previous_R) %></td>
+	<td colspan="2" bgcolor="#FF7F00"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.wOBA_previous_L, pitcher.wOBA_previous_R).to_i %></td>
+	<td colspan="3" bgcolor="#6495ED"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.FB_L, pitcher.FB_R) %></td>
+	<td colspan="2" bgcolor="#FF7F00"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.xFIP_L, pitcher.xFIP_R) %></td>
+	<td colspan="2" bgcolor="#FF7F00"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.KBB_L, pitcher.KBB_R) %></td>
+	<td colspan="2" bgcolor="#FF7F00"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.wOBA_L, pitcher.wOBA_R).to_i %></td>
+	<td colspan="2" bgcolor="#DC143C"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.GB_L, pitcher.GB_R) %></th>
+	<td colspan="2" bgcolor="#DC143C"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.GB_previous_L, pitcher.GB_previous_R) %></th>
+</tr>

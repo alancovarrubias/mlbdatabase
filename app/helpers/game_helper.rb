@@ -22,4 +22,18 @@ module GameHelper
 
 	end
 
+	def gethandedstat(handedness, same, diff, left_stat, right_stat)
+		if same + diff == 9
+			if handedness == "L"
+				((same * left_stat + diff * right_stat)/9).round(2)
+			elsif handedness == "R"
+				((same * right_stat + diff * left_stat)/9).round(2)
+			else
+				0
+			end
+		else
+			0
+		end
+	end
+
 end
