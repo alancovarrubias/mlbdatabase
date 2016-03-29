@@ -83,7 +83,6 @@ class Team < ActiveRecord::Base
 
 	def update_players
 		year = Time.now.year - 1
-		last_year = year - 1
 		url = "http://www.baseball-reference.com/teams/#{self.abbr}/#{year}.shtml"
 		puts url
 		doc = Nokogiri::HTML(open(url))
