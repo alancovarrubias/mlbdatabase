@@ -328,9 +328,9 @@ class Team < ActiveRecord::Base
 					if pitcher
 						case url_index
 						when 0
-							pitcher.update_attributes(:team_id => self.id, :FB_previous_L => fb, :xFIP_previous_L => xfip, :KBB_previous_L => kbb, :wOBA_previous_L => wOBA, :GB_previous_L => gb)
+							pitcher.update_attributes(:team_id => self.id, :IP_previous_L => ip, :FB_previous_L => fb, :xFIP_previous_L => xfip, :KBB_previous_L => kbb, :wOBA_previous_L => wOBA, :GB_previous_L => gb)
 						when 1
-							pitcher.update_attributes(:FB_previous_R => fb, :xFIP_previous_R => xfip, :KBB_previous_R => kbb, :wOBA_previous_R => wOBA, :GB_previous_R => gb)
+							pitcher.update_attributes(:IP_previous_R => ip, :FB_previous_R => fb, :xFIP_previous_R => xfip, :KBB_previous_R => kbb, :wOBA_previous_R => wOBA, :GB_previous_R => gb)
 						end
 					else
 						puts name + ' not found'

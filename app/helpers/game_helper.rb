@@ -36,4 +36,22 @@ module GameHelper
 		end
 	end
 
+	def getleft(handedness, same, diff)
+		if handedness == "L"
+			same
+		else
+			diff
+		end
+
+	end
+
+	def getright(handedness, same, diff)
+		if handedness == "R"
+			same
+		else
+			diff
+		end
+
+	end
+
 end

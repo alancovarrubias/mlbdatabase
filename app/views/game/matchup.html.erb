@@ -15,9 +15,7 @@
 		<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
 		<%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %></br></br>
 
-	<h1><%= @home_pitcher_same %></h1>
-	<h1><%= @away_pitcher_same %></h1>
-
+	<h2><%= @away_pitcher_same %></h2>
 
 	<table>
 		<tr>
