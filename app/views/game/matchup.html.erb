@@ -39,14 +39,14 @@
 
 	<h2><%= "Gametime: " + @game.time + ' Local Time' %></h2>
 
-	<% unless @tomorrow_bool %>
-
+    <% unless @tomorrow_bool %>
 		<h3><%= "Umpire    : " + @game.ump %></h3>
-		
 	<% end %>
 
-		<%= render(:partial => "weather_forecast")%>
-		<%= render(:partial => "weather")%>
+	<%= render(:partial => "weather_forecast")%>
+	<%= render(:partial => "weather")%>
+		
+
 
 
 	<table>
