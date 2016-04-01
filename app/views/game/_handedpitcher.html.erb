@@ -1,5 +1,5 @@
 <tr>
-	<td><%= pitcher.name + " (" + pitcher.throwhand + ")"%></td>
+	<td style="white-space: nowrap"><%= pitcher.name + " (" + pitcher.throwhand + ")"%></td>
 	<td bgcolor="#DC143C"><%= getleft(pitcher.throwhand, same, diff) %></td>
 	<td bgcolor="#DC143C"><%= getright(pitcher.throwhand, same, diff) %></td>
 	<td colspan="5", bgcolor="#7FFFD4"><%= gethandedstat(pitcher.throwhand, same, diff, pitcher.LD_L, pitcher.LD_R) %></td>

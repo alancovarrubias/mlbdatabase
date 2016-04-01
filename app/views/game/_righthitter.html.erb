@@ -1,14 +1,14 @@
 <% if hitter.name == 'Total' %>
 <tbody class="total">
 	<tr>
-		<td><%= hitter.name %></td>
+		<td style="white-space: nowrap"><%= hitter.name %></td>
 <% else %>
 <tbody>
 	<tr>
 		<% if hitter.lineup != 0 %>
-			<td><%= hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.bathand + ")"%></td>
+			<td style="white-space: nowrap"><%= hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.bathand + ")"%></td>
 		<% else %>
-			<td><%= hitter.name + " (" + hitter.bathand + ")"%></td>
+			<td style="white-space: nowrap"><%= hitter.name + " (" + hitter.bathand + ")"%></td>
 		<% end %>
 <% end %>
 	<td bgcolor="#7FFFD4"><%= hitter.wOBA_R %></td>

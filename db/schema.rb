@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160330041839) do
+ActiveRecord::Schema.define(version: 20160401231445) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -140,6 +140,21 @@ ActiveRecord::Schema.define(version: 20160330041839) do
     t.integer  "wRC_previous_R",  default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "FB_L",            default: 0.0
+    t.float    "FB_R",            default: 0.0
+    t.float    "FB_14",           default: 0.0
+    t.float    "FB_previous_L",   default: 0.0
+    t.float    "FB_previous_R",   default: 0.0
+    t.float    "GB_L",            default: 0.0
+    t.float    "GB_R",            default: 0.0
+    t.float    "GB_14",           default: 0.0
+    t.float    "GB_previous_L",   default: 0.0
+    t.float    "GB_previous_R",   default: 0.0
+    t.integer  "OPS_L",           default: 0
+    t.integer  "OPS_R",           default: 0
+    t.integer  "OPS_14",          default: 0
+    t.integer  "OPS_previous_L",  default: 0
+    t.integer  "OPS_previous_R",  default: 0
   end
 
   add_index "hitters", ["alias"], name: "index_hitters_on_alias", using: :btree
