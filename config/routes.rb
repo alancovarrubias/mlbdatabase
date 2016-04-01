@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+aRails.application.routes.draw do
 
   get 'admin', :to => 'index#home'
 
