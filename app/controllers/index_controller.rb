@@ -24,14 +24,14 @@ class IndexController < ApplicationController
 
 	end
 
-	def month_list
-	  if params[:year]
-	  	@months = 
-	  else
-	  end
+	# def month_list
+	#   if params[:year]
+	#   	@months = 
+	#   else
+	#   end
 
-	  respond_with(@months)
-	end
+	#   respond_with(@months)
+	# end
 
 
 	def year
