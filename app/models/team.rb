@@ -5,9 +5,6 @@ class Team < ActiveRecord::Base
 	has_many :pitchers
 	has_many :hitters
 
-	def self.get_class_variable
-		p @@season_hash.size
-	end
 	def fangraph_abbr
 		name = self.name
 		if name.include?(" ")
@@ -326,6 +323,8 @@ class Team < ActiveRecord::Base
 				when 11
 					gb = text[0...-2].to_f
 					if pitcher
+						puts pitcher.name
+						puts ip.to_s + ' 2014'
 						case url_index
 						when 0
 							pitcher.update_attributes(:team_id => self.id, :IP_previous_L => ip, :FB_previous_L => fb, :xFIP_previous_L => xfip, :KBB_previous_L => kbb, :wOBA_previous_L => wOBA, :GB_previous_L => gb)
@@ -422,14 +421,6 @@ class Team < ActiveRecord::Base
 			end
 		end
 	end
-
-	def self.get_season_hash
-		puts @@season_hash.size
-	end
-
-
-
-
 
 	private
 
