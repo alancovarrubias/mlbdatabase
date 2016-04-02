@@ -1,7 +1,24 @@
 module GameHelper
 
-	def format_time(time, plus)
+  def hitter_class(hitter)
+    if hitter.name == "Total"
+      "total"
+    else
+      "hitter"
+    end
+  end
 
+  def hitter_total_lineup(hitter)
+    if hitter.name == "Total"
+      hitter.name
+    elsif hitter.lineup == 0
+      hitter.name + " (" + hitter.bathand + ")"
+    else
+      hitter.lineup.to_s + ". " + hitter.name + " (" + hitter.bathand + ")"
+    end
+  end
+
+	def format_time(time, plus)
 		original_hour = time[0...time.index(":")].to_i
 		suffix = time[-2..-1]
 		hour = original_hour + plus
@@ -51,7 +68,6 @@ module GameHelper
 		else
 			diff
 		end
-
 	end
 
 end

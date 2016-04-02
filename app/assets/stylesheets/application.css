@@ -50,3 +50,32 @@ th
 body {
   margin-left: 1%; margin-right: 1%;
 }
+
+tbody.hitter td:nth-child(1) {
+  background-color: #f6f6f6;
+  white-space: nowrap;
+  text-align: left;
+}
+
+tbody.hitter td:nth-child(n+2):nth-child(-n+9) {
+  background-color: #7FFFD4;
+}
+
+tbody.hitter td:nth-child(n+10):nth-child(-n+17) {
+  background-color: #EA8DFE;
+}
+
+tbody.hitter td:nth-child(n+18):nth-child(-n+25) {
+  background-color: #FFF8DC;
+}
+
+tbody.hitter td:nth-child(n+26):nth-child(-n+28) {
+  background-color: #FF7F00;
+}
+
+
+
+
+
+
+

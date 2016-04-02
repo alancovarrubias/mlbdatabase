@@ -18,7 +18,7 @@ namespace :setup do
 	task :daily => [:create_players, :fangraphs, :update_players, :boxscores, :innings] do
 	end
 
-	task :hourly => [:update_weather, :bullpen, :matchups, :ump, :tomorrow, :closingline] do
+	task :hourly => [:bullpen, :matchups, :update_weather, :ump, :tomorrow, :closingline] do
 	end
 
 	task :create_teams => :environment do
@@ -54,6 +54,7 @@ namespace :setup do
 			end
 
 			hour, day, month, year = Matchup.find_date(Time.now.tomorrow)
+			
 			Game.where(:year => year, :month => month, :day => day).each do |game|
 				game.update_weather_forecast(false)
 			end
