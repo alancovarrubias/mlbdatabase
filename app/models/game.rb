@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'open-uri'
+require 'timeout'
 
 class Game < ActiveRecord::Base
 	belongs_to :away_team, :class_name => 'Team'
@@ -127,7 +128,16 @@ class Game < ActiveRecord::Base
 		game_next_next_hour, game_next_next_amorpm = next_hour(game_next_hour, game_next_amorpm)
 		url = @@wunderground_urls[home_team.id-1]
 		puts url
-		doc = Nokogiri::HTML(open(url, "Accept-Encoding" => "plain"))
+		doc = nil
+		begin
+			Timeout::timeout(3){
+				doc = Nokogiri::HTML(open(url, "Accept-Encoding" => "plain"))	
+			}
+		rescue Timeout::Error => e
+			puts "retry"
+			retry
+		end
+		
 		size = doc.css("#obsTable th").size
 		hour = amorpm = temp = humidity = pressure = dir = speed = precipitation = nil
 		one = two = three = false

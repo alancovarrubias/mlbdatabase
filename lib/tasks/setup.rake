@@ -4,6 +4,13 @@ namespace :setup do
 	require 'nokogiri'
 	require 'open-uri'
 
+	task :test => :environment do
+		# url = "https://www.wunderground.com/history/airport/KOAK/2016/4/2/DailyHistory.html?req_city=Oakland&req_statename=California"
+		# doc = Nokogiri::HTML(open(url))
+		url = "https://www.wunderground.com/history/airport/KSAN/2016/4/2/DailyHistory.html?req_city=San%20Diego&req_statename=California"
+		doc = Nokogiri::HTML(open(url))
+	end
+
 	task :delete => :environment do
 		Game.games(Time.now).each do |game|
 			game.pitchers.destroy_all
