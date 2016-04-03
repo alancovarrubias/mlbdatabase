@@ -116,18 +116,21 @@ class Game < ActiveRecord::Base
 	end
 
 	def update_weather
-		# Store all the values of time for the three hours a game will most likely last
+		
 		home_team = self.home_team
 		game_time = self.time
 		unless game_time.include?(":")
 			return
 		end
-		game_hour = game_time[0...game_time.index(":")]
-		game_amorpm = game_time[-2..-1]
-		game_next_hour, game_next_amorpm = next_hour(game_hour, game_amorpm)
-		game_next_next_hour, game_next_next_amorpm = next_hour(game_next_hour, game_next_amorpm)
+
+		# Store all the values of time for the three hours
+		game_hour_1, game_period_1 = parse_time_string_get_hour_period(game_time)
+		game_hour_2, game_period_2 = next_hour(game_hour_1, game_period_1)
+		game_hour_3, game_period_3 = next_hour(game_hour_2, game_period_2)
+
 		url = @@wunderground_urls[home_team.id-1]
 		puts url
+
 		doc = nil
 		begin
 			Timeout::timeout(3){
@@ -138,21 +141,21 @@ class Game < ActiveRecord::Base
 			retry
 		end
 		
-		size = doc.css("#obsTable th").size
+		elements = doc.css("#obsTable th")
+		size = elements.size
 		hour = amorpm = temp = humidity = pressure = dir = speed = precipitation = nil
 		one = two = three = false
 		# Iterate through all the rows and find the correct time and update the weather
-		doc.css("#obsTable td").each_with_index do |stat, index|
+		elements.each_with_index do |element, index|
 			case index%size
 			when 0
 				time = stat.text.strip
-				hour = time[0...time.index(":")]
-				amorpm = time[-2..-1]
-				if hour == game_hour && game_amorpm == amorpm
+				hour, period = parse_time_string_get_hour_period(time)
+				if hour == game_hour_1 && game_period_1 == period
 					one = true
-				elsif hour == game_next_hour && game_next_amorpm == amorpm
+				elsif hour == game_hour_2 && game_period_2 == period
 					two = true
-				elsif hour == game_next_next_hour && game_next_next_amorpm == amorpm
+				elsif hour == game_hour_3 && game_period_3 == period
 					three = true
 				end
 			when 1
@@ -185,17 +188,27 @@ class Game < ActiveRecord::Base
 
 	private
 
-		def next_hour(hour, amorpm)
+		def parse_time_string_get_hour_period(time_string)
+			return time_string[0...time_string.index(":")], time_string[-2..-1]
+		end
+
+		def next_hour(hour, period)
 
 			if hour.to_i == 11
-				amorpm = "PM"
+			  if period == "AM"
+			    period = "PM"
+			  else
+			    period = "AM"
+			  end
 			end
+
 			if hour.to_i == 12
 				hour = "1"
 			else
 				hour = (hour.to_i + 1).to_s
 			end
-			return hour, amorpm
+
+			return hour, period
 		end
 
 		@@yahoo_urls = ["https://weather.yahoo.com/united-states/california/anaheim-2354447/", "https://weather.yahoo.com/united-states/texas/houston-2424766/", "https://weather.yahoo.com/united-states/california/oakland-2463583/",
