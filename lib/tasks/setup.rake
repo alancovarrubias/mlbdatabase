@@ -25,7 +25,10 @@ namespace :setup do
 	task :daily => [:create_players, :fangraphs, :update_players, :boxscores, :innings] do
 	end
 
-	task :hourly => [:bullpen, :matchups, :update_weather, :ump, :tomorrow, :closingline] do
+	task :hourly => [:update_weather, :ump, :tomorrow, :closingline] do
+	end
+
+	task :ten => [:bullpen, :matchups] do
 	end
 
 	task :create_teams => :environment do
@@ -71,23 +74,22 @@ namespace :setup do
 	task :matchups => :environment do
 		include Matchup
 		# Today's current lineup from baseballpress
-		url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
-		puts url
-		doc = Nokogiri::HTML(open(url))
 		hour, day, month, year = find_date(Time.now)
-		todays_games = Game.where(:year => year, :month => month, :day => day)
-		proto_pitchers = Pitcher.where(:game_id => nil)
-		proto_hitters = Hitter.where(:game_id => nil)
-		home, away, gametime, duplicates = set_game_info(doc)
-		create_games(todays_games, gametime, home, away, duplicates, Time.now)
-		todays_games = Game.where(:year => year, :month => month, :day => day)
-		set_starters_false(proto_pitchers, proto_hitters)
-		create_game_starters(doc, todays_games)
-
 		if hour > 6 && hour < 23
+			url = "http://www.baseballpress.com/lineups/#{DateTime.now.to_date}"
+			puts url
+			doc = Nokogiri::HTML(open(url))
+			todays_games = Game.where(:year => year, :month => month, :day => day)
+			proto_pitchers = Pitcher.where(:game_id => nil)
+			proto_hitters = Hitter.where(:game_id => nil)
+			home, away, gametime, duplicates = set_game_info(doc)
+			create_games(todays_games, gametime, home, away, duplicates, Time.now)
+			todays_games = Game.where(:year => year, :month => month, :day => day)
+			set_starters_false(proto_pitchers, proto_hitters)
+			create_game_starters(doc, todays_games)
 			create_bullpen_pitchers(todays_games, proto_pitchers, proto_hitters)
+			remove_excess_starters(todays_games, proto_pitchers, proto_hitters)
 		end
-		remove_excess_starters(todays_games, proto_pitchers, proto_hitters)
 	end
 
 
@@ -95,16 +97,18 @@ namespace :setup do
 
 		include Matchup
 
-		url = "http://www.baseballpress.com/lineups/#{DateTime.now.tomorrow.to_date}"
-		puts url
-		doc = Nokogiri::HTML(open(url))
 		hour, day, month, year = find_date(Time.now.tomorrow)
-		tomorrows_games = Game.where(:year => year, :month => month, :day => day)
-		home, away, gametime, duplicates = set_game_info(doc)
-		create_games(tomorrows_games, gametime, home, away, duplicates, Time.now.tomorrow)
-		set_tomorrow_starters_false
-		proto_pitchers = Pitcher.where(:game_id => nil)
-		set_tomorrow_starters(doc, proto_pitchers, away, home)
+		if hour > 6 && hour < 23
+			url = "http://www.baseballpress.com/lineups/#{DateTime.now.tomorrow.to_date}"
+			puts url
+			doc = Nokogiri::HTML(open(url))
+			tomorrows_games = Game.where(:year => year, :month => month, :day => day)
+			home, away, gametime, duplicates = set_game_info(doc)
+			create_games(tomorrows_games, gametime, home, away, duplicates, Time.now.tomorrow)
+			set_tomorrow_starters_false
+			proto_pitchers = Pitcher.where(:game_id => nil)
+			set_tomorrow_starters(doc, proto_pitchers, away, home)
+		end
 
 	end
 
