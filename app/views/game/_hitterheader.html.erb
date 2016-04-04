@@ -1,0 +1,25 @@
+<tr>
+	<th></th>
+	<th colspan="7">2015 vs <%= handed_hitter_header(away) %></th>
+	<th colspan="7">Last 14 Days</th>
+	<th colspan="7">2014 vs <%= handed_hitter_header(away) %></th>
+	<th colspan="2">2015</th>
+	<th colspan="2">Last 14 Days</th>
+	<th colspan="2">2014</th>
+</tr>
+<tr>
+	<th>Name</th>
+	<% 3.times do %>
+		<th>OPS+</th>
+		<th>AB</th>
+		<th>SO</th>
+		<th>BB</th>
+		<th>FB%</th>
+		<th>GB%</th>
+		<th>LD%</th>
+	<% end %>
+	<% 3.times do %>
+		<th>Rank</th>
+		<th>AB</th>
+	<% end %>
+</tr>

@@ -1,42 +1,61 @@
-<tr>
-	<td><%= pitcher.name + " (" + pitcher.throwhand + ")"%></td>
-	<td bgcolor="#DC143C"><%= getleft(pitcher.throwhand, same, diff) %></td>
-	<td bgcolor="#DC143C"><%= getright(pitcher.throwhand, same, diff) %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.LD_L %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.LD_R %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.WHIP_L %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.WHIP_R %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.IP_L %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.IP_R %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.SO_L %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.SO_R %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.BB_L %></td>
-	<td bgcolor="#7FFFD4"><%= pitcher.BB_R %></td>
-	<td bgcolor="#EA8DFE"><%= pitcher.LD_30 %></td>
-	<td bgcolor="#EA8DFE"><%= pitcher.WHIP_30 %></td>
-	<td bgcolor="#EA8DFE"><%= pitcher.IP_30 %></td>
-	<td bgcolor="#EA8DFE"><%= pitcher.SO_30 %></td>
-	<td bgcolor="#EA8DFE"><%= pitcher.BB_30 %></td>
-	<td bgcolor="#FFF8DC"><%= pitcher.FIP_previous %></td>
-	<td bgcolor="#6495ED"><%= pitcher.IP_previous_L %></td>
-	<td bgcolor="#FFF8DC"><%= pitcher.xFIP_previous_L %></td>
-	<td bgcolor="#FFF8DC"><%= pitcher.KBB_previous_L %></td>
-	<td bgcolor="#FFF8DC"><%= pitcher.wOBA_previous_L %></td>
-	<td bgcolor="#6495ED"><%= pitcher.IP_previous_R %></td>
-	<td bgcolor="#FFF8DC"><%= pitcher.xFIP_previous_R %></td>
-	<td bgcolor="#FFF8DC"><%= pitcher.KBB_previous_R %></td>
-	<td bgcolor="#FFF8DC"><%= pitcher.wOBA_previous_R %></td>
-	<td bgcolor="#FF7F00"><%= pitcher.FIP %></td>
-	<td bgcolor="#6495ED"><%= pitcher.IP_L %></td>
-	<td bgcolor="#FF7F00"><%= pitcher.xFIP_L %></td>
-	<td bgcolor="#FF7F00"><%= pitcher.KBB_L %></td>
-	<td bgcolor="#FF7F00"><%= pitcher.wOBA_L %></td>
-	<td bgcolor="#6495ED"><%= pitcher.IP_R %></td>
-	<td bgcolor="#FF7F00"><%= pitcher.xFIP_R %></td>
-	<td bgcolor="#FF7F00"><%= pitcher.KBB_R %></td>
-	<td bgcolor="#FF7F00"><%= pitcher.wOBA_R %></td>
-	<td bgcolor="#DC143C"><%= pitcher.GB_L %></td>
-	<td bgcolor="#DC143C"><%= pitcher.GB_R %></td>
-	<td bgcolor="#DC143C"><%= pitcher.GB_previous_L %></td>
-	<td bgcolor="#DC143C"><%= pitcher.GB_previous_R %></td>
-</tr>
+<tbody class="pitcher">
+	<tr>
+		<td><%= pitcher.name + " (" + pitcher.throwhand + ")"%></td>
+		<td><%= getleft(pitcher.throwhand, same, diff) %></td>
+		<td><%= getright(pitcher.throwhand, same, diff) %></td>
+		<td><%= pitcher.LD_L %></td>
+		<td><%= pitcher.LD_R %></td>
+		<td><%= pitcher.WHIP_L %></td>
+		<td><%= pitcher.WHIP_R %></td>
+		<td><%= pitcher.IP_L %></td>
+		<td><%= pitcher.IP_R %></td>
+		<td><%= pitcher.SO_L %></td>
+		<td><%= pitcher.SO_R %></td>
+		<td><%= pitcher.BB_L %></td>
+		<td><%= pitcher.BB_R %></td>
+		<td><%= pitcher.LD_30 %></td>
+		<td><%= pitcher.WHIP_30 %></td>
+		<td><%= pitcher.IP_30 %></td>
+		<td><%= pitcher.SO_30 %></td>
+		<td><%= pitcher.BB_30 %></td>
+		<td><%= pitcher.FIP_next %></td>
+		<td class="blue"><%= pitcher.IP_next_L %></td>
+		<td><%= pitcher.xFIP_next_L %></td>
+		<td><%= pitcher.KBB_next_L %></td>
+		<td><%= pitcher.OPS_next_L %></td>
+		<td><%= pitcher.wOBA_next_L %></td>
+		<td class="blue"><%= pitcher.IP_next_R %></td>
+		<td><%= pitcher.xFIP_next_R %></td>
+		<td><%= pitcher.KBB_next_R %></td>
+		<td><%= pitcher.OPS_next_R %></td>
+		<td><%= pitcher.wOBA_next_R %></td>
+		<td><%= pitcher.FIP_previous %></td>
+		<td class="blue"><%= pitcher.IP_previous_L %></td>
+		<td><%= pitcher.xFIP_previous_L %></td>
+		<td><%= pitcher.KBB_previous_L %></td>
+		<td><%= pitcher.OPS_previous_L %></td>
+		<td><%= pitcher.wOBA_previous_L %></td>
+		<td class="blue"><%= pitcher.IP_previous_R %></td>
+		<td><%= pitcher.xFIP_previous_R %></td>
+		<td><%= pitcher.KBB_previous_R %></td>
+		<td><%= pitcher.OPS_previous_R %></td>
+		<td><%= pitcher.wOBA_previous_R %></td>
+		<td><%= pitcher.FIP %></td>
+		<td class="blue"><%= pitcher.IP_L %></td>
+		<td><%= pitcher.xFIP_L %></td>
+		<td><%= pitcher.KBB_L %></td>
+		<td><%= pitcher.OPS_L %></td>
+		<td><%= pitcher.wOBA_L %></td>
+		<td class="blue"><%= pitcher.IP_R %></td>
+		<td><%= pitcher.xFIP_R %></td>
+		<td><%= pitcher.KBB_R %></td>
+		<td><%= pitcher.OPS_R %></td>
+		<td><%= pitcher.wOBA_R %></td>
+		<td><%= pitcher.GB_next_L %></td>
+		<td><%= pitcher.GB_next_R %></td>
+		<td><%= pitcher.GB_L %></td>
+		<td><%= pitcher.GB_R %></td>
+		<td><%= pitcher.GB_previous_L %></td>
+		<td><%= pitcher.GB_previous_R %></td>
+	</tr>
+</tbody>

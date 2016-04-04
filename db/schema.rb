@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160401231445) do
+ActiveRecord::Schema.define(version: 20160404021855) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -155,6 +155,30 @@ ActiveRecord::Schema.define(version: 20160401231445) do
     t.integer  "OPS_14",          default: 0
     t.integer  "OPS_previous_L",  default: 0
     t.integer  "OPS_previous_R",  default: 0
+    t.integer  "SB_next_L",       default: 0
+    t.integer  "wOBA_next_L",     default: 0
+    t.integer  "OBP_next_L",      default: 0
+    t.integer  "SLG_next_L",      default: 0
+    t.integer  "AB_next_L",       default: 0
+    t.integer  "BB_next_L",       default: 0
+    t.integer  "SO_next_L",       default: 0
+    t.float    "LD_next_L",       default: 0.0
+    t.integer  "wRC_next_L",      default: 0
+    t.integer  "FB_next_L",       default: 0
+    t.integer  "GB_next_L",       default: 0
+    t.integer  "OPS_next_L",      default: 0
+    t.integer  "SB_next_R",       default: 0
+    t.integer  "wOBA_next_R",     default: 0
+    t.integer  "OBP_next_R",      default: 0
+    t.integer  "SLG_next_R",      default: 0
+    t.integer  "AB_next_R",       default: 0
+    t.integer  "BB_next_R",       default: 0
+    t.integer  "SO_next_R",       default: 0
+    t.float    "LD_next_R",       default: 0.0
+    t.integer  "wRC_next_R",      default: 0
+    t.integer  "FB_next_R",       default: 0
+    t.integer  "GB_next_R",       default: 0
+    t.integer  "OPS_next_R",      default: 0
   end
 
   add_index "hitters", ["alias"], name: "index_hitters_on_alias", using: :btree
@@ -248,6 +272,35 @@ ActiveRecord::Schema.define(version: 20160401231445) do
     t.integer  "five",             default: 0
     t.float    "IP_previous_L",    default: 0.0
     t.float    "IP_previous_R",    default: 0.0
+    t.integer  "OPS_L",            default: 0
+    t.integer  "OPS_R",            default: 0
+    t.integer  "OPS_previous_L",   default: 0
+    t.integer  "OPS_previous_R",   default: 0
+    t.integer  "FIP_next",         default: 0
+    t.float    "LD_next_L",        default: 0.0
+    t.float    "WHIP_next_L",      default: 0.0
+    t.float    "IP_next_L",        default: 0.0
+    t.integer  "SO_next_L",        default: 0
+    t.integer  "BB_next_L",        default: 0
+    t.float    "ERA_next_L",       default: 0.0
+    t.integer  "wOBA_next_L",      default: 0
+    t.float    "FB_next_L",        default: 0.0
+    t.float    "GB_next_L",        default: 0.0
+    t.float    "xFIP_next_L",      default: 0.0
+    t.float    "KBB_next_L",       default: 0.0
+    t.integer  "OPS_next_L",       default: 0
+    t.float    "LD_next_R",        default: 0.0
+    t.float    "WHIP_next_R",      default: 0.0
+    t.float    "IP_next_R",        default: 0.0
+    t.integer  "SO_next_R",        default: 0
+    t.integer  "BB_next_R",        default: 0
+    t.float    "ERA_next_R",       default: 0.0
+    t.integer  "wOBA_next_R",      default: 0
+    t.float    "FB_next_R",        default: 0.0
+    t.float    "GB_next_R",        default: 0.0
+    t.float    "xFIP_next_R",      default: 0.0
+    t.float    "KBB_next_R",       default: 0.0
+    t.integer  "OPS_next_R",       default: 0
   end
 
   add_index "pitchers", ["alias"], name: "index_pitchers_on_alias", using: :btree

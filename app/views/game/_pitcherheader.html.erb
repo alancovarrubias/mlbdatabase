@@ -4,15 +4,17 @@
 	<th>Righties</th>
 	<th colspan="10">2015</th>
 	<th colspan="5">Last 30 Days</th>
-	<th colspan="9">2014</th>
-	<th colspan="9">2015</th>
+	<th colspan="11">2016</th>
+	<th colspan="11">2014</th>
+	<th colspan="11">2015</th>
+	<th colspan="2">2016</th>
 	<th colspan="2">2015</th>
 	<th colspan="2">2014</th>
 </tr>
 <tr>
-	<th></th>
-	<th></th>
-	<th></th>
+	<% 3.times do %>
+		<th></th>
+	<% end %>
 	<th>LD LHB</th>
 	<th>LD RHB</th>
 	<th>WHIP LHB</th>
@@ -28,26 +30,21 @@
 	<th>IP 30</th>
 	<th>SO 30</th>
 	<th>BB 30</th>
-	<th>FIP-</th>
-	<th>IP LHB</th>
-	<th>xFIP LHB</th>
-	<th>KBB LHB</th>
-	<th>wOBA LHB</th>
-	<th>IP RHB</th>
-	<th>xFIP RHB</th>
-	<th>KBB RHB</th>
-	<th>wOBA RHB</th>
-	<th>FIP-</th>
-	<th>IP LHB</th>
-	<th>xFIP LHB</th>
-	<th>KBB LHB</th>
-	<th>wOBA LHB</th>
-	<th>IP RHB</th>
-	<th>xFIP RHB</th>
-	<th>KBB RHB</th>
-	<th>wOBA RHB</th>
-	<th>GB LHB</th>
-	<th>GB RHB</th>
-	<th>GB LHB</th>
-	<th>GB RHB</th>
+	<% 3.times do %>
+		<th>FIP-</th>
+		<th>IP LHB</th>
+		<th>xFIP LHB</th>
+		<th>KBB LHB</th>
+		<th>OPS+ LHB</th>
+		<th>wOBA LHB</th>
+		<th>IP RHB</th>
+		<th>xFIP RHB</th>
+		<th>KBB RHB</th>
+		<th>OPS+ RHB</th>
+		<th>wOBA RHB</th>
+	<% end %>
+	<% 3.times do %>
+		<th>GB LHB</th>
+		<th>GB RHB</th>
+	<% end %>
 </tr>

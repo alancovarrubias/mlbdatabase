@@ -1,5 +1,21 @@
 module GameHelper
 
+  def projected?(bool)
+  	if bool
+  		"Projected"
+  	else
+  		""
+  	end
+  end
+
+  def handed_hitter_header(away)
+  	if away
+  	  "LHP"
+  	else
+  	  "RHP"
+  	end
+  end
+
   def hitter_class(hitter)
     if hitter.name == "Total"
       "total"

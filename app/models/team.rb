@@ -91,21 +91,26 @@ class Team < ActiveRecord::Base
 		proto_hitters = Hitter.where(:game_id => nil)
 		proto_pitchers = Pitcher.where(:game_id => nil)
 
+		name = identifier = nil
+
 		doc.css("#team_batting tbody td").each_with_index do |stat, index|
 			text = stat.text
 			case index%28
 			when 2
 				name = get_name(text)
 				identifier = get_alias(stat)
+			when 21
+				ops = text.to_i
 				if hitter = proto_hitters.find_by_name(name)
 					unless identifier == ""
-						hitter.update_attributes(:alias => identifier)
+						hitter.update_attributes(:alias => identifier, :OPS_L => ops, :OPS_R => ops)
 					end
 				else
 					puts 'Hitter ' + name + ' not found'
 				end
 			end
 		end
+
 		doc.css("#team_pitching tbody td").each_with_index do |stat, index|
 			text = stat.text
 			case index%34
@@ -122,24 +127,46 @@ class Team < ActiveRecord::Base
 			end
 		end
 
+		url = "http://www.baseball-reference.com/teams/#{self.abbr}/#{year-1}.shtml"
+		puts url
+		doc = Nokogiri::HTML(open(url))
+		name = identifier = nil
+		doc.css("#team_batting tbody td").each_with_index do |stat, index|
+			text = stat.text
+			case index%28
+			when 2
+				name = get_name(text)
+				identifier = get_alias(stat)
+			when 21
+				ops = text.to_i
+				if hitter = proto_hitters.find_by_name(name)
+					unless identifier == ""
+						hitter.update_attributes(:alias => identifier, :OPS_previous_L => ops, :OPS_previous_R => ops)
+					end
+				else
+					puts 'Hitter ' + name + ' not found'
+				end
+			end
+		end
+
 =begin
 	After the prototypes have been created, iterate through the fangraphs urls and update each player's attributes.
 	First update the hitters, and then the pitchers.
 =end
 
 		urls = Array.new
-		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=13&season1=#{year}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
-		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year}&month=14&season1=#{year}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
-		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43&season=#{year}&month=2&season1=#{year}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
-		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=13&season1=#{year-1}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
-		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43&season=#{year-1}&month=14&season1=#{year-1}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
+		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43,44,45&season=#{year}&month=13&season1=#{year}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
+		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43,44,45&season=#{year}&month=14&season1=#{year}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
+		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43,44,45&season=#{year}&month=2&season1=#{year}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
+		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43,44,45&season=#{year-1}&month=13&season1=#{year-1}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
+		urls << "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43,44,45&season=#{year-1}&month=14&season1=#{year-1}&ind=0&team=#{self.fangraph_id}&rost=1&age=0&filter=&players=0"
 
-		ab = sb = bb = so = slg = obp = wOBA = wRC = ld = hitter = name = nil
+		ab = sb = bb = so = slg = obp = wOBA = wRC = ld = gb = fb = hitter = name = nil
 		urls.each_with_index do |url, url_index|
 			doc = Nokogiri::HTML(open(url))
 			doc.css(".grid_line_regular").each_with_index do |stat, index|
 				text = stat.text
-				case index%12
+				case index%14
 				when 1
 					name = text
 					fangraph_id = get_fangraph(stat).to_i
@@ -168,18 +195,22 @@ class Team < ActiveRecord::Base
 					wRC = text.to_i
 				when 11
 					ld = text[0...-2].to_f
+				when 12
+					gb = text[0...-2].to_f
+				when 13
+					fb = text[0...-2].to_f
 					if hitter
 						case url_index
 						when 0
-							hitter.update_attributes(:team_id => self.id, :AB_L => ab, :SB_L => sb, :BB_L => bb, :SO_L => so, :SLG_L => slg, :OBP_L => obp, :wOBA_L => wOBA, :LD_L => ld, :wRC_L => wRC)
+							hitter.update_attributes(:team_id => self.id, :AB_L => ab, :SB_L => sb, :BB_L => bb, :SO_L => so, :SLG_L => slg, :OBP_L => obp, :wOBA_L => wOBA, :LD_L => ld, :wRC_L => wRC, :GB_L => gb, :FB_L => fb)
 						when 1
-							hitter.update_attributes(:team_id => self.id, :AB_R => ab, :SB_R => sb, :BB_R => bb, :SO_R => so, :SLG_R => slg, :OBP_R => obp, :wOBA_R => wOBA, :LD_R => ld, :wRC_R => wRC)
+							hitter.update_attributes(:team_id => self.id, :AB_R => ab, :SB_R => sb, :BB_R => bb, :SO_R => so, :SLG_R => slg, :OBP_R => obp, :wOBA_R => wOBA, :LD_R => ld, :wRC_R => wRC, :GB_R => gb, :FB_R => fb)
 						when 2
-							hitter.update_attributes(:team_id => self.id, :AB_14 => ab, :SB_14 => sb, :BB_14 => bb, :SO_14 => so, :SLG_14 => slg, :OBP_14 => obp, :wOBA_14 => wOBA, :LD_14 => ld, :wRC_14 => wRC)
+							hitter.update_attributes(:team_id => self.id, :AB_14 => ab, :SB_14 => sb, :BB_14 => bb, :SO_14 => so, :SLG_14 => slg, :OBP_14 => obp, :wOBA_14 => wOBA, :LD_14 => ld, :wRC_14 => wRC, :GB_14 => gb, :FB_14 => fb)
 						when 3
-							hitter.update_attributes(:team_id => self.id, :AB_previous_L => ab, :SB_previous_L => sb, :BB_previous_L => bb, :SO_previous_L => so, :SLG_previous_L => slg, :OBP_previous_L => obp, :wOBA_previous_L => wOBA, :LD_previous_L => ld, :wRC_previous_L => wRC)
+							hitter.update_attributes(:team_id => self.id, :AB_previous_L => ab, :SB_previous_L => sb, :BB_previous_L => bb, :SO_previous_L => so, :SLG_previous_L => slg, :OBP_previous_L => obp, :wOBA_previous_L => wOBA, :LD_previous_L => ld, :wRC_previous_L => wRC, :GB_previous_L => gb, :FB_previous_L => fb)
 						when 4
-							hitter.update_attributes(:team_id => self.id, :AB_previous_R => ab, :SB_previous_R => sb, :BB_previous_R => bb, :SO_previous_R => so, :SLG_previous_R => slg, :OBP_previous_R => obp, :wOBA_previous_R => wOBA, :LD_previous_R => ld, :wRC_previous_R => wRC)
+							hitter.update_attributes(:team_id => self.id, :AB_previous_R => ab, :SB_previous_R => sb, :BB_previous_R => bb, :SO_previous_R => so, :SLG_previous_R => slg, :OBP_previous_R => obp, :wOBA_previous_R => wOBA, :LD_previous_R => ld, :wRC_previous_R => wRC, :GB_previous_R => gb, :FB_previous_R => fb)
 						end
 					else
 						puts name + ' not found'
