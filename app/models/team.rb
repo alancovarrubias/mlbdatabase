@@ -251,12 +251,8 @@ class Team < ActiveRecord::Base
 					if pitcher
 						case url_index
 						when 0
-							puts '2015'
-							puts fip
 							pitcher.update_attributes(:team_id => self.id, :FIP => fip)
 						when 1
-							puts '2014'
-							puts fip
 							pitcher.update_attributes(:FIP_previous => fip)
 						end
 		 			else
@@ -361,8 +357,6 @@ class Team < ActiveRecord::Base
 				when 11
 					gb = text[0...-2].to_f
 					if pitcher
-						puts pitcher.name
-						puts ip.to_s + ' 2014'
 						case url_index
 						when 0
 							pitcher.update_attributes(:team_id => self.id, :IP_previous_L => ip, :FB_previous_L => fb, :xFIP_previous_L => xfip, :KBB_previous_L => kbb, :wOBA_previous_L => wOBA, :GB_previous_L => gb)

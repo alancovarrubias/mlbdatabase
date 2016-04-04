@@ -2,6 +2,7 @@ module Update
 
   require 'nokogiri'
   require 'open-uri'
+  require 'timeout'
 
   def update_pitchers_ops(team, year)
   	Pitcher.where(game_id: nil, team_id: team.id).each do |pitcher|
@@ -10,7 +11,14 @@ module Update
   	  end
   	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{pitcher.alias}&year=#{year}&t=p"
   	  puts url
-  	  doc = Nokogiri::HTML(open(url))
+	  doc = nil
+	  begin
+	    Timeout::timeout(3){
+	  	  doc = Nokogiri::HTML(open(url))
+	  	}
+	  rescue Timeout::Error => e
+	  	retry
+	  end
   	  row = 0
   	  doc.css("#plato td").each_with_index do |element, index|
   	  	case index%28
