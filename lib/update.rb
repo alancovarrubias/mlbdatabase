@@ -16,15 +16,12 @@ module Update
 	    Timeout::timeout(3){
 	  	  doc = Nokogiri::HTML(open(url))
 	  	}
-	  rescue Timeout::Error => e
-	  	retry
+	  rescue Errno::ECONNREFUSED, Timeout::Error, URI::InvalidURIError => e
+	  	next
 	  end
   	  row = 0
-  	  puts doc.css("#plato td").size
   	  doc.css("#plato td").each_with_index do |element, index|
   	  	case index%28
-  	  	when 0
-  	  		puts element.text
   	  	when 27
   	  	  ops = element.text.to_i
   	  	  case row
