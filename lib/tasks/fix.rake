@@ -4,12 +4,9 @@ namespace :fix do
   require 'open-uri'
   require 'timeout'
   task :test => :environment do
-    Game.all.each do |game|
-      puts game.url
-      game.hitters.each do |player|
-      	
-      end
-    end	
+    include Update
+    team = Team.first
+    update_pitchers_ops(team, "2015")
   end
 
 end

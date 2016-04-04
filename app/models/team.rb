@@ -4,6 +4,7 @@ require 'open-uri'
 class Team < ActiveRecord::Base
 	has_many :pitchers
 	has_many :hitters
+	include Update
 
 	def fangraph_abbr
 		name = self.name
@@ -79,6 +80,7 @@ class Team < ActiveRecord::Base
 	end
 
 	def update_players
+
 		year = Time.now.year - 1
 		url = "http://www.baseball-reference.com/teams/#{self.abbr}/#{year}.shtml"
 		puts url
@@ -88,6 +90,7 @@ class Team < ActiveRecord::Base
 	First we check to see if any of the prototypes do not exist. If so, create them.
 	Prototype players are not associated with a specific game.
 =end
+
 		proto_hitters = Hitter.where(:game_id => nil)
 		proto_pitchers = Pitcher.where(:game_id => nil)
 
@@ -148,6 +151,10 @@ class Team < ActiveRecord::Base
 				end
 			end
 		end
+
+		p "NEW"
+		update_pitchers_ops(self, year)
+		update_pitchers_ops(self, year-1)
 
 =begin
 	After the prototypes have been created, iterate through the fangraphs urls and update each player's attributes.
