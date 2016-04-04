@@ -155,7 +155,7 @@ module Matchup
 
 	def create_pitcher(pitcher, game)
 		unless game_pitcher = Pitcher.where(:game_id => game.id, :name => pitcher.name).first
-			new_pitcher = game_pitcher.dup
+			new_pitcher = pitcher.dup
 			new_pitcher.game_id = game.id
 			new_pitcher.save
 			puts new_pitcher.name + ' ' + new_pitcher.team.name + ' ' + game.id.to_s + ' pitcher'
@@ -164,7 +164,7 @@ module Matchup
 
 	def create_hitter(hitter, game)
 		unless game_hitter = Hitter.where(:game_id => game.id, :name => hitter.name).first
-			new_hitter = game_hitter.dup
+			new_hitter = hitter.dup
 			new_hitter.game_id = game.id
 			new_hitter.save
 			puts new_hitter.name + ' ' + new_hitter.team.name + ' ' + game.id.to_s + ' hitter'
