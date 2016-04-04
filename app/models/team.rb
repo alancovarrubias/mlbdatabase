@@ -152,7 +152,6 @@ class Team < ActiveRecord::Base
 			end
 		end
 
-		p "NEW"
 		update_pitchers_ops(self, year)
 		update_pitchers_ops(self, year-1)
 

@@ -20,22 +20,25 @@ module Update
 	  	retry
 	  end
   	  row = 0
+  	  puts doc.css("#plato td").size
   	  doc.css("#plato td").each_with_index do |element, index|
   	  	case index%28
+  	  	when 0
+  	  		puts element.text
   	  	when 27
   	  	  ops = element.text.to_i
   	  	  case row
   	  	  when 0
-  	  	  	if year == "2015"
-  	  	  		pitcher.update_attributes(OPS_R: ops)
-  	  	  	elsif year == "2014"
-  	  	  		pitcher.update_attributes(OPS_previous_R: ops)
+  	  	  	if year == 2015
+  	  	  	  pitcher.update_attributes(OPS_R: ops)
+  	  	  	elsif year == 2014
+  	  	  	  pitcher.update_attributes(OPS_previous_R: ops)
   	  	  	end
   	  	  when 1
-  	  	  	if year == "2015"
-  	  	  		pitcher.update_attributes(OPS_L: ops)
-  	  	  	elsif year == "2014"
-  	  	  		pitcher.update_attributes(OPS_previous_L: ops)
+  	  	  	if year == 2015
+  	  	  	  pitcher.update_attributes(OPS_L: ops)
+  	  	  	elsif year == 2014
+  	  	  	  pitcher.update_attributes(OPS_previous_L: ops)
   	  	  	end
   	  	  end
   	  	  row += 1
