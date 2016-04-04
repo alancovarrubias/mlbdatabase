@@ -146,7 +146,7 @@ class Game < ActiveRecord::Base
 		hour = amorpm = temp = humidity = pressure = dir = speed = precipitation = nil
 		one = two = three = false
 		# Iterate through all the rows and find the correct time and update the weather
-		elements.each_with_index do |element, index|
+		elements.each_with_index do |stat, index|
 			case index%size
 			when 0
 				time = stat.text.strip
