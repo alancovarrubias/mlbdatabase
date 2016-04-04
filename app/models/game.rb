@@ -141,7 +141,7 @@ class Game < ActiveRecord::Base
 			retry
 		end
 		
-		elements = doc.css("#obsTable th")
+		elements = doc.css("#obsTable td")
 		size = elements.size
 		hour = amorpm = temp = humidity = pressure = dir = speed = precipitation = nil
 		one = two = three = false
