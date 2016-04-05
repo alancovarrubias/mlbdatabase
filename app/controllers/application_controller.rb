@@ -32,61 +32,41 @@ class ApplicationController < ActionController::Base
 
 	end
 
-	def find_projected_lineup(today_game, home, away_pitcher, home_pitcher)
+  def find_projected_lineup(this_game, team, opp_pitcher)
 
-		home_team = today_game.home_team
-		away_team = today_game.away_team
+    unless opp_pitcher
+	  return Array.new
+    end
 
-		# Check to see if the team is home or away and grab the previous games that team has played
+	# Grab previous games where the team played
+	games = Game.where("(home_team_id = #{team.id} OR away_team_id = #{team.id}) AND id < #{this_game.id}").order("id DESC")
 
-		if home
-			unless away_pitcher
-				return Array.new
-			end
-			throwhand = away_pitcher.throwhand
-			pitcher = home_pitcher
-			team = home_team
-			games = Game.where("(home_team_id = #{home_team.id} OR away_team_id = #{home_team.id}) AND id < #{today_game.id}").order("id DESC")
-		else
-			unless home_pitcher
-				return Array.new
-			end
-			throwhand = home_pitcher.throwhand
-			pitcher = away_pitcher
-			team = away_team
-			games = Game.where("(home_team_id = #{away_team.id} OR away_team_id = #{away_team.id}) AND id < #{today_game.id}").order("id DESC")
-		end
+	games.each do |game|
 
-		games.each do |game|
+	  if team == game.home_team
+	    game_opp_pitcher = game.pitchers.where(team_id: game.away_team.id, starter: true).first
+	  else
+		game_opp_pitcher = game.pitchers.where(team_id: game.home_team.id, starter: true).first
+	  end
 
-			if home_team == game.home_team
-				opp_pitcher = game.pitchers.where(:team_id => game.away_team.id).first
-			else
-				opp_pitcher = game.pitchers.where(:team_id => game.home_team.id).first
-			end
+	  if game_opp_pitcher == nil || game.hitters.size != 18
+		next
+	  end
 
-			if opp_pitcher == nil || game.hitters.size < 18
-				next
-			end
+	  if game_opp_pitcher.throwhand == ''
+		game_opp_pitcher = Pitcher.proto_pitchers.find_by_alias(opp_pitcher.alias)
+	  end
 
-			if opp_pitcher.throwhand == ''
-				opp_pitcher = Pitcher.where(:game_id => nil, :alias => opp_pitcher.alias).first
-			end
+	  if game_opp_pitcher.throwhand == opp_pitcher.throwhand
+		game_hitters = game.hitters.where(:team_id => team.id)
+		return game_hitters
+	  end
 
-			if opp_pitcher.throwhand == throwhand
-				array = game.hitters.where(:team_id => team.id)
-				if pitcher
-					hitter = Hitter.find_by_name(pitcher.name)
-					if home_team.league == 'NL'
-						array = array[0...-1]
-						array << hitter
-					end
-				end
-				return array
-			end
-
-		end
 	end
+
+	return Array.new
+
+  end
 
   def add_total_stats(hitters)
   	woba_l = hitters.sum(:wOBA_L)
