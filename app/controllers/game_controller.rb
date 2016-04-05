@@ -122,15 +122,19 @@ class GameController < ApplicationController
 		# Add the stats of each lineup and add a total column to the array
 
 		# render text: @home_starting_hitters[]
-		# unless @away_starting_hitters.empty?
-		# 	away_total = add_total_stats(@away_starting_hitters)
-		# 	@away_starting_hitters << away_total
-		# end
+		unless @away_projected
+			unless @away_starting_hitters.empty?
+				away_total = add_total_stats(@away_starting_hitters)
+				@away_starting_hitters << away_total
+			end
+		end
 
-		# unless @home_starting_hitters.empty?
-		# 	home_total = add_total_stats(@home_starting_hitters)
-		# 	@home_starting_hitters << home_total
-		# end
+		unless @home_projected
+			unless @home_starting_hitters.empty?
+				home_total = add_total_stats(@home_starting_hitters)
+				@home_starting_hitters << home_total
+			end
+		end
 		@away_bench_hitters = Hitter.where(:game_id => nil, :team_id => @away_team.id, :starter => false).order(AB_R: :desc)
 		@home_bench_hitters = Hitter.where(:game_id => nil, :team_id => @home_team.id, :starter => false).order(AB_R: :desc)
 		
