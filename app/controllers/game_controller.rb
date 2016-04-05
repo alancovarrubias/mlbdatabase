@@ -78,23 +78,23 @@ class GameController < ApplicationController
 		@away_projected = false
 		@home_projected = false
 
-		if @today_bool || @tomorrow_bool
-			if @away_starting_hitters.empty?
-				@away_starting_hitters = find_projected_lineup(@game, @away_team, @home_pitcher)
-				unless @away_starting_hitters.empty?
-					@away_starting_hitters = get_current_stats(@away_starting_hitters)
-					@away_projected = true
-				end
-			end
+		# if @today_bool || @tomorrow_bool
+		# 	if @away_starting_hitters.empty?
+		# 		@away_starting_hitters = find_projected_lineup(@game, @away_team, @home_pitcher)
+		# 		unless @away_starting_hitters.empty?
+		# 			@away_starting_hitters = get_current_stats(@away_starting_hitters)
+		# 			@away_projected = true
+		# 		end
+		# 	end
 
-			if @home_starting_hitters.empty?
-				@home_starting_hitters = find_projected_lineup(@game, @home_team, @away_pitcher)
-				unless @home_starting_hitters.empty?
-					@home_starting_hitters = get_current_stats(@home_starting_hitters)
-					@home_projected = true
-				end
-			end
-		end
+		# 	if @home_starting_hitters.empty?
+		# 		@home_starting_hitters = find_projected_lineup(@game, @home_team, @away_pitcher)
+		# 		unless @home_starting_hitters.empty?
+		# 			@home_starting_hitters = get_current_stats(@home_starting_hitters)
+		# 			@home_projected = true
+		# 		end
+		# 	end
+		# end
 
 		# render text: @away_starting_hitters[4].class.name
 
