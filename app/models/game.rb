@@ -11,7 +11,7 @@ class Game < ActiveRecord::Base
 	has_many :pitcher_box_scores
 	has_many :hitter_box_scores
 
-	def self.games(time)
+	def self.days_games(time)
 		Game.where(:year => time.year.to_s, :month => "%02d" % time.month, :day => "%02d" % time.day)
 	end
 

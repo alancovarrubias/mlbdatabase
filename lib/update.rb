@@ -11,14 +11,14 @@ module Update
   	  end
   	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{pitcher.alias}&year=#{year}&t=p"
   	  puts url
-	  doc = nil
-	  begin
-	    Timeout::timeout(3){
-	  	  doc = Nokogiri::HTML(open(url))
-	  	}
-	  rescue Errno::ECONNREFUSED, Timeout::Error, URI::InvalidURIError => e
-	  	next
-	  end
+	    doc = nil
+	    begin
+	      Timeout::timeout(3){
+	  	    doc = Nokogiri::HTML(open(url))
+	  	  }
+	    rescue Errno::ECONNREFUSED, Timeout::Error, URI::InvalidURIError => e
+	  	  next
+	    end
   	  row = 0
   	  doc.css("#plato td").each_with_index do |element, index|
   	  	case index%28
