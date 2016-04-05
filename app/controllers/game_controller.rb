@@ -1,5 +1,5 @@
 class GameController < ApplicationController
-
+	include Share
 	require 'date'
 
 	def matchup
@@ -28,29 +28,8 @@ class GameController < ApplicationController
 			@home_score << inning.home
 		end
 
-		@today_bool = false
-		@tomorrow_bool = false
-
-
-		# Check the date of the game to determine what players to render
-
-		year = Time.now.year.to_s
-		month = Time.now.month.to_s
-		day = Time.now.day.to_s
-
-		if year == params[:year] && month == params[:month] && day == params[:day]
-			@today_bool = true
-		end
-
-
-		year = Time.now.tomorrow.year.to_s
-		month = Time.now.tomorrow.month.to_s
-		day = Time.now.tomorrow.day.to_s
-
-		if year == params[:year] && month == params[:month] && day == params[:day]
-			@tomorrow_bool = true
-		end
-
+		@today_bool = game_day?(Time.now)
+		@tomorrow_bool = game_day?(Time.now.tomorrow)
 
 		if @tomorrow_bool
 			@away_pitcher = Pitcher.where(:game_id => nil, :team_id => @away_team.id, :tomorrow_starter => true).first
@@ -66,19 +45,11 @@ class GameController < ApplicationController
 
 		# Set the left variable depending on whether the opposing pitcher is a lefty
 		if @away_pitcher
-			if @away_pitcher.throwhand == 'L'
-				@home_left = true
-			else
-				@home_left = false
-			end
+			@home_left = lefty?(@away_pitcher.throwhand)
 		end
 
 		if @home_pitcher
-			if @home_pitcher.throwhand == 'L'
-				@away_left = true
-			else
-				@away_left = false
-			end
+			@away_left = lefty?(@home_pitcher.throwhand)
 		end
 
 		# Set the date variables needed for the bullpen
@@ -93,7 +64,6 @@ class GameController < ApplicationController
 		@five = Date::DAYNAMES[day-5]
 
 		# Set the hitters variable unless this is tomorrow's game
-
 		unless @tomorrow_bool
 			@away_starting_hitters = Hitter.where(:game_id => @game.id, :team_id => @away_team.id, :starter => true).order("lineup")
 			@home_starting_hitters = Hitter.where(:game_id => @game.id, :team_id => @home_team.id, :starter => true).order("lineup")
@@ -107,20 +77,20 @@ class GameController < ApplicationController
 		@home_projected = false
 
 		if @today_bool || @tomorrow_bool
-			if @away_starting_hitters.size <= 1
-				@away_starting_hitters = find_projected_lineup(@game, false, @away_pitchers, @home_pitchers)
+			if @away_starting_hitters.empty?
+				@away_starting_hitters = find_projected_lineup(@game, false, @away_pitcher, @home_pitcher)
 				unless @away_starting_hitters.empty?
 					@away_starting_hitters = get_current_stats(@away_starting_hitters)
 					@away_projected = true
 				end
 			end
-		end
 
-		if @home_starting_hitters.size <= 1
-			@home_starting_hitters = find_projected_lineup(@game, true, @away_pitchers, @home_pitchers)
-			unless @home_starting_hitters.empty?
-				@home_starting_hitters = get_current_stats(@home_starting_hitters)
-				@home_projected = true
+			if @home_starting_hitters.empty?
+				@home_starting_hitters = find_projected_lineup(@game, true, @away_pitcher, @home_pitcher)
+				unless @home_starting_hitters.empty?
+					@home_starting_hitters = get_current_stats(@home_starting_hitters)
+					@home_projected = true
+				end
 			end
 		end
 
@@ -178,5 +148,22 @@ class GameController < ApplicationController
 			@hitters = @team.hitters.where(:game_id => nil).order(:AB_R).reverse.limit(20)
 		end
 	end
+
+  def game_day?(time)
+  	hour, day, month, year = find_date(time)
+  	if year.to_i == params[:year].to_i && month.to_i == params[:month].to_i && day.to_i == params[:day].to_i
+  	  true
+  	else
+  	  false
+  	end
+  end
+
+  def lefty?(throwhand)
+  	if throwhand == 'L'
+	  true
+	else
+	  false
+	end
+  end
 
 end
