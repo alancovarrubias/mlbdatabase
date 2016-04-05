@@ -78,25 +78,23 @@ class GameController < ApplicationController
 		@away_projected = false
 		@home_projected = false
 
-		# if @today_bool || @tomorrow_bool
-		# 	if @away_starting_hitters.empty?
-		# 		@away_starting_hitters = find_projected_lineup(@game, @away_team, @home_pitcher)
-		# 		unless @away_starting_hitters.empty?
-		# 			@away_starting_hitters = get_current_stats(@away_starting_hitters)
-		# 			@away_projected = true
-		# 		end
-		# 	end
+		if @today_bool || @tomorrow_bool
+			if @away_starting_hitters.empty?
+				@away_starting_hitters = find_projected_lineup(@game, @away_team, @home_pitcher)
+				unless @away_starting_hitters.empty?
+					@away_starting_hitters = get_current_stats(@away_starting_hitters)
+					@away_projected = true
+				end
+			end
 
-		# 	if @home_starting_hitters.empty?
-		# 		@home_starting_hitters = find_projected_lineup(@game, @home_team, @away_pitcher)
-		# 		unless @home_starting_hitters.empty?
-		# 			@home_starting_hitters = get_current_stats(@home_starting_hitters)
-		# 			@home_projected = true
-		# 		end
-		# 	end
-		# end
-
-		# render text: @away_starting_hitters[4].class.name
+			if @home_starting_hitters.empty?
+				@home_starting_hitters = find_projected_lineup(@game, @home_team, @away_pitcher)
+				unless @home_starting_hitters.empty?
+					@home_starting_hitters = get_current_stats(@home_starting_hitters)
+					@home_projected = true
+				end
+			end
+		end
 
 		# calculate the number of hitters facing the pitcher with the same handedness
 		@away_pitcher_same = @away_pitcher_diff = 0
@@ -121,7 +119,7 @@ class GameController < ApplicationController
 
 		# Add the stats of each lineup and add a total column to the array
 
-		render text: @home_starting_hitters[]
+		# render text: @home_starting_hitters[]
 		unless @away_projected
 			unless @away_starting_hitters.empty?
 				away_total = add_total_stats(@away_starting_hitters)
