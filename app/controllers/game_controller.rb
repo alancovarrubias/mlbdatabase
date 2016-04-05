@@ -76,23 +76,23 @@ class GameController < ApplicationController
 		@away_projected = false
 		@home_projected = false
 
-		if @today_bool || @tomorrow_bool
-			if @away_starting_hitters.empty?
-				@away_starting_hitters = find_projected_lineup(@game, false, @away_pitcher, @home_pitcher)
-				unless @away_starting_hitters.empty?
-					@away_starting_hitters = get_current_stats(@away_starting_hitters)
-					@away_projected = true
-				end
-			end
+		# if @today_bool || @tomorrow_bool
+		# 	if @away_starting_hitters.empty?
+		# 		@away_starting_hitters = find_projected_lineup(@game, false, @away_pitcher, @home_pitcher)
+		# 		unless @away_starting_hitters.empty?
+		# 			@away_starting_hitters = get_current_stats(@away_starting_hitters)
+		# 			@away_projected = true
+		# 		end
+		# 	end
 
-			if @home_starting_hitters.empty?
-				@home_starting_hitters = find_projected_lineup(@game, true, @away_pitcher, @home_pitcher)
-				unless @home_starting_hitters.empty?
-					@home_starting_hitters = get_current_stats(@home_starting_hitters)
-					@home_projected = true
-				end
-			end
-		end
+		# 	if @home_starting_hitters.empty?
+		# 		@home_starting_hitters = find_projected_lineup(@game, true, @away_pitcher, @home_pitcher)
+		# 		unless @home_starting_hitters.empty?
+		# 			@home_starting_hitters = get_current_stats(@home_starting_hitters)
+		# 			@home_projected = true
+		# 		end
+		# 	end
+		# end
 
 		# calculate the number of hitters facing the pitcher with the same handedness
 		@away_pitcher_same = @away_pitcher_diff = 0
