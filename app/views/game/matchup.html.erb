@@ -67,7 +67,7 @@
 		<% end %>
 
 		
-		<%= render partial: "lineupheader", locals: { header: @away_team.name + " " + projected?(@away_projected) + " Starting Lineup", colspan: "31" }%>
+		<%= render partial: "lineupheader", locals: { header: @away_team.name + " " + projected?(@away_projected) + " Starting Lineup", colspan: "31", projected: projected?(@away_projected).downcase }%>
 
 		<%= render(:partial => "hitterheader", locals: { away: @away_left }) %>
 
@@ -79,7 +79,7 @@
 			<% end %>
 		<% end %>
 
-		<%= render partial: "lineupheader", locals: { header: @home_team.name + projected?(@home_projected) + " Starting Lineup", colspan: "31" }%>
+		<%= render partial: "lineupheader", locals: { header: @home_team.name + projected?(@home_projected) + " Starting Lineup", colspan: "31", projected: projected?(@home_projected).downcase }%>
 
 		<%= render(:partial => "hitterheader", locals: { away: @away_left }) %>
 
