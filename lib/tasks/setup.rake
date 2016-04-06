@@ -57,16 +57,16 @@ namespace :setup do
 	task :update_weather => :environment do
 		include Share
 		hour, day, month, year = find_date(Time.now)
-			Game.where(:year => year, :month => month, :day => day).each do |game|
-				game.update_weather_forecast(true)
-				game.update_weather
-			end
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+			game.update_weather_forecast(true)
+			game.update_weather
+		end
 
-			hour, day, month, year = find_date(Time.now.tomorrow)
-			
-			Game.where(:year => year, :month => month, :day => day).each do |game|
-				game.update_weather_forecast(false)
-			endr
+		hour, day, month, year = find_date(Time.now.tomorrow)
+		
+		Game.where(:year => year, :month => month, :day => day).each do |game|
+			game.update_weather_forecast(false)
+		end
 	end
 
   task :matchups => :environment do
