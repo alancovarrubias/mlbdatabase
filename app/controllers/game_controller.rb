@@ -78,6 +78,8 @@ class GameController < ApplicationController
 		@away_projected = false
 		@home_projected = false
 
+		unless params[:id] == "6911"
+
 		if @today_bool || @tomorrow_bool
 			if @away_starting_hitters.empty?
 				@away_starting_hitters = find_projected_lineup(@game, @away_team, @home_pitcher)
@@ -107,6 +109,7 @@ class GameController < ApplicationController
 				end
 			end
 		end
+	end
 
 		# calculate the number of hitters facing the pitcher with the same handedness
 		@away_pitcher_same = @away_pitcher_diff = 0
