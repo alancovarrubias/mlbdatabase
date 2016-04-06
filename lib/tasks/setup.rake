@@ -66,7 +66,7 @@ namespace :setup do
 			
 			Game.where(:year => year, :month => month, :day => day).each do |game|
 				game.update_weather_forecast(false)
-			end
+			endr
 	end
 
   task :matchups => :environment do

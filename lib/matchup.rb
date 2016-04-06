@@ -333,7 +333,7 @@ module Matchup
 	end
 
 	def set_umpire(doc)
-		hour, day, month, year = Matchup.find_date(Time.now)
+		hour, day, month, year = find_date(Time.now)
 		if hour > 4 && hour < 20
 			if month.size == 1
 				month = "0" + month
