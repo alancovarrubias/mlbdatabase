@@ -83,8 +83,10 @@ class GameController < ApplicationController
 				@away_starting_hitters = find_projected_lineup(@game, @away_team, @home_pitcher)
 				unless @away_starting_hitters.empty?
 					if @away_team.league == "NL"
-					  @away_starting_hitters = @away_starting_hitters[0...-1]
-					  @away_starting_hitters << Hitter.proto_hitters.find_by_name(@away_pitcher.name)
+					  if hitter = Hitter.proto_hitters.find_by_name(@away_pitcher.name)
+					  	@away_starting_hitters = @away_starting_hitters[0...-1]
+					    @away_starting_hitters << Hitter.proto_hitters.find_by_name(@away_pitcher.name)
+					  end
 					end
 					@away_starting_hitters = get_current_stats(@away_starting_hitters)
 					@away_projected = true
@@ -95,8 +97,10 @@ class GameController < ApplicationController
 				@home_starting_hitters = find_projected_lineup(@game, @home_team, @away_pitcher)
 				unless @home_starting_hitters.empty?
 					if @home_team.league == "NL"
-					  @home_starting_hitters = @home_starting_hitters[0...-1]
-					  @home_starting_hitters << Hitter.proto_hitters.find_by_name(@home_pitcher.name)
+					  if hitter = Hitter.proto_hitters.find_by_name(@home_pitcher.name)
+						@home_starting_hitters = @home_starting_hitters[0...-1]
+			  			@home_starting_hitters << 
+					  end
 					end
 					@home_starting_hitters = get_current_stats(@home_starting_hitters)
 					@home_projected = true
