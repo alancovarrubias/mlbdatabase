@@ -51,7 +51,7 @@
 
 	<table>
 
-		<%= render partial: "lineupheader", locals: { header: "Starting Pitchers", colspan: "57" }%>
+		<%= render partial: "lineupheader", locals: { header: "Starting Pitchers", colspan: "57", projected: "" }%>
 		<%= render(:partial => "handedpitcher", :locals => { pitcher: @away_pitcher, same: @away_pitcher_same, diff: @away_pitcher_diff }) %>
 		<%= render(:partial => "handedpitcher", :locals => { pitcher: @home_pitcher, same: @home_pitcher_same, diff: @home_pitcher_diff }) %>
 
@@ -67,7 +67,7 @@
 		<% end %>
 
 		
-		<%= render partial: "lineupheader", locals: { header: @away_team.name + " " + projected?(@away_projected) + " Starting Lineup", colspan: "31" }%>
+		<%= render partial: "lineupheader", locals: { header: @away_team.name + " " + projected?(@away_projected) + " Starting Lineup", colspan: "31", projected: projected?(@away_projected).downcase }%>
 
 		<%= render(:partial => "hitterheader", locals: { away: @away_left }) %>
 
@@ -79,7 +79,7 @@
 			<% end %>
 		<% end %>
 
-		<%= render partial: "lineupheader", locals: { header: @home_team.name + " " + projected?(@home_projected) + " Starting Lineup", colspan: "31" }%>
+		<%= render partial: "lineupheader", locals: { header: @home_team.name + " " + projected?(@home_projected) + " Starting Lineup", colspan: "31", projected: projected?(@home_projected).downcase}%>
 
 		<%= render(:partial => "hitterheader", locals: { away: @away_left }) %>
 
@@ -92,7 +92,7 @@
 		<% end %>
 
 		<% if @today_bool %>
-			<%= render partial: "lineupheader", locals: { header: @away_team.name + " Bench", colspan: "31" }%>
+			<%= render partial: "lineupheader", locals: { header: @away_team.name + " Bench", colspan: "31", projected: "" }%>
 			<%= render(partial: "hitterheader", locals: { away: @away_left }) %>
 
 			<% @away_bench_hitters.each do |hitter| %>
@@ -105,7 +105,7 @@
 		<% end %>
 
 		<% if @today_bool %>
-			<%= render partial: "lineupheader", locals: { header: @home_team.name + " Bench", colspan: "31" }%>
+			<%= render partial: "lineupheader", locals: { header: @home_team.name + " Bench", colspan: "31", projected: "" }%>
 			<%= render(:partial => "hitterheader", locals: { away: @away_left }) %>
 
 			<% @home_bench_hitters.each do |hitter| %>
@@ -119,7 +119,7 @@
 
 		<% unless @tomorrow_bool %>
 			<table>
-				<%= render partial: "lineupheader", locals: { header: @away_team.name + " Bullpen", colspan: "43" }%>
+				<%= render partial: "lineupheader", locals: { header: @away_team.name + " Bullpen", colspan: "43",projected: "" }%>
 				<%= render(:partial => "bullpenpitchingheader") %>
 				<% @away_bullpen_pitchers.each do |pitcher| %>
 					<%= render(:partial => "bullpenpitching", :locals => {:pitcher => pitcher}) %>
@@ -127,7 +127,7 @@
 			</table>
 
 			<table>
-				<%= render partial: "lineupheader", locals: { header: @home_team.name + " Bullpen", colspan: "43" }%>
+				<%= render partial: "lineupheader", locals: { header: @home_team.name + " Bullpen", colspan: "43", projected: "" }%>
 				<%= render(:partial => "bullpenpitchingheader") %>
 				<% @home_bullpen_pitchers.each do |pitcher| %>
 					<%= render(:partial => "bullpenpitching", :locals => {:pitcher => pitcher}) %>

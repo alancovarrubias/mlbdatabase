@@ -74,9 +74,9 @@ namespace :setup do
   task :matchups => :environment do
 	include Matchup
 
-	set_matchups(Time.now)
+    set_matchups(Time.now)
 	
-	end
+  end
 
 
   task :tomorrow => :environment do
