@@ -85,7 +85,7 @@ class GameController < ApplicationController
 					if @away_team.league == "NL"
 					  if hitter = Hitter.proto_hitters.find_by_name(@away_pitcher.name)
 					  	@away_starting_hitters = @away_starting_hitters[0...-1]
-					    @away_starting_hitters << Hitter.proto_hitters.find_by_name(@away_pitcher.name)
+					    @away_starting_hitters << hitter
 					  end
 					end
 					@away_starting_hitters = get_current_stats(@away_starting_hitters)
@@ -99,7 +99,7 @@ class GameController < ApplicationController
 					if @home_team.league == "NL"
 					  if hitter = Hitter.proto_hitters.find_by_name(@home_pitcher.name)
 						@home_starting_hitters = @home_starting_hitters[0...-1]
-			  			@home_starting_hitters << 
+			  			@home_starting_hitters << hitter
 					  end
 					end
 					@home_starting_hitters = get_current_stats(@home_starting_hitters)
