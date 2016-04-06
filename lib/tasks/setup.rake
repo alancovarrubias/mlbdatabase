@@ -55,20 +55,18 @@ namespace :setup do
 	end
 
 	task :update_weather => :environment do
-		include Matchup
-		hour, day, month, year = Matchup.find_date(Time.now)
-		if hour > 6 && hour < 23
+		include Share
+		hour, day, month, year = find_date(Time.now)
 			Game.where(:year => year, :month => month, :day => day).each do |game|
 				game.update_weather_forecast(true)
 				game.update_weather
 			end
 
-			hour, day, month, year = Matchup.find_date(Time.now.tomorrow)
+			hour, day, month, year = find_date(Time.now.tomorrow)
 			
 			Game.where(:year => year, :month => month, :day => day).each do |game|
 				game.update_weather_forecast(false)
 			end
-		end
 	end
 
   task :matchups => :environment do
