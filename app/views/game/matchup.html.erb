@@ -127,7 +127,7 @@
 			</table>
 
 			<table>
-				<%= render partial: "lineupheader", locals: { header: @home_team.name + " Bullpen", colspan: "43", projected: "" }%>
+				<%= render partial: "lineupheader", locals: { header: @home_team.name + " Bullpen", colspan: "43", projected: ""  }%>
 				<%= render(:partial => "bullpenpitchingheader") %>
 				<% @home_bullpen_pitchers.each do |pitcher| %>
 					<%= render(:partial => "bullpenpitching", :locals => {:pitcher => pitcher}) %>
