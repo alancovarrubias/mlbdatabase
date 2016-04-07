@@ -455,29 +455,6 @@ class Team < ActiveRecord::Base
 
 	private
 
-	def self.set_class_variable
-		url = "http://www.fangraphs.com/guts.aspx?type=cn"
-		doc = Nokogiri::HTML(open(url))
-		hash = {}
-		season = woba = woba_scale = r_pa = nil
-		doc.css(".grid_line_regular").each_with_index do |stat, index|
-			case index%14
-			when 0
-				season = stat.text.to_i
-			when 1
-				woba = stat.text.to_f
-			when 2
-				woba_scale = stat.text.to_f
-			when 11
-				r_pa = stat.text.to_f
-				hash[season] = {woba: woba, woba_scale: woba_scale, r_pa: r_pa}
-			end
-		end
-    	class_variable_set(:@@season_hash, hash)
-	end
-	set_class_variable
-
-
 	def get_fangraph(stat)
 		href = stat.child['href']
 		unless href == nil

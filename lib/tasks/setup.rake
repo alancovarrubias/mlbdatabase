@@ -1,38 +1,29 @@
 namespace :setup do
 
-	require 'nokogiri'
-	require 'open-uri'
 
-	task :test => :environment do
-		# url = "https://www.wunderground.com/history/airport/KOAK/2016/4/2/DailyHistory.html?req_city=Oakland&req_statename=California"
-		# doc = Nokogiri::HTML(open(url))
-		url = "https://www.wunderground.com/history/airport/KSAN/2016/4/2/DailyHistory.html?req_city=San%20Diego&req_statename=California"
-		doc = Nokogiri::HTML(open(url))
+  task :delete => :environment do
+	Game.days_games(Time.now).each do |game|
+	  game.pitchers.destroy_all
+	  game.hitters.destroy_all
+	  game.destroy
 	end
+  end
 
-	task :delete => :environment do
-		Game.days_games(Time.now).each do |game|
-			game.pitchers.destroy_all
-			game.hitters.destroy_all
-			game.destroy
-		end
-	end
+  task :create => [:create_teams, :create_players] do
+  end
 
-	task :create => [:create_teams, :create_players] do
-	end
+  task :daily => [:create_players, :fangraphs, :update_players, :boxscores, :innings] do
+  end
 
-	task :daily => [:create_players, :fangraphs, :update_players, :boxscores, :innings] do
-	end
+  task :hourly => [:update_weather, :ump, :tomorrow, :closingline] do
+  end
 
-	task :hourly => [:update_weather, :ump, :tomorrow, :closingline] do
-	end
-
-	task :ten => [:bullpen, :matchups] do
-	end
+  task :ten => [:bullpen, :matchups] do
+  end
 
   task :create_teams => :environment do
     include Create
-	  Create.teams
+	Create.teams
   end
 
   task :create_players => :environment do
@@ -41,47 +32,37 @@ namespace :setup do
 	end
   end
 
-	task :update_players => :environment do
-		Team.all.each do |team|
-			team.update_players
-		end
+  task :update_players => :environment do
+	Team.all.each do |team|
+	  team.update_players
 	end
+  end
 
-	task :fangraphs => :environment do
-		Team.all.each do |team|
-			team.fangraphs
-		end
+  task :fangraphs => :environment do
+	Team.all.each do |team|
+	  team.fangraphs
 	end
+  end
 
-	task :update_weather => :environment do
-		include Share
-		hour, day, month, year = find_date(Time.now)
-		Game.where(:year => year, :month => month, :day => day).each do |game|
-			game.update_weather_forecast(true)
-			game.update_weather
-		end
-
-		hour, day, month, year = find_date(Time.now.tomorrow)
-		
-		Game.where(:year => year, :month => month, :day => day).each do |game|
-			game.update_weather_forecast(false)
-		end
+  task :update_weather => :environment do
+	Game.days_games(Time.now).each do |game|
+	  game.get_forecast(Time.now)
+	  game.get_weather
 	end
+	Game.days_games(Time.now.tomorrow).each do |game|
+	  game.get_forecast(Time.now.tomorrow)
+	end
+  end
 
   task :matchups => :environment do
 	include Matchup
-
     set_matchups(Time.now)
-	
   end
 
 
   task :tomorrow => :environment do
-
 	include Matchup
-
 	set_matchups(Time.now.tomorrow)
-
   end
 
   task :ump => :environment do

@@ -1,17 +1,31 @@
-# Shared amongst multiple modules
 module Share
 
   require 'open-uri'
+  require 'open_uri_redirections'
   require 'nokogiri'
+  require 'mechanize'
   require 'timeout'
+
+  def mechanize_page(url)
+    page = nil
+    begin
+      Timeout::timeout(3){
+        page = Mechanize.new.get(url)
+      }
+    rescue Errno::ECONNREFUSED, Timeout::Error, URI::InvalidURIError => e
+      retry
+    end
+    return page
+  end
   
   def download_document(url)
   	doc = nil
     begin
       Timeout::timeout(3){
-  	    doc = Nokogiri::HTML(open(url))
+  	    doc = Nokogiri::HTML(open(url, allow_redirections: :all))
   	  }
     rescue Errno::ECONNREFUSED, Timeout::Error, URI::InvalidURIError => e
+      retry
     end
     return doc
   end
