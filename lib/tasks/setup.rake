@@ -301,7 +301,7 @@ namespace :setup do
 		require 'open-uri'
 		include Matchup
 		hour, day, month, year = Matchup.find_date(Time.now)
-		if hour > 6 && hour < 22
+		if hour.to_s > 6 && hour.to_s < 22
 			today_games = Game.where(:year => year, :month => month, :day => day)
 			size = today_games.size
 			url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/?date=#{year}#{month}#{day}"
