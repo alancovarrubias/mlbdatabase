@@ -14,6 +14,7 @@
  *= require_self
  */
 
+
 table {
   border-collapse: collapse;
   border: 1px solid #666666;
@@ -102,7 +103,12 @@ tbody.pitcher td:nth-child(n+14):nth-child(-n+18) {
 tbody.pitcher td:nth-child(19){
   background-color: #D3D3D3;
 }
-tbody.pitcher td:nth-child(n+21):nth-child(-n+29) {
+
+tbody.pitcher td:nth-child(n+21):nth-child(-n+24) {
+  background-color: #D3D3D3;
+}
+
+tbody.pitcher td:nth-child(n+26):nth-child(-n+29) {
   background-color: #D3D3D3;
 }
 
@@ -110,7 +116,11 @@ tbody.pitcher td:nth-child(n+21):nth-child(-n+29) {
 tbody.pitcher td:nth-child(30) {
   background-color: #FFF8DC;
 }
-tbody.pitcher td:nth-child(n+32):nth-child(-n+40) {
+tbody.pitcher td:nth-child(n+32):nth-child(-n+35) {
+  background-color: #FFF8DC;
+}
+
+tbody.pitcher td:nth-child(n+37):nth-child(-n+40) {
   background-color: #FFF8DC;
 }
 
@@ -118,7 +128,11 @@ tbody.pitcher td:nth-child(n+32):nth-child(-n+40) {
 tbody.pitcher td:nth-child(41){
   background-color: #FF7F00;
 }
-tbody.pitcher td:nth-child(n+43):nth-child(-n+51) {
+tbody.pitcher td:nth-child(n+43):nth-child(-n+46) {
+  background-color: #FF7F00;
+}
+
+tbody.pitcher td:nth-child(n+48):nth-child(-n+51) {
   background-color: #FF7F00;
 }
 

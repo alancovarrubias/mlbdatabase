@@ -4,9 +4,13 @@ class GameController < ApplicationController
 
 	def matchup
 
+
+
 		@game = Game.find_by_id(params[:id])
 		@away_team = @game.away_team
 		@home_team = @game.home_team
+
+		@url_image = @home_team.id.to_s + ".png"
 
 		# Set the boxscores and innings of the game if information is available
 		hitter_box_scores = @game.hitter_box_scores
@@ -80,36 +84,36 @@ class GameController < ApplicationController
 
 		unless params[:id] == "6911"
 
-		if @today_bool || @tomorrow_bool
-			if @away_starting_hitters.empty?
-				@away_starting_hitters = find_projected_lineup(@game, @away_team, @home_pitcher)
-				unless @away_starting_hitters.empty?
-					if @away_team.league == "NL"
-					  if hitter = Hitter.proto_hitters.find_by_name(@away_pitcher.name)
-					  	@away_starting_hitters = @away_starting_hitters[0...-1]
-					    @away_starting_hitters << hitter
-					  end
+			if @today_bool || @tomorrow_bool
+				if @away_starting_hitters.empty?
+					@away_starting_hitters = find_projected_lineup(@game, @away_team, @home_pitcher)
+					unless @away_starting_hitters.empty?
+						if @away_team.league == "NL"
+						  if hitter = Hitter.proto_hitters.find_by_name(@away_pitcher.name)
+						  	@away_starting_hitters = @away_starting_hitters[0...-1]
+						    @away_starting_hitters << hitter
+						  end
+						end
+						@away_starting_hitters = get_current_stats(@away_starting_hitters)
+						@away_projected = true
 					end
-					@away_starting_hitters = get_current_stats(@away_starting_hitters)
-					@away_projected = true
 				end
-			end
 
-			if @home_starting_hitters.empty?
-				@home_starting_hitters = find_projected_lineup(@game, @home_team, @away_pitcher)
-				unless @home_starting_hitters.empty?
-					if @home_team.league == "NL"
-					  if hitter = Hitter.proto_hitters.find_by_name(@home_pitcher.name)
-						@home_starting_hitters = @home_starting_hitters[0...-1]
-			  			@home_starting_hitters << hitter
-					  end
+				if @home_starting_hitters.empty?
+					@home_starting_hitters = find_projected_lineup(@game, @home_team, @away_pitcher)
+					unless @home_starting_hitters.empty?
+						if @home_team.league == "NL"
+						  if hitter = Hitter.proto_hitters.find_by_name(@home_pitcher.name)
+							@home_starting_hitters = @home_starting_hitters[0...-1]
+				  			@home_starting_hitters << hitter
+						  end
+						end
+						@home_starting_hitters = get_current_stats(@home_starting_hitters)
+						@home_projected = true
 					end
-					@home_starting_hitters = get_current_stats(@home_starting_hitters)
-					@home_projected = true
 				end
 			end
 		end
-	end
 
 		# calculate the number of hitters facing the pitcher with the same handedness
 		@away_pitcher_same = @away_pitcher_diff = 0

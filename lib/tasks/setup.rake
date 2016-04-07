@@ -1,4 +1,3 @@
-
 namespace :setup do
 
 	require 'nokogiri'
