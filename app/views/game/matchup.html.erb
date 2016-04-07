@@ -1,9 +1,13 @@
 <h1>
-	<%= @away_team.name %>
-	<i><%= @game.away_money_line + ' ' + @game.away_total %></i>
-	<%= "@ " + @home_team.name %>
-	<i><%= @game.home_money_line + ' ' + @game.home_total %></i>
+	<%= @away_team.name + " @ " + @home_team.name %>
 </h1>
+
+<h2>
+	<i><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></i>
+</h2>
+<h2>
+	<i><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></i>
+</h2>
 
 <%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
 <%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %>
