@@ -11,10 +11,47 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160404021855) do
+ActiveRecord::Schema.define(version: 20160407164423) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "batter_stats", force: true do |t|
+    t.integer  "season_id"
+    t.integer  "game_id"
+    t.integer  "player_id"
+    t.integer  "team_id"
+    t.string   "handedness", default: ""
+    t.string   "range",      default: ""
+    t.integer  "woba",       default: 0
+    t.integer  "ops",        default: 0
+    t.integer  "ab",         default: 0
+    t.integer  "so",         default: 0
+    t.integer  "bb",         default: 0
+    t.integer  "sb",         default: 0
+    t.float    "fb",         default: 0.0
+    t.float    "gb",         default: 0.0
+    t.float    "ld",         default: 0.0
+    t.integer  "wrc",        default: 0
+    t.integer  "obp",        default: 0
+    t.integer  "slg",        default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "batter_stats", ["game_id"], name: "index_batter_stats_on_game_id", using: :btree
+  add_index "batter_stats", ["player_id"], name: "index_batter_stats_on_player_id", using: :btree
+  add_index "batter_stats", ["season_id"], name: "index_batter_stats_on_season_id", using: :btree
+  add_index "batter_stats", ["team_id"], name: "index_batter_stats_on_team_id", using: :btree
+
+  create_table "game_days", force: true do |t|
+    t.integer  "season_id"
+    t.integer  "year"
+    t.integer  "month"
+    t.integer  "day"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "games", force: true do |t|
     t.integer  "away_team_id"
@@ -61,7 +98,10 @@ ActiveRecord::Schema.define(version: 20160404021855) do
     t.string   "pressure_3_value",      default: ""
     t.string   "temperature_3_value",   default: ""
     t.string   "precipitation_3_value", default: ""
+    t.integer  "game_day_id"
   end
+
+  add_index "games", ["game_day_id"], name: "index_games_on_game_day_id", using: :btree
 
   create_table "hitter_box_scores", force: true do |t|
     t.integer  "game_id"
@@ -213,6 +253,38 @@ ActiveRecord::Schema.define(version: 20160404021855) do
     t.datetime "updated_at"
   end
 
+  create_table "pitcher_stats", force: true do |t|
+    t.integer  "season_id"
+    t.integer  "game_id"
+    t.integer  "player_id"
+    t.integer  "team_id"
+    t.string   "handedness", default: ""
+    t.string   "range",      default: ""
+    t.boolean  "starter",    default: false
+    t.boolean  "bullpen",    default: false
+    t.integer  "pitches",    default: 0
+    t.float    "whip",       default: 0.0
+    t.float    "ip",         default: 0.0
+    t.integer  "so",         default: 0
+    t.integer  "bb",         default: 0
+    t.integer  "fip",        default: 0
+    t.float    "xfip",       default: 0.0
+    t.float    "kbb",        default: 0.0
+    t.integer  "woba",       default: 0
+    t.integer  "ops",        default: 0
+    t.float    "era",        default: 0.0
+    t.float    "fb",         default: 0.0
+    t.float    "gb",         default: 0.0
+    t.float    "ld",         default: 0.0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "pitcher_stats", ["game_id"], name: "index_pitcher_stats_on_game_id", using: :btree
+  add_index "pitcher_stats", ["player_id"], name: "index_pitcher_stats_on_player_id", using: :btree
+  add_index "pitcher_stats", ["season_id"], name: "index_pitcher_stats_on_season_id", using: :btree
+  add_index "pitcher_stats", ["team_id"], name: "index_pitcher_stats_on_team_id", using: :btree
+
   create_table "pitchers", force: true do |t|
     t.integer  "team_id"
     t.integer  "game_id"
@@ -307,6 +379,26 @@ ActiveRecord::Schema.define(version: 20160404021855) do
   add_index "pitchers", ["fangraph_id"], name: "index_pitchers_on_fangraph_id", using: :btree
   add_index "pitchers", ["name"], name: "index_pitchers_on_name", using: :btree
 
+  create_table "players", force: true do |t|
+    t.integer  "team_id"
+    t.string   "name",        default: ""
+    t.string   "identity",    default: ""
+    t.integer  "fangraph_id"
+    t.string   "bathand",     default: ""
+    t.string   "throwhand",   default: ""
+    t.boolean  "starter",     default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "players", ["team_id"], name: "index_players_on_team_id", using: :btree
+
+  create_table "seasons", force: true do |t|
+    t.integer  "year"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "teams", force: true do |t|
     t.string   "name",        default: ""
     t.string   "abbr",        default: ""
@@ -332,5 +424,20 @@ ActiveRecord::Schema.define(version: 20160404021855) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "weathers", force: true do |t|
+    t.integer  "game_id"
+    t.string   "station",    default: ""
+    t.integer  "hour",       default: 0
+    t.string   "wind",       default: ""
+    t.string   "humidity",   default: ""
+    t.string   "pressure",   default: ""
+    t.string   "temp",       default: ""
+    t.string   "rain",       default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "weathers", ["game_id"], name: "index_weathers_on_game_id", using: :btree
 
 end

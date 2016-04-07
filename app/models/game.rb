@@ -4,15 +4,19 @@ require 'timeout'
 
 class Game < ActiveRecord::Base
 
-  include Weather
+  include UpdateWeather
   
   belongs_to :away_team, :class_name => 'Team'
   belongs_to :home_team, :class_name => 'Team'
+  belongs_to :game_day
   has_many :pitchers
   has_many :hitters
   has_many :innings
   has_many :pitcher_box_scores
   has_many :hitter_box_scores
+  has_many :pitcher_stats
+  has_many :hitter_stats
+  has_many :weathers
   
   def self.days_games(time)
     Game.where(:year => time.year.to_s, :month => "%02d" % time.month, :day => "%02d" % time.day)
