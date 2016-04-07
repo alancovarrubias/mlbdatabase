@@ -300,8 +300,8 @@ namespace :setup do
 		require 'nokogiri'
 		require 'open-uri'
 		include Matchup
-		hour, day, month, year = Matchup.find_date(Time.now)
-		if hour.to_s > 6 && hour.to_s < 22
+		hour, day, month, year = find_date(Time.now)
+		# if hour.to_s > 6 && hour.to_s < 22
 			today_games = Game.where(:year => year, :month => month, :day => day)
 			size = today_games.size
 			url = "http://www.sportsbookreview.com/betting-odds/mlb-baseball/?date=#{year}#{month}#{day}"
@@ -383,7 +383,7 @@ namespace :setup do
 					game.update_attributes(:away_money_line => away_money_line[i], :home_money_line => home_money_line[i], :away_total => away_totals[i], :home_total => home_totals[i])
 				end
 			end
-		end
+		# end
 
 	end
 
