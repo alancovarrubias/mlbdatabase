@@ -39,6 +39,7 @@ namespace :change do
   	  player = find_player(pitcher.name, pitcher.alias)
       unless player
   	   player = Player.create(name: pitcher.name, identity: pitcher.alias, throwhand: pitcher.throwhand, bathand: pitcher.bathand)
+       puts player.name + ' created'
       end
       fill_empty_attributes(player, pitcher)
   	end
@@ -47,6 +48,7 @@ namespace :change do
       player = find_player(hitter.name, hitter.alias)
       unless player
        player = Player.create(name: hitter.name, identity: hitter.alias, throwhand: hitter.throwhand, bathand: hitter.bathand)
+       puts player.name + ' created'
       end
       fill_empty_attributes(player, hitter)
   	end
@@ -55,7 +57,7 @@ namespace :change do
 
 
   task create_game_days: :environment do
-  	(2014..2016).each do |year|
+  	(201..2016).each do |year|
       season = Season.where(year: year).first
   	  (1..12).each do |month|
   	  	(1..31).each do |day|
