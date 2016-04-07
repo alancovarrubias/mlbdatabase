@@ -5,7 +5,7 @@
 	<i><%= @game.home_money_line + ' ' + @game.home_total %></i>
 </h1>
 
-<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%>
+<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
 <%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %>
 
 <div class="container" style="background-image: url(<%= @url_image %>); ">
