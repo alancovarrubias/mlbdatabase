@@ -264,7 +264,7 @@ module Matchup
 				proto_hitters = Hitter.where(:game_id => nil)
 				# look for the prototype hitter
 				identifier, fangraph_id, name, handedness, lineup, position = hitter_info(element)
-				hitter = (proto_hitters, identifier, fangraph_id, name)
+				hitter = find_player(proto_hitters, identifier, fangraph_id, name)
 				team = find_hitter_team(hitter_index, away_team, home_team, away_lineup, home_lineup)
 				# If prototype hitter not found, create one
 				unless hitter
