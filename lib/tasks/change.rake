@@ -56,6 +56,7 @@ namespace :change do
         end
         time = game.year + "-" + game.month + "-" + game.day
         (1..5).each do |i|
+          pitches = get_correct_pitches(i, bullpen)
           day = (Date.parse(time) - i).day
           month = game.month.to_i
           if day > game.day.to_i
@@ -65,8 +66,8 @@ namespace :change do
           month = "%02d" % month
           Game.where(year: year, month: month, day: day).each do |prev_game|
             prev_game.pitcher_stats.where(player_id: player.id).each do |pitcher_stat|
-              unless pitcher_stat.pitches == 0
-                pitcher_stat.update_attributes(pitches: get_correct_pitches(i, bullpen))
+              if pitcher_stat.pitches == 0
+                pitcher_stat.update_attributes(pitches: pitches)
               end
             end
           end
