@@ -3,11 +3,16 @@ class GameController < ApplicationController
 	require 'date'
 
 
-	def new
+  def new
+    @game = Game.find_by_id(params[:id])
+    @away_team = @game.away_team
+    @home_team = @game.home_team
 
+    @url_image = @home_team.id.to_s + ".png"
 
+    
 		
-	end
+  end
 
 	def matchup
 
