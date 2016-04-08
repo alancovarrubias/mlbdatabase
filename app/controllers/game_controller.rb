@@ -2,6 +2,13 @@ class GameController < ApplicationController
 	include Share
 	require 'date'
 
+
+	def new
+
+
+		
+	end
+
 	def matchup
 
 

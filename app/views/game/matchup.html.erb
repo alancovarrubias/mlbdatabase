@@ -1,39 +1,23 @@
 <h1>
-	<%= @away_team.name + " @ " + @home_team.name %>
+  <%= @away_team.name + " @ " + @home_team.name %>
 </h1>
 
 <h2>
-	<i><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></i>
+  <i><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></i>
 </h2>
+
 <h2>
-	<i><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></i>
+  <i><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></i>
 </h2>
 
 <%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
 <%= link_to(@date + ' Matchups', {:controller => 'index', :action => 'game', :year => params[:year], :month => params[:month], :day => params[:day]}) %>
 
 <div class="container" style="background-image: url(<%= @url_image %>); ">
+	
 <%= image_tag(@url_image, :height => '400', :width => '800', :align => 'right') %>
-	<table>
-		<tr>
-			<th>Innings</th>
-			<% @innings.each do |inning| %>
-				<th><%= inning %></th>
-			<% end %>
-		</tr>
-		<tr>
-			<th><%= @away_team.name%></th>
-			<% @away_score.each do |inning| %>
-				<td><%= inning %></td>
-			<% end %>
-		</tr>
-		<tr>
-			<th><%= @home_team.name%></th>
-			<% @home_score.each do |inning| %>
-				<td><%= inning %></td>
-			<% end %>
-		</tr>
-	</table>
+
+<%= render partial: "innings" %>
 
 
 	<h2><%= "Gametime: " + @game.time + ' Local Time' %></h2>

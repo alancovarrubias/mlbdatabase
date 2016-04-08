@@ -1,7 +1,7 @@
 namespace :change do
 
 
-  def find_player(name, identity)
+  def find_playerstat(name, identity)
     player = nil
   	if identity && identity != ""
       player = Player.find_by_identity(identity)
@@ -49,7 +49,7 @@ namespace :change do
     Game.all.each do |game|
       year = game.year
       game.pitchers.where(bullpen: true).each do |bullpen|
-        player = find_player(bullpen.name, bullpen.alias)
+        player = find_playerstat(bullpen.name, bullpen.alias)
         unless player
           puts bullpen.name + " not found"
           next
@@ -87,7 +87,7 @@ namespace :change do
     end
 
   	Pitcher.all.each do |pitcher|
-  	  player = find_player(pitcher.name, pitcher.alias)
+  	  player = find_playerstat(pitcher.name, pitcher.alias)
       unless player
   	   player = Player.create(name: pitcher.name, identity: pitcher.alias, throwhand: pitcher.throwhand, bathand: pitcher.bathand)
        puts player.name + ' created'
@@ -96,7 +96,7 @@ namespace :change do
   	end
 
   	Hitter.all.each do |hitter|
-      player = find_player(hitter.name, hitter.alias)
+      player = find_playerstat(hitter.name, hitter.alias)
       unless player
        player = Player.create(name: hitter.name, identity: hitter.alias, throwhand: hitter.throwhand, bathand: hitter.bathand)
        puts player.name + ' created'
@@ -135,7 +135,7 @@ namespace :change do
 
   	Pitcher.proto_pitchers.each do |pitcher|
 
-  	  player = find_player(pitcher.name, pitcher.alias)
+  	  player = find_playerstat(pitcher.name, pitcher.alias)
       unless player
         puts pitcher.name + " Not Found"
         next
@@ -168,7 +168,7 @@ namespace :change do
 
   	Hitter.proto_hitters.each do |hitter|
 
-      player = find_player(hitter.name, hitter.alias)
+      player = find_playerstat(hitter.name, hitter.alias)
       unless player
         puts hitter.name + " Not Found"
         next
@@ -210,7 +210,7 @@ namespace :change do
 
       game.hitters.each do |hitter|
 
-        player = find_player(hitter.name, hitter.alias)
+        player = find_playerstat(hitter.name, hitter.alias)
         unless player
           puts hitter.name + " Pitcher Not Found"
           next
@@ -234,7 +234,7 @@ namespace :change do
 
       game.pitchers.each do |pitcher|
 
-        player = find_player(pitcher.name, pitcher.alias)
+        player = find_playerstat(pitcher.name, pitcher.alias)
         unless player
           puts pitcher.name + " Pitcher Not Found"
           next
