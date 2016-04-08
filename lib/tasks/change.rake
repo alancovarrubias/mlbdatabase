@@ -161,7 +161,7 @@ namespace :change do
 
         player = find_player(hitter.name, hitter.alias)
         unless player
-          puts player.name + " Not Found"
+          puts hitter.name + " Not Found"
         end
 
         stat = BatterStat.create(season_id: season.id, player_id: player.id, game_id: game.id, team_id: hitter.team_id, handedness: "L", range: "Game Season", woba: hitter.wOBA_L, ops: hitter.OPS_L, 
