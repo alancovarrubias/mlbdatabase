@@ -57,6 +57,9 @@ namespace :change do
         time = game.year + "-" + game.month + "-" + game.day
         (1..5).each do |i|
           pitches = get_correct_pitches(i, bullpen)
+          if pitches == 0
+            next
+          end
           day = (Date.parse(time) - i).day
           month = game.month.to_i
           if day > game.day.to_i
