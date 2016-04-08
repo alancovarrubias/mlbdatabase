@@ -47,7 +47,7 @@ namespace :change do
 
   task bullpen_pitches_thrown: :environment do
     Game.all.each do |game|
-      game_day = game.game_day
+      year = game.year
       game.pitchers.where(bullpen: true).each do |bullpen|
         player = find_player(bullpen.name, bullpen.alias)
         unless player
