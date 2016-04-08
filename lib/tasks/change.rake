@@ -57,7 +57,7 @@ namespace :change do
 
 
   task create_game_days: :environment do
-  	(201..2016).each do |year|
+  	(2014..2016).each do |year|
       season = Season.where(year: year).first
   	  (1..12).each do |month|
   	  	(1..31).each do |day|
