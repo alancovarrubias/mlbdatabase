@@ -29,8 +29,6 @@ module Share
       count += 1
       if count < 3
         retry
-      else
-        next
       end
     end
     return doc
