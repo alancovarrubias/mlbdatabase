@@ -14,6 +14,9 @@ module Update
   	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{pitcher.alias}&year=#{year}&t=p"
   	  puts url
       doc = download_document(url)
+      unless doc
+        next
+      end
   	  row = 0
   	  doc.css("#plato td").each_with_index do |element, index|
   	  	case index%28
