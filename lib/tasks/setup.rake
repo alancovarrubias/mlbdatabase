@@ -34,6 +34,9 @@ namespace :setup do
 
   task :update_players => :environment do
 	Team.all.each do |team|
+	  if (team.id < 7)
+	  	next
+	  end
 	  team.update_players
 	end
   end
