@@ -20,12 +20,18 @@ module Share
   
   def download_document(url)
   	doc = nil
+    count = 0
     begin
       Timeout::timeout(3){
   	    doc = Nokogiri::HTML(open(url, allow_redirections: :all))
   	  }
     rescue Errno::ECONNREFUSED, Timeout::Error, URI::InvalidURIError, Zlib::BufError => e
-      retry
+      count += 1
+      if count < 3
+        retry
+      else
+        next
+      end
     end
     return doc
   end
