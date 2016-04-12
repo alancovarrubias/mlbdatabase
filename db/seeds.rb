@@ -5,6 +5,15 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+include PlayerUpdate
 
-	require 'nokogiri'
-	require 'open-uri'
+(2014..2016).each do |i|
+  Season.create(year: i)
+end
+
+Season.all.each do |season|
+  Team.all.each do |team|
+  	create_players(season, team)
+  end
+end
+

@@ -15,7 +15,7 @@ class Game < ActiveRecord::Base
   has_many :pitcher_box_scores
   has_many :hitter_box_scores
   has_many :pitcher_stats
-  has_many :hitter_stats
+  has_many :batter_stats
   has_many :weathers
   
   def self.days_games(time)
@@ -23,7 +23,13 @@ class Game < ActiveRecord::Base
   end
 
   def url
-	  return self.home_team.game_abbr + self.year + self.month + self.day + self.num
+    game_day = self.game_day
+    return self.home_team.game_abbr + self.year.to_s + "%02d" % self.month + "%02d" % self.day + self.num
+  end
+
+  def new_url
+    game_day = self.game_day
+	  return self.home_team.game_abbr + game_day.year.to_s + "%02d" % game_day.month + "%02d" % game_day.day + self.num
   end
 
   def get_forecast(time)

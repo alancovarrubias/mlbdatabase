@@ -10,6 +10,7 @@ gem 'rails', '4.1.6'
 
 gem 'pg'
 
+gem 'jquery-ui-rails'
 
 gem 'open_uri_redirections'
 

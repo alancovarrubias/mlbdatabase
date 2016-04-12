@@ -8,7 +8,8 @@ class CreateBatterStats < ActiveRecord::Migration
       t.string   :handedness,    default: ""
       t.string   :range,         default: ""
       t.boolean  :starter,       default: false
-      t.integer  :lineup,         default: 0
+      t.integer  :lineup,        default: 0
+      t.string   :position,      default: ""
       t.integer  :woba,          default: 0
       t.integer  :ops,		       default: 0
       t.integer  :ab,            default: 0

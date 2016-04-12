@@ -1,37 +1,39 @@
 <table>
+  <caption>Weather Recorded By Wunderground</caption>
+  <thead>
 	<tr>
-		<th colspan="7"> <%= 'Weather Recorded By Wunderground'%> </th>
+	  <th>Weather</th>
+	  <th>Temperature</th>
+	  <th>Wind</th>
+	  <th>Pressure</th>
+	  <th>Humidity</th>
+	  <th>Precipitation</th>
+	</tr>
+  </thead>
+  <tbody>
+	<tr>
+	  <td><%= format_time(@game.time, 0) %></td>
+	  <td align="center"><%= @game.temperature_1_value %></td>
+	  <td align="center"><%= @game.wind_1_value %></td>
+	  <td align="center"><%= @game.pressure_1_value %></td>
+	  <td align="center"><%= @game.humidity_1_value %></td>
+	  <td align="center"><%= @game.precipitation_1_value %></td>
 	</tr>
 	<tr>
-		<th>Weather</th>
-		<th>Temperature</th>
-		<th>Wind</th>
-		<th>Pressure</th>
-		<th>Humidity</th>
-		<th>Precipitation</th>
+	  <td><%= format_time(@game.time, 1) %></td>
+	  <td align="center"><%= @game.temperature_2_value %></td>
+	  <td align="center"><%= @game.wind_2_value %></td>
+	  <td align="center"><%= @game.pressure_2_value %></td>
+	  <td align="center"><%= @game.humidity_2_value %></td>
+	  <td align="center"><%= @game.precipitation_2_value %></td>
 	</tr>
 	<tr>
-		<td><%= format_time(@game.time, 0) %></td>
-		<td align="center"><%= @game.temperature_1_value %></td>
-		<td align="center"><%= @game.wind_1_value %></td>
-		<td align="center"><%= @game.pressure_1_value %></td>
-		<td align="center"><%= @game.humidity_1_value %></td>
-		<td align="center"><%= @game.precipitation_1_value %></td>
+	  <td><%= format_time(@game.time, 2) %></td>
+	  <td align="center"><%= @game.temperature_3_value %></td>
+	  <td align="center"><%= @game.wind_3_value %></td>
+	  <td align="center"><%= @game.pressure_3_value %></td>
+	  <td align="center"><%= @game.humidity_3_value %></td>
+	  <td align="center"><%= @game.precipitation_3_value %></td>
 	</tr>
-	<tr>
-		<td><%= format_time(@game.time, 1) %></td>
-		<td align="center"><%= @game.temperature_2_value %></td>
-		<td align="center"><%= @game.wind_2_value %></td>
-		<td align="center"><%= @game.pressure_2_value %></td>
-		<td align="center"><%= @game.humidity_2_value %></td>
-		<td align="center"><%= @game.precipitation_2_value %></td>
-	</tr>
-	<tr>
-		<td><%= format_time(@game.time, 2) %></td>
-		<td align="center"><%= @game.temperature_3_value %></td>
-		<td align="center"><%= @game.wind_3_value %></td>
-		<td align="center"><%= @game.pressure_3_value %></td>
-		<td align="center"><%= @game.humidity_3_value %></td>
-		<td align="center"><%= @game.precipitation_3_value %></td>
-	</tr>
+  </tbody>
 </table>

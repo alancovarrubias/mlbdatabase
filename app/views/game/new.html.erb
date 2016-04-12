@@ -1,0 +1,18 @@
+<div class="header">
+	<h1><%= @away_team.name + " @ " + @home_team.name %></h1>
+	<h2><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></h2>
+	<h2><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></h2>
+	<h3><%= "Gametime: " + @game.time + ' Local Time' %></h3>
+</div>
+
+  <nav>
+    <ul>
+  	  <li><%= link_to('Home Page', { controller: 'index', action: 'home'})%></li>
+  	  <li><%= link_to(@date + ' Matchups', 
+  	  { controller: 'index', action: 'game',
+  	  year: params[:year], month: params[:month], day: params[:day] }) %>
+      </li>
+    </ul>
+  </nav>
+<%= image_tag(@image_url, :width => '700') %>
+<%= render partial: "new_weather", locals: { weathers: @forecasts } %>

@@ -5,9 +5,10 @@ class CreatePlayers < ActiveRecord::Migration
 	    t.string :name,			    default: ""
 	    t.string :identity,		  default: ""
       t.integer :fangraph_id
+      t.boolean :starter,     default: false
+      t.boolean :bullpen,     default: false
       t.string :bathand, 		  default: ""
       t.string :throwhand, 		default: ""
-      t.boolean :starter, 		default: false
       t.timestamps
     end
   end

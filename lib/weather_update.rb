@@ -1,27 +1,34 @@
-module UpdateWeather
+module WeatherUpdate
 
-  include Share
+  include NewShare
 
+  def create_weathers(game)
+    if game.weathers.size != 6
+      (1..3).each do |i|
+        Weather.create(game_id: game.id, station: "Forecast", hour: i)
+        Weather.create(game_id: game.id, station: "Actual", hour: i)
+      end
+    end
+  end
 
-  # Wunderground
+  # Data scraped from Wunderground
   def update_pressure_forecast(game)
-
   	home_team = game.home_team
   	url = "https://www.wunderground.com/cgi-bin/findweather/getForecast?query=#{home_team.zipcode}"
 	  page = mechanize_page(url)
-    puts url
 
     page.search("#current td").each_with_index do |stat, index|
-	    if index == 1
-	      pressure = stat.text.strip[0..4] + ' in'
-        game.update_attributes(pressure_1: pressure, pressure_2: pressure, pressure_3: pressure)
+	  if index == 1
+	    pressure = stat.text.strip[0..4] + ' in'
+        game.weathers.where(station: "Forecast").each do |weather|
+          weather.update_attributes(pressure: pressure)
+        end
         break
-	    end
+	  end
     end
-
   end
 
-  # Accuweather
+  # Data scraped from Accuweather
   def update_forecast(game, time)
 
   	# Game time must include a colon
@@ -44,13 +51,11 @@ module UpdateWeather
   	url = @@accuweather_urls[home_team.id-1]
     url += "?hour=#{game_hour}"
     doc = download_document(url)
-    puts url
-
-    var = row = 0
-    @temperature = Array.new
+    @temp = Array.new
     @humidity = Array.new
-    @precipitation = Array.new
+    @rain = Array.new
     @wind = Array.new
+    var = row = 0
     doc.css("td").each_with_index do |stat, index|
       if stat.children.size == 1
         text = stat.text
@@ -79,17 +84,16 @@ module UpdateWeather
 
     if home_team.id == 4
 	    (0..2).each do |i|
-	      @temperature[i] = convert_to_fahr(@temperature[i])
+	      @temp[i] = convert_to_fahr(@temp[i])
 	    end
     end
-    game.update_attributes(:temperature_1 => @temperature[0], :temperature_2 => @temperature[1], :temperature_3 => @temperature[2])
-    game.update_attributes(:humidity_1 => @humidity[0], :humidity_2 => @humidity[1], :humidity_3 => @humidity[2])
-    game.update_attributes(:precipitation_1 => @precipitation[0], :precipitation_2 => @precipitation[1], :precipitation_3 => @precipitation[2])
-    game.update_attributes(:wind_1 => @wind[0], :wind_2 => @wind[1], :wind_3 => @wind[2])
 
+    game.weathers.where(station: "Forecast").order("hour").each_with_index do |weather, index|
+    	weather.update_attributes(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index])
+    end
   end
 
-  # Wunderground
+  # Data scraped from wunderground
   def update_weather(game)
     
     home_team = game.home_team
@@ -114,20 +118,22 @@ module UpdateWeather
     else
       size = 12
     end
-    temp = humidity = pressure = precipitation = dir = speed  = nil
-    one = two = three = false
-    # Iterate through all the rows and find the correct time and update the weather
+    temp = humidity = pressure = rain = dir = speed  = nil
+    weathers = game.weathers.where(station: "Actual")
+    weather = nil
     elements.each_with_index do |stat, index|
       case index%size
       when 0
         time = stat.text.strip
         hour, period = parse_time_string_get_hour_period(time)
         if hour == game_hour_1 && game_period_1 == period
-          one = true
+          weather = weathers.where(hour: 1).first
         elsif hour == game_hour_2 && game_period_2 == period
-          two = true
+          weather = weathers.where(hour: 2).first
         elsif hour == game_hour_3 && game_period_3 == period
-          three = true
+          weather = weathers.where(hour: 3).first
+        else
+          weather = nil
         end
       when 1
         temp = stat.text.strip
@@ -140,15 +146,10 @@ module UpdateWeather
       when size - 5
         speed = stat.text.strip
       when size - 3
-        precipitation = stat.text.strip
-        if one
-          game.update_attributes(:wind_1_value => speed + " " + dir, :humidity_1_value => humidity, :pressure_1_value => pressure, :temperature_1_value => temp, :precipitation_1_value => precipitation)
-        elsif two
-          game.update_attributes(:wind_2_value => speed + " " + dir, :humidity_2_value => humidity, :pressure_2_value => pressure, :temperature_2_value => temp, :precipitation_2_value => precipitation)
-        elsif three
-          game.update_attributes(:wind_3_value => speed + " " + dir, :humidity_3_value => humidity, :pressure_3_value => pressure, :temperature_3_value => temp, :precipitation_3_value => precipitation)
+        rain = stat.text.strip
+        if weather
+          weather.update_attributes(wind: speed + " " + dir, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
         end
-        one = two = three = false
       end
     end
   end
@@ -165,11 +166,11 @@ module UpdateWeather
     def row(row, text)
       case row
       when 2
-        @temperature << text
+        @temp << text
       when 4
         @humidity << text
       when 6
-        @precipitation << text
+        @rain << text
       when 10
         @wind << text
       end 
@@ -187,7 +188,6 @@ module UpdateWeather
     end
 
     def next_hour(hour, period)
-
       if hour.to_i == 11
         if period == "AM"
           period = "PM"
@@ -205,16 +205,16 @@ module UpdateWeather
       return hour, period
     end
 
-	@@accuweather_urls = ["http://www.accuweather.com/en/us/anaheim-ca/92805/hourly-weather-forecast/327150", "http://www.accuweather.com/en/us/houston-tx/77002/hourly-weather-forecast/351197", "http://www.accuweather.com/en/us/oakland-ca/94612/hourly-weather-forecast/347626",
-	"http://www.accuweather.com/en/ca/toronto/m5g/hourly-weather-forecast/55488", "http://www.accuweather.com/en/us/atlanta-ga/30303/hourly-weather-forecast/348181", "http://www.accuweather.com/en/us/milwaukee-wi/53202/hourly-weather-forecast/351543",
-	"http://www.accuweather.com/en/us/st-louis-mo/63101/hourly-weather-forecast/349084", "http://www.accuweather.com/en/us/chicago-il/60608/hourly-weather-forecast/348308", "http://www.accuweather.com/en/us/phoenix-az/85004/hourly-weather-forecast/346935",
-	"http://www.accuweather.com/en/us/los-angeles-ca/90012/hourly-weather-forecast/347625", "http://www.accuweather.com/en/us/san-francisco-ca/94103/hourly-weather-forecast/347629", "http://www.accuweather.com/en/us/cleveland-oh/44113/hourly-weather-forecast/350127",
-	"http://www.accuweather.com/en/us/seattle-wa/98104/hourly-weather-forecast/351409", "http://www.accuweather.com/en/us/miami-fl/33128/hourly-weather-forecast/347936", "http://www.accuweather.com/en/us/queens-borough-ny/11414/hourly-weather-forecast/2623321",
-	"http://www.accuweather.com/en/us/washington-dc/20006/hourly-weather-forecast/327659", "http://www.accuweather.com/en/us/baltimore-md/21202/hourly-weather-forecast/348707", "http://www.accuweather.com/en/us/san-diego-ca/92101/hourly-weather-forecast/347628",
-	"http://www.accuweather.com/en/us/philadelphia-pa/19107/hourly-weather-forecast/350540", "http://www.accuweather.com/en/us/pittsburgh-pa/15219/hourly-weather-forecast/1310", "http://www.accuweather.com/en/us/arlington-tx/76010/hourly-weather-forecast/331134",
-	"http://www.accuweather.com/en/us/st-petersburg-fl/33712/hourly-weather-forecast/332287", "http://www.accuweather.com/en/us/boston-ma/02108/hourly-weather-forecast/348735", "http://www.accuweather.com/en/us/cincinnati-oh/45229/hourly-weather-forecast/350126",
-	"http://www.accuweather.com/en/us/denver-co/80203/hourly-weather-forecast/347810", "http://www.accuweather.com/en/us/kansas-city-mo/64106/hourly-weather-forecast/329441", "http://www.accuweather.com/en/us/detroit-mi/48226/hourly-weather-forecast/348755",
-	"http://www.accuweather.com/en/us/minneapolis-mn/55415/hourly-weather-forecast/348794", "http://www.accuweather.com/en/us/chicago-il/60608/hourly-weather-forecast/348308", "http://www.accuweather.com/en/us/bronx-borough-ny/10461/hourly-weather-forecast/334650"]
+  @@accuweather_urls = ["http://www.accuweather.com/en/us/anaheim-ca/92805/hourly-weather-forecast/327150", "http://www.accuweather.com/en/us/houston-tx/77002/hourly-weather-forecast/351197", "http://www.accuweather.com/en/us/oakland-ca/94612/hourly-weather-forecast/347626",
+  "http://www.accuweather.com/en/ca/toronto/m5g/hourly-weather-forecast/55488", "http://www.accuweather.com/en/us/atlanta-ga/30303/hourly-weather-forecast/348181", "http://www.accuweather.com/en/us/milwaukee-wi/53202/hourly-weather-forecast/351543",
+  "http://www.accuweather.com/en/us/st-louis-mo/63101/hourly-weather-forecast/349084", "http://www.accuweather.com/en/us/chicago-il/60608/hourly-weather-forecast/348308", "http://www.accuweather.com/en/us/phoenix-az/85004/hourly-weather-forecast/346935",
+  "http://www.accuweather.com/en/us/los-angeles-ca/90012/hourly-weather-forecast/347625", "http://www.accuweather.com/en/us/san-francisco-ca/94103/hourly-weather-forecast/347629", "http://www.accuweather.com/en/us/cleveland-oh/44113/hourly-weather-forecast/350127",
+  "http://www.accuweather.com/en/us/seattle-wa/98104/hourly-weather-forecast/351409", "http://www.accuweather.com/en/us/miami-fl/33128/hourly-weather-forecast/347936", "http://www.accuweather.com/en/us/queens-borough-ny/11414/hourly-weather-forecast/2623321",
+  "http://www.accuweather.com/en/us/washington-dc/20006/hourly-weather-forecast/327659", "http://www.accuweather.com/en/us/baltimore-md/21202/hourly-weather-forecast/348707", "http://www.accuweather.com/en/us/san-diego-ca/92101/hourly-weather-forecast/347628",
+  "http://www.accuweather.com/en/us/philadelphia-pa/19107/hourly-weather-forecast/350540", "http://www.accuweather.com/en/us/pittsburgh-pa/15219/hourly-weather-forecast/1310", "http://www.accuweather.com/en/us/arlington-tx/76010/hourly-weather-forecast/331134",
+  "http://www.accuweather.com/en/us/st-petersburg-fl/33712/hourly-weather-forecast/332287", "http://www.accuweather.com/en/us/boston-ma/02108/hourly-weather-forecast/348735", "http://www.accuweather.com/en/us/cincinnati-oh/45229/hourly-weather-forecast/350126",
+  "http://www.accuweather.com/en/us/denver-co/80203/hourly-weather-forecast/347810", "http://www.accuweather.com/en/us/kansas-city-mo/64106/hourly-weather-forecast/329441", "http://www.accuweather.com/en/us/detroit-mi/48226/hourly-weather-forecast/348755",
+  "http://www.accuweather.com/en/us/minneapolis-mn/55415/hourly-weather-forecast/348794", "http://www.accuweather.com/en/us/chicago-il/60608/hourly-weather-forecast/348308", "http://www.accuweather.com/en/us/bronx-borough-ny/10461/hourly-weather-forecast/334650"]
 
 
 
@@ -228,5 +228,4 @@ module UpdateWeather
   "https://www.wunderground.com/history/airport/KSPG/#{Time.now.year}/#{Time.now.month}/#{Time.now.day}/DailyHistory.html?req_city=Saint+Petersburg&req_state=FL&req_statename=Florida&reqdb.zip=33701&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KBOS/#{Time.now.year}/#{Time.now.month}/#{Time.now.day}/DailyHistory.html?req_city=Boston&req_state=MA&req_statename=Massachusetts&reqdb.zip=02101&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KLUK/#{Time.now.year}/#{Time.now.month}/#{Time.now.day}/DailyHistory.html?req_city=Cincinnati&req_state=OH&req_statename=Ohio&reqdb.zip=45201&reqdb.magic=1&reqdb.wmo=99999",
   "https://www.wunderground.com/history/airport/KAPA/#{Time.now.year}/#{Time.now.month}/#{Time.now.day}/DailyHistory.html?req_city=Denver&req_statename=Colorado", "https://www.wunderground.com/history/airport/KMKC/#{Time.now.year}/#{Time.now.month}/#{Time.now.day}/DailyHistory.html?req_city=Kansas+City&req_state=MO&req_statename=Missouri&reqdb.zip=64106&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KDET/#{Time.now.year}/#{Time.now.month}/#{Time.now.day}/DailyHistory.html?req_city=Detroit&req_state=MI&req_statename=Michigan&reqdb.zip=48201&reqdb.magic=1&reqdb.wmo=99999",
   "https://www.wunderground.com/history/airport/KMIC/#{Time.now.year}/#{Time.now.month}/#{Time.now.day}/DailyHistory.html?req_city=Minneapolis&req_state=MN&req_statename=Minnesota&reqdb.zip=55401&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KMDW/#{Time.now.year}/#{Time.now.month}/#{Time.now.day}/DailyHistory.html?req_city=Chicago&req_state=IL&req_statename=Illinois&reqdb.zip=60290&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KHPN/#{Time.now.year}/#{Time.now.month}/#{Time.now.day}/DailyHistory.html?req_city=Bronxville&req_state=NY&req_statename=New+York&reqdb.zip=10708&reqdb.magic=1&reqdb.wmo=99999"]
-
 end

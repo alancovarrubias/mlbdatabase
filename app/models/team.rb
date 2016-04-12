@@ -4,6 +4,8 @@ require 'open-uri'
 class Team < ActiveRecord::Base
 	has_many :pitchers
 	has_many :hitters
+	has_many :players
+	
 	include Update
 
 	def fangraph_abbr
@@ -296,7 +298,7 @@ class Team < ActiveRecord::Base
 				when 9
 					fb = text[0...-2].to_f
 				when 10
-					xfip = text.to_i
+					xfip = text.to_f
 				when 11
 					kbb = text.to_f
 				when 12

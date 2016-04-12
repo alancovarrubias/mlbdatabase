@@ -1,24 +1,10 @@
 class GameController < ApplicationController
-	include Share
-	require 'date'
+  include NewShare
+  require 'date'
 
+  def matchup
 
-  def new
-    @game = Game.find_by_id(params[:id])
-    @away_team = @game.away_team
-    @home_team = @game.home_team
-
-    @url_image = @home_team.id.to_s + ".png"
-
-    
-		
-  end
-
-	def matchup
-
-
-
-		@game = Game.find_by_id(params[:id])
+  		@game = Game.find_by_id(params[:id])
 		@away_team = @game.away_team
 		@home_team = @game.home_team
 
@@ -166,27 +152,48 @@ class GameController < ApplicationController
 		end
 		@away_bench_hitters = Hitter.where(:game_id => nil, :team_id => @away_team.id, :starter => false).order(AB_R: :desc)
 		@home_bench_hitters = Hitter.where(:game_id => nil, :team_id => @home_team.id, :starter => false).order(AB_R: :desc)
+	
+
+  end
+
+
+  def new
+
+  	@game = Game.find_by_id(params[:id])
+    @game_day = @game.game_day
+	@away_team = @game.away_team
+	@home_team = @game.home_team
+	@image_url = @home_team.id.to_s + ".png"
+
+	@month = Date::MONTHNAMES[@game_day.month.to_i]
+	day = @game_day.day.to_i.to_s
+	@date = @month + ' ' + day
+	
+	@forecasts = @game.weathers.where(station: "Forecast")
+	@weathers = @game.weathers.where(station: "Actual")
+
+
+    
 		
+  end
 
+
+  def team
+	@team = Team.find_by_id(params[:id])
+	if params[:left] == '1'
+	  @left = true
+	else
+	  @left = false
 	end
 
-
-	def team
-		@team = Team.find_by_id(params[:id])
-		if params[:left] == '1'
-			@left = true
-		else
-			@left = false
-		end
-
-		if @left
-			@pitchers = @team.pitchers.where(:game_id => nil).order(:IP_L).reverse
-			@hitters = @team.hitters.where(:game_id => nil).order(:AB_L).reverse
-		else
-			@pitchers = @team.pitchers.where(:game_id => nil).order(:IP_R).reverse
-			@hitters = @team.hitters.where(:game_id => nil).order(:AB_R).reverse.limit(20)
-		end
+	if @left
+	  @pitchers = @team.pitchers.where(:game_id => nil).order(:IP_L).reverse
+	  @hitters = @team.hitters.where(:game_id => nil).order(:AB_L).reverse
+	else
+	  @pitchers = @team.pitchers.where(:game_id => nil).order(:IP_R).reverse
+	  @hitters = @team.hitters.where(:game_id => nil).order(:AB_R).reverse.limit(20)
 	end
+  end
 
   def game_day?(time)
   	hour, day, month, year = find_date(time)

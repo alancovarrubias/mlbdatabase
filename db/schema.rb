@@ -23,6 +23,9 @@ ActiveRecord::Schema.define(version: 20160407164423) do
     t.integer  "team_id"
     t.string   "handedness", default: ""
     t.string   "range",      default: ""
+    t.boolean  "starter",    default: false
+    t.integer  "lineup",     default: 0
+    t.string   "position",   default: ""
     t.integer  "woba",       default: 0
     t.integer  "ops",        default: 0
     t.integer  "ab",         default: 0
@@ -384,9 +387,10 @@ ActiveRecord::Schema.define(version: 20160407164423) do
     t.string   "name",        default: ""
     t.string   "identity",    default: ""
     t.integer  "fangraph_id"
+    t.boolean  "starter",     default: false
+    t.boolean  "bullpen",     default: false
     t.string   "bathand",     default: ""
     t.string   "throwhand",   default: ""
-    t.boolean  "starter",     default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

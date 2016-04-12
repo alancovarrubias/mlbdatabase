@@ -1,16 +1,19 @@
-<h1>Home Page</h1>
+<div class="header">
+	<h1>Home Page</h1>
+</div>
 
-<%yesterday = Time.now.yesterday %>
-<%today = Time.now %>
-<%tomorrow = Time.now.tomorrow %>
+<ul>
+	<li><%= link_to('Teams', { controller: 'index', action: 'teams' })%></li>
+	<li><%= link_to( @yesterday.strftime("%B %e"), { controller: 'index', action: 'game',
+		year: @yesterday.year, month: @yesterday.month, day: @yesterday.day })%></li>
+	<li><%= link_to( @today.strftime("%B %e"), { controller: 'index', action: 'game',
+		year: @today.year, month: @today.month, day: @today.day})%></li>
+	<li><%= link_to( @tomorrow.strftime("%B %e"), { controller: 'index', action: 'game',
+		year: @tomorrow.year, month: @tomorrow.month, day: @tomorrow.day })%></li>
+	<li><%= link_to('History', { controller: 'index', action: 'year'})%></li>
+	<li><%= link_to('Logout', { controller: 'access', action: 'logout'})%></li>
+</ul>
 
-<%= link_to('Teams', {:controller => 'index', :action => 'teams'})%> </br>
-<%= link_to( yesterday.strftime("%B %e"), {:controller => 'index', :action => 'game', :year => yesterday.year, :month => yesterday.month, :day => yesterday.day})%></br>
-<%= link_to( today.strftime("%B %e"), {:controller => 'index', :action => 'game', :year => today.year, :month => today.month, :day => today.day})%></br>
-<%= link_to( tomorrow.strftime("%B %e"), {:controller => 'index', :action => 'game', :year => tomorrow.year, :month => tomorrow.month, :day => tomorrow.day})%></br>
-<%= link_to('History', {:controller => 'index', :action => 'year'})%></br>	
-<%= link_to('Logout', {:controller => 'access', :action => 'logout'})%>
-
-<div id="footer">
+<div class="footer">
 	<p id="copyright">&copy; Mike Halioua </p>
 </div>
