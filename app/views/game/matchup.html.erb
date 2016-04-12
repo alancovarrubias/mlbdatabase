@@ -7,7 +7,7 @@
     <i><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></i>
   </h2>
   <h2><%= "Gametime: " + @game.time + ' Local Time' %></h2>
-  <% @game.ump.empty? %>
+  <% unless @game.ump.empty? %>
     <h3><%= "Umpire: " + @game.ump %></h3>
   <% end %>
 </div>
