@@ -175,16 +175,17 @@ img {
   float:right;
 }
 
-/*ul {
-    list-style-type: none;
-    background-color: #f1f1f1;
+ul {
+    /*list-style-type: none;*/
+    /*background-color: #f1f1f1;*/
+    text-align: center;
     border: 1px solid #555;
     margin: 0;
     padding: 0;
     height: 100%;
     position: relative;
     overflow: auto;
-}*/
+}
 
 
 
