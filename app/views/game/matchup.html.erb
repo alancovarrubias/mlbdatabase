@@ -1,3 +1,17 @@
+<div class="header">
+  <h1><%= @away_team.name + " @ " + @home_team.name %></h1>
+  <h2>
+    <i><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></i>
+  </h2>
+  <h2>
+    <i><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></i>
+  </h2>
+  <h2><%= "Gametime: " + @game.time + ' Local Time' %></h2>
+  <% unless @tomorrow_bool %>
+    <h3><%= "Umpire    : " + @game.ump %></h3>
+  <% end %>
+</div>
+
 <nav>
   <ul>
     <li><%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></li>
@@ -7,30 +21,11 @@
     </li>
   </ul>
 </nav>
-
-<h1><%= @away_team.name + " @ " + @home_team.name %></h1>
-
-<h2>
-  <i><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></i>
-</h2>
-
-<h2>
-  <i><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></i>
-</h2>
-
-
-<div class="container" style="background-image: url(<%= @url_image %>); ">
   
-<%= image_tag(@url_image, :height => '400', :width => '800', :align => 'right') %>
+<%= image_tag(@url_image, :width => '700', :align => 'right') %>
 
 <%= render partial: "innings" %>
 
-
-  <h2><%= "Gametime: " + @game.time + ' Local Time' %></h2>
-
-    <% unless @tomorrow_bool %>
-    <h3><%= "Umpire    : " + @game.ump %></h3>
-  <% end %>
 
   <%= render(:partial => "weather_forecast")%>
   <%= render(:partial => "weather")%>
