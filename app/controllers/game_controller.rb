@@ -157,36 +157,36 @@ class GameController < ApplicationController
   end
 
 
-  def new
+ #  def new
 
-  	@game = Game.find_by_id(params[:id])
-    @game_day = @game.game_day
-    @season = @game_day.season
+ #  	@game = Game.find_by_id(params[:id])
+ #    @game_day = @game.game_day
+ #    @season = @game_day.season
 
-	@away_team = @game.away_team
-	@home_team = @game.home_team
-	@image_url = @home_team.id.to_s + ".png"
+	# @away_team = @game.away_team
+	# @home_team = @game.home_team
+	# @image_url = @home_team.id.to_s + ".png"
 
-	month = Date::MONTHNAMES[@game_day.month]
-	day = @game_day.day.to_s
-	@date = month + ' ' + day
+	# month = Date::MONTHNAMES[@game_day.month]
+	# day = @game_day.day.to_s
+	# @date = month + ' ' + day
 	
-	@forecasts = @game.weathers.where(station: "Forecast")
-	@weathers = @game.weathers.where(station: "Actual")
+	# @forecasts = @game.weathers.where(station: "Forecast")
+	# @weathers = @game.weathers.where(station: "Actual")
 
-	@away_starting_lancer = @game.lancers.where(team_id: @away_team.id, starter: true)
-	@home_starting_lancer = @game.lancers.where(team_id: @home_team.id, starter: true)
+	# @away_starting_lancer = @game.lancers.where(team_id: @away_team.id, starter: true)
+	# @home_starting_lancer = @game.lancers.where(team_id: @home_team.id, starter: true)
 
-	@away_batters = @game.batters.where(team_id: @away_team.id).order("lineup")
-	@home_batters = @game.batters.where(team_id: @home_team.id).order("lineup")
+	# @away_batters = @game.batters.where(team_id: @away_team.id).order("lineup")
+	# @home_batters = @game.batters.where(team_id: @home_team.id).order("lineup")
 
-	@home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
-	@away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
+	# @home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
+	# @away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
 
-	@away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
-	@home_bullpen_lancers = @game.lancers.where(team_id: @home_team.id, bullpen: true)
+	# @away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
+	# @home_bullpen_lancers = @game.lancers.where(team_id: @home_team.id, bullpen: true)
 
-  end
+ #  end
 
 
   def team
