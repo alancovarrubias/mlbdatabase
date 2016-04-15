@@ -57,7 +57,6 @@ module Matchup
 
   def create_game(time, home_team, away_team, num)
   	hour, day, month, year = find_date(time)
-  	puts "HERE"
   	Game.create(year: year, month: month, day: day, home_team_id: home_team.id, away_team_id: away_team.id, num: num)
   end
 

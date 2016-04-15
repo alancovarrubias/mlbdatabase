@@ -1,0 +1,16 @@
+<% current_season = stats.first %>
+
+<td colspan="5"><%= mixed_stat(current_season.first.ld, current_season.second.ld, lefty, righty) %></td>
+<td colspan="5"><%= mixed_stat(current_season.first.whip, current_season.second.whip, lefty, righty) %></td>
+<td colspan="5"></td>
+
+<% stats.each do |stat| %>
+<td colspan="3"><%= mixed_stat(stat.first.xfip, stat.second.xfip, lefty, righty) %></td>
+<td colspan="3"><%= mixed_stat(stat.first.kbb, stat.second.kbb, lefty, righty) %></td>
+<td colspan="3"><%= mixed_stat(stat.first.ops, stat.second.ops, lefty, righty).to_i %></td>
+<td colspan="2"><%= mixed_stat(stat.first.woba, stat.second.woba, lefty, righty).to_i %></td>
+<% end %>
+
+<% stats.each do |stat| %>
+<td colspan="2"><%= mixed_stat(stat.first.gb, stat.second.gb, lefty, righty) %></td>
+<% end %>

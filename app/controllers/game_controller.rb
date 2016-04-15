@@ -161,20 +161,31 @@ class GameController < ApplicationController
 
   	@game = Game.find_by_id(params[:id])
     @game_day = @game.game_day
+    @season = @game_day.season
+
 	@away_team = @game.away_team
 	@home_team = @game.home_team
 	@image_url = @home_team.id.to_s + ".png"
 
-	@month = Date::MONTHNAMES[@game_day.month.to_i]
-	day = @game_day.day.to_i.to_s
-	@date = @month + ' ' + day
+	month = Date::MONTHNAMES[@game_day.month]
+	day = @game_day.day.to_s
+	@date = month + ' ' + day
 	
 	@forecasts = @game.weathers.where(station: "Forecast")
 	@weathers = @game.weathers.where(station: "Actual")
 
+	@away_starting_lancer = @game.lancers.where(team_id: @away_team.id, starter: true)
+	@home_starting_lancer = @game.lancers.where(team_id: @home_team.id, starter: true)
 
-    
-		
+	@away_batters = @game.batters.where(team_id: @away_team.id).order("lineup")
+	@home_batters = @game.batters.where(team_id: @home_team.id).order("lineup")
+
+	@home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
+	@away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
+
+	@away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
+	@home_bullpen_lancers = @game.lancers.where(team_id: @home_team.id, bullpen: true)
+
   end
 
 
@@ -204,12 +215,24 @@ class GameController < ApplicationController
   	end
   end
 
-  def lefty?(throwhand)
-  	if throwhand == 'L'
-	  true
-	else
-	  false
-	end
+  private
+
+  def get_batters_handedness(lancer, batters)
+    lancer = lancer.player
+    batters = batters.map { |batter| batter.player }
+    same = diff = 0
+    batters.each do |batter|
+      if lancer.throwhand == batter.bathand
+        same += 1
+      else
+        diff += 1
+      end
+    end
+    if lancer.throwhand == "R"
+      return diff, same
+    else
+      return same, diff
+    end
   end
 
 end

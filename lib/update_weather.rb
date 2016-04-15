@@ -91,7 +91,6 @@ module UpdateWeather
 
   # Wunderground
   def update_weather(game)
-    
     home_team = game.home_team
     game_time = game.time
     unless game_time.include?(":")
@@ -104,7 +103,7 @@ module UpdateWeather
     game_hour_3, game_period_3 = next_hour(game_hour_2, game_period_2)
 
     url = @@wunderground_urls[home_team.id-1]
-    puts url
+    # puts url
 
     page = mechanize_page(url)
     

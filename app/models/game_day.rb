@@ -8,4 +8,12 @@ class GameDay < ActiveRecord::Base
   	end
   	return game_day
   end
+
+  def prev_day(num_days)
+  	date = Date.parse("#{self.year}-#{self.month}-#{self.day}")
+  	num_days.times do
+  	  date = date.prev_day
+  	end
+  	return GameDay.where(year: date.year, month: date.month, day: date.day).first
+  end
 end

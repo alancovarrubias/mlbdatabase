@@ -5,14 +5,30 @@
 	<h3><%= "Gametime: " + @game.time + ' Local Time' %></h3>
 </div>
 
-  <nav>
-    <ul>
-  	  <li><%= link_to('Home Page', { controller: 'index', action: 'home'})%></li>
-  	  <li><%= link_to(@date + ' Matchups', 
-  	  { controller: 'index', action: 'game',
-  	  year: params[:year], month: params[:month], day: params[:day] }) %>
-      </li>
-    </ul>
-  </nav>
-<%= image_tag(@image_url, :width => '700') %>
-<%= render partial: "new_weather", locals: { weathers: @forecasts } %>
+<nav>
+  <ul>
+	  <li><%= link_to('Home Page', { controller: 'index', action: 'home'})%></li>
+	  <li><%= link_to(@date + ' Matchups', 
+	  { controller: 'index', action: 'game',
+	  year: params[:year], month: params[:month], day: params[:day] }) %>
+    </li>
+  </ul>
+</nav>
+
+<%= image_tag(@image_url, :width => '600') %>
+<%= render partial: "new_weather", locals: { caption: "Accuweather Weather Forecast", weathers: @forecasts } %>
+<%= render partial: "new_weather", locals: { caption: "Wunderground Weather Records", weathers: @weathers } %>
+
+<%= render partial: "lancer", locals: { caption: "Starting Pitchers",
+							  lancers: @away_starting_lancer + @home_starting_lancer, left: @away_left } %>
+
+<%= render partial: "batter", locals: { caption: "#{@away_team.name} Batters",
+							  batters: @away_batters, left: @away_left } %>
+<%= render partial: "batter", locals: { caption: "#{@home_team.name} Batters",
+							  batters: @home_batters, left: @home_left } %>
+
+<%= render partial: "bullpen", locals: { caption: "#{@away_team.name} Bullpen",
+										 lancers: @away_bullpen_lancers }%>
+
+<%= render partial: "bullpen", locals: { caption: "#{@home_team.name} Bullpen",
+										 lancers: @home_bullpen_lancers }%>

@@ -3,7 +3,7 @@ module WeatherUpdate
   include NewShare
 
   def create_weathers(game)
-    if game.weathers.size != 6
+    if game.weathers.size == 0
       (1..3).each do |i|
         Weather.create(game_id: game.id, station: "Forecast", hour: i)
         Weather.create(game_id: game.id, station: "Actual", hour: i)
@@ -30,7 +30,6 @@ module WeatherUpdate
 
   # Data scraped from Accuweather
   def update_forecast(game, time)
-
   	# Game time must include a colon
   	game_time = game.time
   	unless game_time.include?(":")
@@ -96,6 +95,7 @@ module WeatherUpdate
   # Data scraped from wunderground
   def update_weather(game)
     
+    puts game.new_url
     home_team = game.home_team
     game_time = game.time
     unless game_time.include?(":")
@@ -112,12 +112,8 @@ module WeatherUpdate
 
     page = mechanize_page(url)
     
+    size = page.search("#obsTable th").size
     elements = page.search("#obsTable td")
-    if elements.size%13 == 0
-      size = 13
-    else
-      size = 12
-    end
     temp = humidity = pressure = rain = dir = speed  = nil
     weathers = game.weathers.where(station: "Actual")
     weather = nil
@@ -184,7 +180,8 @@ module WeatherUpdate
     end
 
     def parse_time_string_get_hour_period(time_string)
-      return time_string[0...time_string.index(":")], time_string[-2..-1]
+      index = time_string.index(":")
+      return time_string[0...index], time_string[-2..-1]
     end
 
     def next_hour(hour, period)

@@ -24,7 +24,7 @@ module NewShare
       Timeout::timeout(3){
   	    doc = Nokogiri::HTML(open(url, allow_redirections: :all))
   	  }
-    rescue Errno::ECONNREFUSED, Timeout::Error, URI::InvalidURIError, Zlib::BufError => e
+    rescue OpenURI::HTTPError, Errno::ECONNREFUSED, Errno::ECONNRESET, Timeout::Error, URI::InvalidURIError, Zlib::BufError => e
       retry
     end
     return doc

@@ -1,17 +1,9 @@
 class Player < ActiveRecord::Base
   validates :identity,    uniqueness: :true, allow_blank: true
   validates :fangraph_id, uniqueness: :true, allow_nil: true
-  has_many :batter_stats
-  has_many :pitcher_stats
   belongs_to :team
-
-  def self.starters
-  	Player.where(starter: true)
-  end
-
-  def self.bullpen
-    Player.where(bullpen: true)
-  end
+  has_many :lancers
+  has_many :batters
 
   def self.search(name, identity=nil, fangraph_id=0)
     if @nicknames[name]
@@ -27,66 +19,51 @@ class Player < ActiveRecord::Base
     return nil
   end
 
-  def season_pitcher_stats(season)
-    if self.pitcher_stats.where(season_id: season.id, game_id: nil).size == 0
-      create_season_pitcher_stats(season)
+  def create_batter(season, team=nil, game=nil)
+    if game
+      unless batter = self.batters.where(season_id: season.id, team_id: team.id, game_id: game.id).first
+        batter = Batter.create(player_id: self.id, season_id: season.id, team_id: team.id, game_id: game.id)
+        batter.create_game_stats
+      end
+    else
+      unless batter = self.batters.where(season_id: season.id, team_id: nil, game_id: nil).first
+        batter = Batter.create(player_id: self.id, season_id: season.id)
+      end
     end
-    return self.pitcher_stats.where(season_id: season.id, game_id: nil)
+    return batter
   end
 
-  def season_batter_stats(season)
-    if self.batter_stats.where(season_id: season.id, game_id: nil).size == 0
-      create_season_batter_stats(season)
+  def create_lancer(season, team=nil, game=nil)
+    if game
+      unless lancer = self.lancers.where(season_id: season.id, team_id: team.id, game_id: game.id).first
+        lancer = Lancer.create(player_id: self.id, season_id: season.id, team_id: team.id, game_id: game.id)
+        lancer.create_game_stats
+      end
+    else
+      unless lancer = self.lancers.where(season_id: season.id, team_id: nil, game_id: nil).first
+        lancer = Lancer.create(player_id: self.id, season_id: season.id)
+      end
     end
-    return self.batter_stats.where(season_id: season.id, game_id: nil)
+    return lancer
   end
 
-  def game_pitcher_stats(game)
-    if self.pitcher_stats.where(game_id: game.id).empty?
-      season = Season.find_by_year(game.game_day.year)
-      create_game_pitcher_stats(game, season)
+  def find_batter(season, team=nil, game=nil)
+    if game
+      return self.batters.where(season_id: season.id, team_id: team.id, game_id: game.id).first
+    else
+      return self.batters.where(season_id: season.id, team_id: nil, game_id: nil).first
     end
-  	return self.pitcher_stats.where(game_id: game.id)
   end
 
-  def game_batter_stats(game)
-    if self.batter_stats.where(game_id: game.id).empty?
-      season = Season.find_by_year(game.game_day.year)
-      create_game_batter_stats(game, season)
+  def find_lancer(season, team=nil, game=nil)
+    if game
+      return self.lancers.where(season_id: season.id, team_id: team.id, game_id: game.id).first
+    else
+      return self.lancers.where(season_id: season.id, team_id: nil, game_id: nil).first
     end
-  	return self.batter_stats.where(game_id: game.id)
   end
-
 
   private
-
-  def create_season_pitcher_stats(season)
-    PitcherStat.create(player_id: self.id, team_id: self.team.id, season_id: season.id, range: "Season", handedness: "L")
-    PitcherStat.create(player_id: self.id, team_id: self.team.id, season_id: season.id, range: "Season", handedness: "R")
-    PitcherStat.create(player_id: self.id, team_id: self.team.id, season_id: season.id, range: "30 Days", handedness: "")
-  end
-
-  def create_season_batter_stats(season)
-    BatterStat.create(player_id: self.id, team_id: self.team.id, season_id: season.id, range: "Season", handedness: "L")
-    BatterStat.create(player_id: self.id, team_id: self.team.id, season_id: season.id, range: "Season", handedness: "R")
-    BatterStat.create(player_id: self.id, team_id: self.team.id, season_id: season.id, range: "14 Days", handedness: "")
-  end
-
-  def create_game_pitcher_stats(game, season)
-    self.season_pitcher_stats(season).each do |pitcher_stat|
-      game_pitcher_stat = pitcher_stat.dup
-      game_pitcher_stat.game_id = game.id
-      game_pitcher_stat.save
-    end
-  end
-
-  def create_game_batter_stats(game, season)
-    self.season_batter_stats(season).each do |batter_stat|
-      game_batter_stat = batter_stat.dup
-      game_batter_stat.game_id = game.id
-      game_batter_stat.save
-    end
-  end
 
   @nicknames = {
     "Phil Gosselin" => "Philip Gosselin",
@@ -136,7 +113,7 @@ class Player < ActiveRecord::Base
     "KikÃÂ© Hernandez" => "Enrique Hernandez",
     "Seung Oh" => "Seung-hwan Oh",
     "Timothy Melville" => "Tim Melville",
-    "Johnny Barbato" => "John Barbato",
+    "John Barbato" => "Johnny Barbato",
     "Anthony Barnette" => "Tony Barnette",
     "Luis David Perdomo" => "Luis Perdomo",
     "Dae-Ho Lee" => "Dae-ho Lee",

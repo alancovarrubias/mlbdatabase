@@ -1,5 +1,3 @@
 class PitcherStat < ActiveRecord::Base
-  belongs_to :season
-  belongs_to :player
-  belongs_to :game
+  belongs_to :lancer
 end

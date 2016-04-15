@@ -1,14 +1,10 @@
 <div class="header">
   <h1><%= @away_team.name + " @ " + @home_team.name %></h1>
-  <h2>
-    <i><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></i>
-  </h2>
-  <h2>
-    <i><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></i>
-  </h2>
+  <h2><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></h2>
+  <h2><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></h2>
   <h2><%= "Gametime: " + @game.time + ' Local Time' %></h2>
   <% unless @game.ump.empty? %>
-    <h3><%= "Umpire: " + @game.ump %></h3>
+    <h2><%= "Umpire: " + @game.ump %></h2>
   <% end %>
 </div>
 

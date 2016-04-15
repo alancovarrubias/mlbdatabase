@@ -1,0 +1,82 @@
+<table class="lancer">
+  <caption><%= caption %></caption>
+
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="5">Pitches Thrown</th>
+      <th colspan="10"><%= @season.year %></th>
+      <th colspan="5">Last 30 Days</th>
+      <% Season.all.order("id DESC").each do |season| %>
+        <th colspan="11"><%= season.year %></th>
+      <% end %>
+      <% Season.all.order("id DESC").each do |season| %>
+        <th colspan="2"><%= season.year %></th>
+      <% end %>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <% 5.times do |i| %>
+        <th><%= bullpen_day_name(i) %></th>
+      <% end %>
+      <th>LD LHB</th>
+      <th>LD RHB</th>
+      <th>WHIP LHB</th>
+      <th>WHIP RHB</th>
+      <th>IP LHB</th>
+      <th>IP RHB</th>
+      <th>SO LHB</th>
+      <th>SO RHB</th>
+      <th>BB LHB</th>
+      <th>BB RHB</th>
+      <th>LD</th>
+      <th>WHIP</th>
+      <th>IP</th>
+      <th>SO</th>
+      <th>BB</th>
+      <% (Season.all.size).times do %>
+        <th>FIP-</th>
+        <th>IP LHB</th>
+        <th>xFIP LHB</th>
+        <th>KBB LHB</th>
+        <th>OPS+ LHB</th>
+        <th>wOBA LHB</th>
+        <th>IP RHB</th>
+        <th>xFIP RHB</th>
+        <th>KBB RHB</th>
+        <th>OPS+ RHB</th>
+        <th>wOBA RHB</th>
+      <% end %>
+      <% (Season.all.size).times do %>
+        <th>GB LHB</th>
+        <th>GB RHB</th>
+      <% end %>
+    </tr>
+  </thead>
+
+
+
+
+  <tbody class="bullpen">
+    <% lancers.each_with_index do |lancer, index| %>
+      <% stats = get_lancer_stats(lancer) %>
+      <tr>
+        <td class="name"><%= "#{lancer.player.name} (#{lancer.player.throwhand})" %></td>
+        <% 5.times do |i| %>
+          <td><%= bullpen_pitches(lancer, i) %></td>
+        <% end %>
+        <%= render partial: "lancer_begin", locals: { stat: stats.first } %>
+        <% stats.each do |stat| %>
+          <%= render partial: "lancer_stat", locals: { stat: stat } %>
+        <% end %>
+        <% stats = get_lancer_stats(lancer) %>
+        <% stats.each do |stat| %>
+          <td><%= stat.first.gb %></td>
+          <td><%= stat.second.gb %></td>
+        <% end %>
+
+      </tr>
+    <% end %>
+
+  </tbody>
+</table>

@@ -5,6 +5,8 @@ class Team < ActiveRecord::Base
 	has_many :pitchers
 	has_many :hitters
 	has_many :players
+	has_many :lancers
+	has_many :batters
 	
 	include Update
 

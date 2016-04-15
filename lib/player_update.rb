@@ -26,9 +26,9 @@ module PlayerUpdate
 	  	  puts "Player " + player.name + " created"
 	  	end
 	  	player.update_attributes(team_id: team.id, identity: identity, bathand: bathand, throwhand: throwhand)
-	  	player.season_batter_stats(season)
+	  	player.create_batter(season)
 	  	if is_pitcher
-	  	  player.season_pitcher_stats(season)
+	  	  player.create_lancer(season)
 	  	end
 	  	check_exceptions(player)
 	  end
@@ -91,7 +91,8 @@ module PlayerUpdate
         ops = text.to_i
         player = Player.search(name, identity)
         if player
-          player.season_batter_stats(season).each do |stat|
+          batter = player.create_batter(season)
+          batter.stats.each do |stat|
             if stat.handedness.size > 0
               stat.update_attributes(ops: ops)
             end
@@ -143,8 +144,9 @@ module PlayerUpdate
   	  	  fb = text[0...-2].to_f
   	  	  if player
   	  	  	handedness = get_handedness(url_index)
-  	  	  	batter_stat = player.season_batter_stats(season).where(handedness: handedness).first
-		  	batter_stat.update_attributes(team_id: team.id, ab: ab, sb: sb, bb: bb, so: so, slg: slg, obp: obp, woba: woba, wrc: wrc, ld: ld, gb: gb, fb: fb)
+  	  	  	batter = player.create_batter(season)
+  	  	  	batter_stat = batter.stats.where(handedness: handedness).first
+		  	batter_stat.update_attributes(ab: ab, sb: sb, bb: bb, so: so, slg: slg, obp: obp, woba: woba, wrc: wrc, ld: ld, gb: gb, fb: fb)
   	  	  end
   	  	end
   	  end
@@ -171,10 +173,10 @@ module PlayerUpdate
   	  when 3
   	  	fip = text.to_i
   	  	if player
-  	  	  pitcher_stats = player.season_pitcher_stats(season)
-  	  	  pitcher_stats.each_with_index do |pitcher_stat|
+  	  	  lancer = player.create_lancer(season)
+  	  	  lancer.stats.each_with_index do |pitcher_stat|
   	  	  	if pitcher_stat.handedness.size > 0
-  	  	  	  pitcher_stat.update_attributes(team_id: team.id, fip: fip)
+  	  	  	  pitcher_stat.update_attributes(fip: fip)
   	  	  	end
   	  	  end
   	  	end
@@ -221,8 +223,9 @@ module PlayerUpdate
 		  gb = text[0...-2].to_f
 		  if player
 		  	handedness = get_handedness(url_index)
-		  	pitcher_stat = player.season_pitcher_stats(season).where(handedness: handedness).first
-		  	pitcher_stat.update_attributes(team_id: team.id, ld: ld, whip: whip, ip: ip, so: so, bb: bb, era: era, fb: fb, xfip: xfip, kbb: kbb, woba: woba, gb: gb)
+		  	lancer = player.create_lancer(season)
+		  	pitcher_stat = lancer.stats.where(handedness: handedness).first
+		  	pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, era: era, fb: fb, xfip: xfip, kbb: kbb, woba: woba, gb: gb)
 		  end
 		end
 	  end
@@ -252,14 +255,15 @@ module PlayerUpdate
 	  when 7
 		bb = text.to_i
 		if player
-		  pitcher_stat = player.season_pitcher_stats(season).where(handedness: "").first
-		  pitcher_stat.update_attributes(team_id: team.id, ld: ld, whip: whip, ip: ip, so: bb)
+		  lancer = player.create_lancer(season)
+		  pitcher_stat = lancer.stats.where(handedness: "").first
+		  pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb)
 		end
 	  end
 	end
 
 	team.players.each do |player|
-  	  if player.identity == "" || player.pitcher_stats.size == 0
+  	  if player.identity == "" || player.find_lancer(season) == nil
   	  	next
   	  end
   	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{player.identity}&year=#{year}&t=p"
@@ -271,9 +275,9 @@ module PlayerUpdate
   	  	  ops = element.text.to_i
   	  	  case row
   	  	  when 0
-  	  	  	player.season_pitcher_stats(season).where(handedness: "R").first.update_attributes(ops: ops)
+  	  	  	player.create_lancer(season).stats.where(handedness: "R").first.update_attributes(ops: ops)
   	  	  when 1
-  	  	  	player.season_pitcher_stats(season).where(handedness: "L").first.update_attributes(ops: ops)
+  	  	  	player.create_lancer(season).stats.where(handedness: "L").first.update_attributes(ops: ops)
   	  	  end
   	  	  row += 1
   	  	end

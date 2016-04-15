@@ -1,13 +1,15 @@
 namespace :new do
 
+  task delete: :environment do
+    GameDay.search(Time.now).games.each do |game|
+      game.lancers.destroy_all
+      game.batters.destroy_all
+      game.destroy
+    end
+  end
+
   task update_players: :environment do
   	include PlayerUpdate
-
-    Season.last.each do |season|
-      Team.all.each do |team|
-        create_players(season, team)
-      end
-    end
 
   	Team.all.each do |team|
   	  fangraphs(team)
@@ -50,37 +52,6 @@ namespace :new do
   end
 
   task test: :environment do
-    include NewShare
-    def parse_identity(element)
-      href = element.child.child['href']
-      if href == nil
-      href = element.child['href']
-      end
-      return href[11..href.index(".")-1]
-    end
-    url = "http://www.baseball-reference.com/teams/NYY/2016.shtml"
-    doc = download_document(url)
-    name = identity = nil
-    doc.css("#team_batting tbody td").each_with_index do |stat, index|
-      text = stat.text
-      case index%28
-      when 2
-        name = stat.child.child.text
-        identity = parse_identity(stat)
-      when 21
-        ops = text.to_i
-        player = Player.search(name, identity)
-        if player
-          player.season_batter_stats(season).each do |stat|
-            if stat.handedness.size > 0
-              stat.update_attributes(ops: ops)
-            end
-          end
-        else
-          puts name + " not found"
-        end
-      end
-    end
   end
 
 
