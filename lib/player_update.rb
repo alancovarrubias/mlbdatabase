@@ -40,7 +40,6 @@ module PlayerUpdate
 
 	url = "http://www.fangraphs.com/depthcharts.aspx?position=ALL&teamid=#{team.fangraph_id}"
 	doc = Nokogiri::HTML(open(url))
-	puts url
 	doc.css(".depth_chart:nth-child(58) td").each_with_index do |stat, index|
 	  case index%10
 	  when 0
@@ -79,6 +78,7 @@ module PlayerUpdate
   	puts "Update " + team.name + " " + year.to_s + " Batters"
 
     url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{year}.shtml"
+    puts url
     doc = download_document(url)
     name = identity = nil
     doc.css("#team_batting tbody td").each_with_index do |stat, index|
@@ -103,16 +103,17 @@ module PlayerUpdate
       end
     end
 
-  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43,44,45&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
-  	url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43,44,45&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
-  	url_14 = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43,44,45&season=#{year}&month=2&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43,44,45&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
+  	url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,54,43,44,45&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
+  	url_14 = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43,44,45&season=#{year}&month=2&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
   	urls = [url_l, url_r, url_14]
   	urls.each_with_index do |url, url_index|
+  	  puts url
   	  doc = download_document(url)
   	  ab = sb = bb = so = slg = obp = woba = wrc = ld = gb = fb = player = name = nil
   	  doc.css(".grid_line_regular").each_with_index do |element, index|
   	  	text = element.text
-  	  	case index%14
+  	  	case index%13
   	  	when 1
   	  	  name = text
   	  	  fangraph_id = parse_fangraph_id(element)
@@ -120,27 +121,27 @@ module PlayerUpdate
   	  	  unless player
   	  	    puts "Player " + name + " not found" 
   	  	  end
-  	  	when 3
+  	  	when 2
   	  	  ab = text.to_i
-  	  	when 4
+  	  	when 3
   	  	  sb = text.to_i
-  	  	when 5
+  	  	when 4
   	  	  bb = text.to_i
-  	  	when 6
+  	  	when 5
   	  	  so = text.to_i
-  	  	when 7
+  	  	when 6
   	  	  slg = (text.to_f*1000).to_i
-  	  	when 8
+  	  	when 7
   	  	  obp = (text.to_f*1000).to_i
-  	  	when 9
+  	  	when 8
   	  	  woba = (text.to_f*1000).to_i
-  	  	when 10
+  	  	when 9
   	  	  wrc = text.to_i
-  	  	when 11
+  	  	when 10
   	  	  ld = text[0...-2].to_f
-	  	when 12
+	  	when 11
   	  	  gb = text[0...-2].to_f
-	  	when 13
+	  	when 12
   	  	  fb = text[0...-2].to_f
   	  	  if player
   	  	  	handedness = get_handedness(url_index)
@@ -157,12 +158,12 @@ module PlayerUpdate
   	year = season.year
   	puts "Update " + team.name + " " + year.to_s + " Pitchers"
 
-  	url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,118&season=#{year}&month=0&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+  	url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=1&season=#{year}&month=0&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
   	doc = download_document(url)
   	player = name = nil
   	doc.css(".grid_line_regular").each_with_index do |element, index|
   	  text = element.text
-  	  case index%4
+  	  case index%16
   	  when 1
   	  	name = text
   	    fangraph_id = parse_fangraph_id(element)
@@ -170,7 +171,7 @@ module PlayerUpdate
   	    unless player
   	      puts "Player " + name + " not found" 
   	    end
-  	  when 3
+  	  when 11
   	  	fip = text.to_i
   	  	if player
   	  	  lancer = player.create_lancer(season)
@@ -183,15 +184,15 @@ module PlayerUpdate
   	  end
   	end
 
-  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
-	url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
+	url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
 	urls = [url_l, url_r]
 	player = name = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = gb = nil
 	urls.each_with_index do |url, url_index|
 	  doc = download_document(url)
 	  doc.css(".grid_line_regular").each_with_index do |element, index|
 	    text = element.text
-	    case index%14
+	    case index%13
 	    when 1
 		  name = text
 	  	  fangraph_id = parse_fangraph_id(element)
@@ -199,27 +200,27 @@ module PlayerUpdate
 	  	  unless player
 	  	    puts "Player " + name + " not found" 
 	  	  end
-	  	when 3
+	  	when 2
 	  	  ld = text[0...-2].to_f
-		when 4
+		when 3
 		  whip = text.to_f
-		when 5
+		when 4
 		  ip = text.to_f
-		when 6
+		when 5
 		  so = text.to_i
-		when 7
+		when 6
 		  bb = text.to_i
-		when 8
+		when 7
 		  era = text.to_f
-		when 9
+		when 8
 		  fb = text[0...-2].to_f
-		when 10
+		when 9
 		  xfip = text.to_i
-		when 11
+		when 10
 		  kbb = text.to_f
-		when 12
+		when 11
 		  woba = (text.to_f*1000).to_i
-		when 13
+		when 12
 		  gb = text[0...-2].to_f
 		  if player
 		  	handedness = get_handedness(url_index)
@@ -231,12 +232,12 @@ module PlayerUpdate
 	  end
 	end
 
-	url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,47,42,13,24,19&season=#{year}&month=3&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=1&age=0&filter=&players=0"
+	url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,47,42,13,24,19&season=#{year}&month=3&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
 	doc = download_document(url)
 	name = ld = whip = ip = so = bb = nil
 	doc.css(".grid_line_regular").each_with_index do |element, index|
 	  text = element.text
-	  case index%8
+	  case index%7
 	  when 1
 		name = text
 	  	fangraph_id = parse_fangraph_id(element)
@@ -244,15 +245,15 @@ module PlayerUpdate
 	  	unless player
 	  	  puts "Player " + name + " not found" 
 	  	end
-	  when 3
+	  when 2
 		ld = text[0...-2].to_f
-	  when 4
+	  when 3
 		whip = text.to_f
-	  when 5
+	  when 4
 		ip = text.to_f
-	  when 6
+	  when 5
 		so = text.to_i
-	  when 7
+	  when 6
 		bb = text.to_i
 		if player
 		  lancer = player.create_lancer(season)
@@ -262,30 +263,30 @@ module PlayerUpdate
 	  end
 	end
 
-	team.players.each do |player|
-  	  if player.identity == "" || player.find_lancer(season) == nil
-  	  	next
-  	  end
-  	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{player.identity}&year=#{year}&t=p"
-  	  doc = download_document(url)
-  	  row = 0
-  	  doc.css("#plato td").each_with_index do |element, index|
-  	  	case index%28
-  	  	when 27
-  	  	  ops = element.text.to_i
-  	  	  case row
-  	  	  when 0
-  	  	  	player.create_lancer(season).stats.where(handedness: "R").first.update_attributes(ops: ops)
-  	  	  when 1
-  	  	  	player.create_lancer(season).stats.where(handedness: "L").first.update_attributes(ops: ops)
-  	  	  end
-  	  	  row += 1
-  	  	end
-  	  	if row == 2
-  	  	  break
-  	  	end
-  	  end
-  	end
+	# team.players.each do |player|
+ #  	  if player.identity == "" || player.find_lancer(season) == nil
+ #  	  	next
+ #  	  end
+ #  	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{player.identity}&year=#{year}&t=p"
+ #  	  doc = download_document(url)
+ #  	  row = 0
+ #  	  doc.css("#plato td").each_with_index do |element, index|
+ #  	  	case index%28
+ #  	  	when 27
+ #  	  	  ops = element.text.to_i
+ #  	  	  case row
+ #  	  	  when 0
+ #  	  	  	player.create_lancer(season).stats.where(handedness: "R").first.update_attributes(ops: ops)
+ #  	  	  when 1
+ #  	  	  	player.create_lancer(season).stats.where(handedness: "L").first.update_attributes(ops: ops)
+ #  	  	  end
+ #  	  	  row += 1
+ #  	  	end
+ #  	  	if row == 2
+ #  	  	  break
+ #  	  	end
+ #  	  end
+ #  	end
 
   end
 

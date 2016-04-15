@@ -20,7 +20,7 @@ class Batter < ActiveRecord::Base
 
   def create_game_stats
     batter = self.player.create_batter(self.season)
-    batter.stats.each do |stat|
+    batter.stats.order("id").each do |stat|
       new_stat = stat.dup
       new_stat.batter_id = self.id
       new_stat.save

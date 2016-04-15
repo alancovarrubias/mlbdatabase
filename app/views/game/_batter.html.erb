@@ -8,6 +8,11 @@
       <% Season.all.order("id DESC")[1..-1].each do |season| %>
       <th colspan="8"><%= "#{season.year} vs #{handed_hitter_header(left)}" %></th>
       <% end %>
+      <th colspan="2"><%= "#{@season.year}" %></th>
+      <th colspan="2">Last 14 Days</th>
+      <% Season.all.order("id DESC")[1..-1].each do |season| %>
+        <th colspan="2"><%= "#{season.year}" %></th>
+      <% end %>
     </tr>
     <tr>
       <th>Name</th>
@@ -21,6 +26,10 @@
         <th>GB%</th>
         <th>LD%</th>
       <% end %>
+      <% (Season.all.size + 1).times do %>
+        <th>Rank</th>
+        <th>AB</th>
+      <% end %>
     </tr>
   </thead>
   <tbody class="batter">
@@ -29,6 +38,10 @@
         <td class="name"><%= "#{batter.lineup}. #{batter.player.name} (#{batter.player.bathand})"%></td>
         <% get_batter_stats(batter, left).each do |stat| %>
           <%= render partial: "batter_stat", locals: { stat: stat } %>
+        <% end %>
+        <% get_batter_stats(batter, left).each do |stat| %>
+          <td><%= stat.wrc %></td>
+          <td><%= stat.ab %></td>
         <% end %>
       </tr>
     <% end %>

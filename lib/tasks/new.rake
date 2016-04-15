@@ -48,10 +48,6 @@ namespace :new do
   	  update_pressure_forecast(game)
 	    update_forecast(game, time)
 	  end
-
-  end
-
-  task test: :environment do
   end
 
 

@@ -42,7 +42,7 @@ module NewBullpen
   end
 
   def set_bullpen
-    @bullpen_teams = [1, 2, 3, 4, 12, 13, 17, 21, 22, 23, 26, 28, 29, 30, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 18, 19, 20, 24, 25]
+    @bullpen_teams = [1, 2, 3, 4, 12, 13, 17, 21, 22, 23, 26, 28, 27, 29, 30, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 18, 19, 20, 24, 25]
     url = "http://www.baseballpress.com/bullpenusage"
     doc = download_document(url)
 

@@ -451,6 +451,14 @@ tbody.batter td:nth-child(n+18):nth-child(-n+25) {
 }
 
 tbody.batter td:nth-child(n+26):nth-child(-n+33) {
+  background-color: #FFD700;
+}
+
+tbody.batter td:nth-child(n+34):nth-child(-n+41):nth-child(odd){
+  background-color: #6495ED;
+}
+
+tbody.batter td:nth-child(n+34):nth-child(-n+41):nth-child(even){
   background-color: #FF7F00;
 }
 

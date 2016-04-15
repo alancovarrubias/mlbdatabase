@@ -24,7 +24,7 @@ class Lancer < ActiveRecord::Base
 
   def create_game_stats
   	lancer = self.player.create_lancer(self.season)
-  	lancer.stats.each do |stat|
+  	lancer.stats.order("id").each do |stat|
   	  new_stat = stat.dup
   	  new_stat.lancer_id = self.id
   	  new_stat.save
