@@ -188,6 +188,14 @@ class GameController < ApplicationController
 
  #  end
 
+ def lefty?(throwhand)
+ 	if throwhand == "L"
+ 		true
+ 	else
+ 		false
+ 	end
+ end
+
 
   def team
 	@team = Team.find_by_id(params[:id])
