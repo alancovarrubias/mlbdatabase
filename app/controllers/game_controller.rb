@@ -180,6 +180,15 @@ class GameController < ApplicationController
 	@away_batters = @game.batters.where(team_id: @away_team.id).order("lineup")
 	@home_batters = @game.batters.where(team_id: @home_team.id).order("lineup")
 
+	if @away_batters.empty?
+	  @away_projected = true
+	  @away_batters = get_previous_lineup(@game_day, @away_team, @home_starting_lancer.first.player.throwhand)
+	end
+	if @home_batters.empty?
+	  @home_projected = true
+	  @home_batters = get_previous_lineup(@game_day, @home_team, @away_starting_lancer.first.player.throwhand)
+	end
+
 	@home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
 	@away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
 
@@ -212,6 +221,33 @@ class GameController < ApplicationController
 	  @pitchers = @team.pitchers.where(:game_id => nil).order(:IP_R).reverse
 	  @hitters = @team.hitters.where(:game_id => nil).order(:AB_R).reverse.limit(20)
 	end
+  end
+
+  def get_previous_lineup(game_day, team, opp_throwhand)
+  	while true
+
+  	  game_day = game_day.prev_day(1)
+
+  	  games = game_day.games.where("away_team_id = #{team.id} OR home_team_id = #{team.id}")
+
+  	  games.each do |game|
+
+  	  	if game.away_team_id == team.id
+  	  	  opp_pitcher = game.lancers.where(starter: true, team_id: game.home_team_id).first
+  	  	else
+  		  opp_pitcher = game.lancers.where(starter: true, team_id: game.away_team_id).first
+  	  	end
+
+  	  	if opp_pitcher.player.throwhand == opp_throwhand
+  	  		return game.batters.where(team_id: team.id, starter: true)
+  	  	end
+  	  end
+
+	  if game_day.id == 1
+  	  	return Array.new
+  	  end
+
+    end
   end
 
   def game_day?(time)
