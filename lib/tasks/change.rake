@@ -85,15 +85,18 @@ namespace :change do
 
   task create_game_stats: :environment do
 
-    GameDay.where("id < 254").each do |game_day|
+      Game.all.each do |game|
 
-      game_day.games.each do |game|
+        unless game.batters.empty?
+          next
+        end
+
 
        # game.lancers.destroy_all
        # game.batters.destroy_all
        # game.weathers.destroy_all
-
-        season = Season.find_by_year(game.year.to_i)
+        game_day = game.game_day
+        season = Season.find_by_year(game_day.year)
 
         Weather.create(game_id: game.id, station: "Forecast", hour: 1, wind: game.wind_1, humidity: game.humidity_1, pressure: game.pressure_1, temp: game.temperature_1, rain: game.precipitation_1)
         Weather.create(game_id: game.id, station: "Forecast", hour: 2, wind: game.wind_2, humidity: game.humidity_2, pressure: game.pressure_2, temp: game.temperature_2, rain: game.precipitation_2)
@@ -164,10 +167,6 @@ namespace :change do
 
 
 
-
-
-
-    end
   end
 
   task bullpen_pitches_thrown: :environment do
