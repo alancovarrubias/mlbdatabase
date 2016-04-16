@@ -174,11 +174,12 @@ class GameController < ApplicationController
 	@forecasts = @game.weathers.where(station: "Forecast")
 	@weathers = @game.weathers.where(station: "Actual")
 
+
 	@away_starting_lancer = @game.lancers.where(team_id: @away_team.id, starter: true)
 	@home_starting_lancer = @game.lancers.where(team_id: @home_team.id, starter: true)
 
-	@away_batters = @game.batters.where(team_id: @away_team.id)
-	@home_batters = @game.batters.where(team_id: @home_team.id)
+	@away_batters = @game.batters.where(team_id: @away_team.id).order("lineup")
+	@home_batters = @game.batters.where(team_id: @home_team.id).order("lineup")
 
 	# if @away_batters.empty? && !@home_starting_lancer.empty?
 	#   @away_projected = true
@@ -196,8 +197,12 @@ class GameController < ApplicationController
 	  @home_batters.order("lineup")
 	end
 
-	@home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
-	@away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
+	unless @away_starting_lancer.empty?
+	  @home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
+	end
+	unless @home_starting_lancer.empty?
+	  @away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
+	end
 
 	@away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
 	@home_bullpen_lancers = @game.lancers.where(team_id: @home_team.id, bullpen: true)

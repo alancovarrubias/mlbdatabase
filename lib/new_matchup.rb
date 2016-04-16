@@ -297,7 +297,7 @@ module NewMatchup
   	  create_game_stats(doc, games)
   	  create_bullpen(games)
   	else
-  	  create_tomorrow_stats(doc, games, away, home)
+  	  create_tomorrow_stats(doc, games.order("id"), away, home)
   	end
 
     remove_excess_starters(games)
