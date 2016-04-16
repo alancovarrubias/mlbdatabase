@@ -181,14 +181,14 @@ namespace :change do
 
   task fix: :environment do
     GameDay.search(Time.now.yesterday).games.each do |game|
-      if weather.temp.size == 0
-        weather.destroy
+      if game.weather.temp.size == 0
+        game.weather.destroy
       end
     end
 
     GameDay.search(Time.now).games.each do |game|
-      if weather.temp.size == 0
-        weather.destroy
+      if game.weather.temp.size == 0
+        game.weather.destroy
       end
     end
   end
