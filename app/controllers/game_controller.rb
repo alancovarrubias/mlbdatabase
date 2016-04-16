@@ -177,16 +177,23 @@ class GameController < ApplicationController
 	@away_starting_lancer = @game.lancers.where(team_id: @away_team.id, starter: true)
 	@home_starting_lancer = @game.lancers.where(team_id: @home_team.id, starter: true)
 
-	@away_batters = @game.batters.where(team_id: @away_team.id).order("lineup")
-	@home_batters = @game.batters.where(team_id: @home_team.id).order("lineup")
+	@away_batters = @game.batters.where(team_id: @away_team.id)
+	@home_batters = @game.batters.where(team_id: @home_team.id)
 
-	if @away_batters.empty?
-	  @away_projected = true
-	  @away_batters = get_previous_lineup(@game_day, @away_team, @home_starting_lancer.first.player.throwhand)
+	# if @away_batters.empty? && !@home_starting_lancer.empty?
+	#   @away_projected = true
+	#   @away_batters = get_previous_lineup(@game_day, @away_team, @home_starting_lancer.first.player.throwhand)
+	# end
+	# if @home_batters.empty? && !@away_starting_lancer.empty?
+	#   @home_projected = true
+	#   @home_batters = get_previous_lineup(@game_day, @home_team, @away_starting_lancer.first.player.throwhand)
+	# end
+
+	unless @away_batters.empty?
+	  @away_batters.order("lineup")
 	end
-	if @home_batters.empty?
-	  @home_projected = true
-	  @home_batters = get_previous_lineup(@game_day, @home_team, @away_starting_lancer.first.player.throwhand)
+	unless @home_batters.empty?
+	  @home_batters.order("lineup")
 	end
 
 	@home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
