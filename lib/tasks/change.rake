@@ -189,7 +189,7 @@ namespace :change do
     end
 
     GameDay.search(Time.now).games.each do |game|
-      game.weather.destroy_all
+      game.weathers.destroy_all
     end
   end
 
