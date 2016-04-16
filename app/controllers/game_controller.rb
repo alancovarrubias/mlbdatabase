@@ -199,9 +199,15 @@ class GameController < ApplicationController
 
 	unless @away_starting_lancer.empty?
 	  @home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
+	else
+	  @home_lefties = 0
+	  @home_righties = 0
 	end
 	unless @home_starting_lancer.empty?
 	  @away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
+	else
+	  @away_lefties = 0
+	  @away_righties = 0
 	end
 
 	@away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
