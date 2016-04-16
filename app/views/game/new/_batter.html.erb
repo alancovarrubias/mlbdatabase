@@ -37,7 +37,7 @@
       <tr>
         <td class="name"><%= "#{batter.lineup}. #{batter.player.name} (#{batter.player.bathand})"%></td>
         <% get_batter_stats(batter, left).each do |stat| %>
-          <%= render partial: "batter_stat", locals: { stat: stat } %>
+          <%= render partial: "game/new/batter_stat", locals: { stat: stat } %>
         <% end %>
         <% get_batter_stats(batter, left).each do |stat| %>
           <td><%= stat.wrc %></td>
@@ -46,4 +46,5 @@
       </tr>
     <% end %>
   </tbody>
+    <%= render partial: "game/new/sum_batter", locals: { batters: batters, left: get_handed(left) } %>
 </table>

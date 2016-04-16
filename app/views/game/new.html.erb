@@ -16,19 +16,19 @@
 </nav>
 
 <%= image_tag(@image_url, :width => '600') %>
-<%= render partial: "new_weather", locals: { caption: "Accuweather Weather Forecast", weathers: @forecasts } %>
-<%= render partial: "new_weather", locals: { caption: "Wunderground Weather Records", weathers: @weathers } %>
+<%= render partial: "game/new/weather", locals: { caption: "Accuweather Weather Forecast", weathers: @forecasts } %>
+<%= render partial: "game/new/weather", locals: { caption: "Wunderground Weather Records", weathers: @weathers } %>
 
-<%= render partial: "lancer", locals: { caption: "Starting Pitchers",
+<%= render partial: "game/new/lancer", locals: { caption: "Starting Pitchers",
 							  lancers: @away_starting_lancer + @home_starting_lancer, left: @away_left } %>
 
-<%= render partial: "batter", locals: { caption: "#{@away_team.name} Batters",
+<%= render partial: "game/new/batter", locals: { caption: "#{@away_team.name} Batters",
 							  batters: @away_batters, left: @away_left } %>
-<%= render partial: "batter", locals: { caption: "#{@home_team.name} Batters",
+<%= render partial: "game/new/batter", locals: { caption: "#{@home_team.name} Batters",
 							  batters: @home_batters, left: @home_left } %>
 
-<%= render partial: "bullpen", locals: { caption: "#{@away_team.name} Bullpen",
+<%= render partial: "game/new/bullpen", locals: { caption: "#{@away_team.name} Bullpen",
 										 lancers: @away_bullpen_lancers }%>
 
-<%= render partial: "bullpen", locals: { caption: "#{@home_team.name} Bullpen",
+<%= render partial: "game/new/bullpen", locals: { caption: "#{@home_team.name} Bullpen",
 										 lancers: @home_bullpen_lancers }%>

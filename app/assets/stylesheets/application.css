@@ -241,11 +241,6 @@ td.name {
   white-space: nowrap;
 }
 
-tbody.total td {
-  border-top: 1px solid black;
-  background: #f6f6f6;
-  border-left: none;
-} 
 
 th.projected {
   background-color: #DC143C;
@@ -464,6 +459,10 @@ tbody.batter td:nth-child(n+34):nth-child(-n+41):nth-child(even){
 
 td.blue {
   background-color: #6495ED;
+}
+
+tr.total td {
+  background-color: #f6f6f6;
 }
 
 /*tbody.hitter td:nth-child(1) {

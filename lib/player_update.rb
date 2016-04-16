@@ -108,7 +108,6 @@ module PlayerUpdate
   	url_14 = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43,44,45&season=#{year}&month=2&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
   	urls = [url_l, url_r, url_14]
   	urls.each_with_index do |url, url_index|
-  	  puts url
   	  doc = download_document(url)
   	  ab = sb = bb = so = slg = obp = woba = wrc = ld = gb = fb = player = name = nil
   	  doc.css(".grid_line_regular").each_with_index do |element, index|

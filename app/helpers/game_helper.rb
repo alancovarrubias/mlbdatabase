@@ -30,11 +30,7 @@ module GameHelper
 
   def get_batter_stats(batter, left)
     stat_array = Array.new
-    if left
-      handed = "L"
-    else
-      handed = "R"
-    end
+    handed = get_handed(left)
     stats = batter.stats
     stat_array << stats.where(handedness: handed).first
     stat_array << stats.where(handedness: "").first
@@ -46,6 +42,14 @@ module GameHelper
       season = Season.find_by_year(season.year-1)
     end
     return stat_array
+  end
+
+  def get_handed(left)
+    if left
+      "L"
+    else
+      "R"
+    end
   end
 
   def get_lancer_stats(lancer)
@@ -99,6 +103,20 @@ module GameHelper
 
 
 
+  def sum_batter_stats(season, batter)
+
+  end
+
+  def handed_hitter_header(hand)
+    if hand
+      "LHP"
+    else
+      "RHP"
+    end
+  end
+
+
+
 ####################################################################################################################################
 
   def projected?(bool)
@@ -109,13 +127,6 @@ module GameHelper
   	end
   end
 
-  def handed_hitter_header(hand)
-  	if hand
-  	  "LHP"
-  	else
-  	  "RHP"
-  	end
-  end
 
   def hitter_class(hitter)
     if hitter.name == "Total"

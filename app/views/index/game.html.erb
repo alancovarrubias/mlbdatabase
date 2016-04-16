@@ -5,6 +5,6 @@
 <ul>
 <li><%= link_to('Home Page', { controller: 'index', action: 'home' })%></li>
 <% @games.each do |game| %>
-  <li><%= link_to(game_link(game), { controller: "game", action: "matchup", id: game.id, year: params[:year], month: params[:month], day: params[:day] }) %></li>
+  <li><%= link_to(game_link(game), { controller: "game", action: "new", id: game.id, year: params[:year], month: params[:month], day: params[:day] }) %></li>
 <% end %>
 </ul>
