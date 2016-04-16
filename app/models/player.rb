@@ -23,6 +23,7 @@ class Player < ActiveRecord::Base
     if game
       unless batter = self.batters.where(season_id: season.id, team_id: team.id, game_id: game.id).first
         batter = Batter.create(player_id: self.id, season_id: season.id, team_id: team.id, game_id: game.id)
+        puts "#{self.name} batter created for #{game.new_url}"
         batter.create_game_stats
       end
     else
@@ -37,6 +38,7 @@ class Player < ActiveRecord::Base
     if game
       unless lancer = self.lancers.where(season_id: season.id, team_id: team.id, game_id: game.id).first
         lancer = Lancer.create(player_id: self.id, season_id: season.id, team_id: team.id, game_id: game.id)
+        puts "#{self.name} lancer created for #{game.new_url}"
         lancer.create_game_stats
       end
     else
