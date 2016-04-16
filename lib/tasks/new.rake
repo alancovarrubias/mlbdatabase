@@ -66,6 +66,7 @@ namespace :new do
   task :closingline => :environment do
 
     include Share
+    hour, day, month, year = find_date(Time.now)
     game_day = GameDay.search(Time.now)
     today_games = game_day.games
     size = today_games.size

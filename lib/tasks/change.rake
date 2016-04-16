@@ -131,7 +131,7 @@ namespace :change do
 
         lancer = player.create_lancer(season, pitcher.team, game)
 
-        lancer.update_attributes(starter: pitcher.starter, bullpen: pitcher.bullpen)
+        lancer.update_attributes(starter: pitcher.starter, bullpen: pitcher.bullpen)c
 
         lancer.stats("L").update_attributes(whip: pitcher.WHIP_L, ip: pitcher.IP_L, so: pitcher.SO_L, bb: pitcher.BB_L, fip: pitcher.FIP, xfip: pitcher.xFIP_L, kbb: pitcher.KBB_L,
           woba: pitcher.wOBA_L, ops: pitcher.OPS_L, era: pitcher.ERA_L, fb: pitcher.FB_L, gb: pitcher.GB_L, ld: pitcher.LD_L)
