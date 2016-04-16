@@ -263,30 +263,30 @@ module PlayerUpdate
 	  end
 	end
 
-	# team.players.each do |player|
- #  	  if player.identity == "" || player.find_lancer(season) == nil
- #  	  	next
- #  	  end
- #  	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{player.identity}&year=#{year}&t=p"
- #  	  doc = download_document(url)
- #  	  row = 0
- #  	  doc.css("#plato td").each_with_index do |element, index|
- #  	  	case index%28
- #  	  	when 27
- #  	  	  ops = element.text.to_i
- #  	  	  case row
- #  	  	  when 0
- #  	  	  	player.create_lancer(season).stats.where(handedness: "R").first.update_attributes(ops: ops)
- #  	  	  when 1
- #  	  	  	player.create_lancer(season).stats.where(handedness: "L").first.update_attributes(ops: ops)
- #  	  	  end
- #  	  	  row += 1
- #  	  	end
- #  	  	if row == 2
- #  	  	  break
- #  	  	end
- #  	  end
- #  	end
+	team.players.each do |player|
+  	  if player.identity == "" || player.find_lancer(season) == nil
+  	  	next
+  	  end
+  	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{player.identity}&year=#{year}&t=p"
+  	  doc = download_document(url)
+  	  row = 0
+  	  doc.css("#plato td").each_with_index do |element, index|
+  	  	case index%28
+  	  	when 27
+  	  	  ops = element.text.to_i
+  	  	  case row
+  	  	  when 0
+  	  	  	player.create_lancer(season).stats.where(handedness: "R").first.update_attributes(ops: ops)
+  	  	  when 1
+  	  	  	player.create_lancer(season).stats.where(handedness: "L").first.update_attributes(ops: ops)
+  	  	  end
+  	  	  row += 1
+  	  	end
+  	  	if row == 2
+  	  	  break
+  	  	end
+  	  end
+  	end
 
   end
 
