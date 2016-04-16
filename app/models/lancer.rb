@@ -13,13 +13,17 @@ class Lancer < ActiveRecord::Base
     Lancer.where(game_id: nil, bullpen: true)
   end
 
-  def stats
+  def stats(handedness=nil)
   	if self.pitcher_stats.size == 0
   	  PitcherStat.create(lancer_id: self.id, range: "Season", handedness: "L")
       PitcherStat.create(lancer_id: self.id, range: "Season", handedness: "R")
       PitcherStat.create(lancer_id: self.id, range: "30 Days", handedness: "")
   	end
-  	self.pitcher_stats
+    unless handedness
+      return self.pitcher_stats
+    else
+      return self.pitcher_stats.where(handedness: handedness).first
+    end
   end
 
   def create_game_stats

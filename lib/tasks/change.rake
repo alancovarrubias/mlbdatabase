@@ -133,15 +133,13 @@ namespace :change do
 
         lancer.update_attributes(starter: pitcher.starter, bullpen: pitcher.bullpen)
 
-        stats = lancer.stats
-
-        stats.where(handedness: "L").first.update_attributes(whip: pitcher.WHIP_L, ip: pitcher.IP_L, so: pitcher.SO_L, bb: pitcher.BB_L, fip: pitcher.FIP, xfip: pitcher.xFIP_L, kbb: pitcher.KBB_L,
+        lancer.stats("L").update_attributes(whip: pitcher.WHIP_L, ip: pitcher.IP_L, so: pitcher.SO_L, bb: pitcher.BB_L, fip: pitcher.FIP, xfip: pitcher.xFIP_L, kbb: pitcher.KBB_L,
           woba: pitcher.wOBA_L, ops: pitcher.OPS_L, era: pitcher.ERA_L, fb: pitcher.FB_L, gb: pitcher.GB_L, ld: pitcher.LD_L)
 
-        stats.where(handedness: "R").first.update_attributes(whip: pitcher.WHIP_R, ip: pitcher.IP_R, so: pitcher.SO_R, bb: pitcher.BB_R, fip: pitcher.FIP, xfip: pitcher.xFIP_L, kbb: pitcher.KBB_R,
+        lancer.stats("R").update_attributes(whip: pitcher.WHIP_R, ip: pitcher.IP_R, so: pitcher.SO_R, bb: pitcher.BB_R, fip: pitcher.FIP, xfip: pitcher.xFIP_L, kbb: pitcher.KBB_R,
           woba: pitcher.wOBA_R, ops: pitcher.OPS_R, era: pitcher.ERA_R, fb: pitcher.FB_R, gb: pitcher.GB_R, ld: pitcher.LD_R)
 
-        stats.where(handedness: "").first.update_attributes(ld: pitcher.LD_30, whip: pitcher.WHIP_30, ip: pitcher.SO_30, bb: pitcher.BB_30)
+        lancer.stats("").update_attributes(ld: pitcher.LD_30, whip: pitcher.WHIP_30, ip: pitcher.SO_30, bb: pitcher.BB_30)
 
       end
     end
