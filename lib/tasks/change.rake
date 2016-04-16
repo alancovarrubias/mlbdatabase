@@ -109,15 +109,13 @@ namespace :change do
 
         batter.update_attributes(starter: hitter.starter, lineup: hitter.lineup)
 
-        stats = batter.stats
-
-        stats.where(handedness: "L").first.update_attributes(woba: hitter.wOBA_L, ops: hitter.OPS_L, 
+        batter.stats("L").update_attributes(woba: hitter.wOBA_L, ops: hitter.OPS_L, 
         ab: hitter.AB_L, so: hitter.SO_L, bb: hitter.BB_L, sb: hitter.SB_L, fb: hitter.FB_L, gb: hitter.GB_L, ld: hitter.LD_L, wrc: hitter.wRC_L, obp: hitter.OBP_L, slg: hitter.SLG_L)
 
-        stats.where(handedness: "R").first.update_attributes(woba: hitter.wOBA_R, ops: hitter.OPS_R, 
+        batter.stats("R").update_attributes(woba: hitter.wOBA_R, ops: hitter.OPS_R, 
         ab: hitter.AB_R, so: hitter.SO_R, bb: hitter.BB_R, sb: hitter.SB_R, fb: hitter.FB_R, gb: hitter.GB_R, ld: hitter.LD_R, wrc: hitter.wRC_R, obp: hitter.OBP_R, slg: hitter.SLG_R)
 
-        stats.where(handedness: "").first.update_attributes(woba: hitter.wOBA_14, ops: hitter.OPS_14, 
+        batter.stats("").update_attributes(woba: hitter.wOBA_14, ops: hitter.OPS_14, 
         ab: hitter.AB_14, so: hitter.SO_14, bb: hitter.BB_14, sb: hitter.SB_14, fb: hitter.FB_14, gb: hitter.GB_14, ld: hitter.LD_14, wrc: hitter.wRC_14, obp: hitter.OBP_14, slg: hitter.SLG_14)
 
       end
