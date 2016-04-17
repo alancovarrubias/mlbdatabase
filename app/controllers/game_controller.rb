@@ -8,70 +8,82 @@ class GameController < ApplicationController
     @game_day = @game.game_day
     @season = @game_day.season
 
-	@away_team = @game.away_team
-	@home_team = @game.home_team
-	@image_url = @home_team.id.to_s + ".png"
+	  @away_team = @game.away_team
+	  @home_team = @game.home_team
+	  @image_url = @home_team.id.to_s + ".png"
 
-	month = Date::MONTHNAMES[@game_day.month]
-	day = @game_day.day.to_s
-	@date = month + ' ' + day
+	  month = Date::MONTHNAMES[@game_day.month]
+	  day = @game_day.day.to_s
+	  @date = "#{month} #{day}"
 	
-	@forecasts = @game.weathers.where(station: "Forecast")
-	@weathers = @game.weathers.where(station: "Actual")
+	  @forecasts = @game.weathers.where(station: "Forecast")
+	  @weathers = @game.weathers.where(station: "Actual")
 
 
-	@away_starting_lancer = @game.lancers.where(team_id: @away_team.id, starter: true)
-	@home_starting_lancer = @game.lancers.where(team_id: @home_team.id, starter: true)
+	  @away_starting_lancer = @game.lancers.where(team_id: @away_team.id, starter: true)
+	  @home_starting_lancer = @game.lancers.where(team_id: @home_team.id, starter: true)
 
-	@away_batters = @game.batters.where(team_id: @away_team.id).order("lineup")
-	@home_batters = @game.batters.where(team_id: @home_team.id).order("lineup")
+	  @away_batters = @game.batters.where(team_id: @away_team.id).order("lineup")
+	  @home_batters = @game.batters.where(team_id: @home_team.id).order("lineup")
+
+    # if @away_batters.empty? && !@away_starting_lancer.empty?
+    #   get_previous_lineup(@game_day, @away_team, @away_starting_lancer.first.player.throwhand)
+    # end
+
+    # if @home_batters.empty? && !@home_starting_lancer.empty?
+    #   get_previous_lineup(@game_day, @home_team, @home_starting_lancer.first.player.throwhand)
+    # end
 
 
-	unless @away_batters.empty?
-	  @away_batters.order("lineup")
-	end
-	unless @home_batters.empty?
-	  @home_batters.order("lineup")
-	end
+	  unless @away_batters.empty?
+	    @away_batters.order("lineup")
+	  end
+	  unless @home_batters.empty?
+	    @home_batters.order("lineup")
+	  end
 
     @home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
     @away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
 
-	@away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
-	@home_bullpen_lancers = @game.lancers.where(team_id: @home_team.id, bullpen: true)
+	  @away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
+	  @home_bullpen_lancers = @game.lancers.where(team_id: @home_team.id, bullpen: true)
 
   end
 
   def lefty?(throwhand)
     if throwhand == "L"
- 	  true
- 	else
- 	  false
+ 	    true
+ 	  else
+ 	    false
     end
   end
 
 
   def team
-	@team = Team.find_by_id(params[:id])
-	if params[:left] == '1'
-	  @left = true
-	else
-	  @left = false
-	end
+	  @team = Team.find_by_id(params[:id])
+	  if params[:left] == '1'
+	    @left = true
+	  else
+	    @left = false
+	  end
 
-	if @left
-	  @pitchers = @team.pitchers.where(:game_id => nil).order(:IP_L).reverse
-	  @hitters = @team.hitters.where(:game_id => nil).order(:AB_L).reverse
-	else
-	  @pitchers = @team.pitchers.where(:game_id => nil).order(:IP_R).reverse
-	  @hitters = @team.hitters.where(:game_id => nil).order(:AB_R).reverse.limit(20)
-	end
+	  if @left
+	    @pitchers = @team.pitchers.where(:game_id => nil).order(:IP_L).reverse
+	    @hitters = @team.hitters.where(:game_id => nil).order(:AB_L).reverse
+	  xelse
+	    @pitchers = @team.pitchers.where(:game_id => nil).order(:IP_R).reverse
+	    @hitters = @team.hitters.where(:game_id => nil).order(:AB_R).reverse.limit(20)
+	  end
   end
 
   def get_previous_lineup(game_day, team, opp_throwhand)
   	while true
 
   	  game_day = game_day.prev_day(1)
+
+      unless game_day
+        next
+      end
 
   	  games = game_day.games.where("away_team_id = #{team.id} OR home_team_id = #{team.id}")
 
@@ -80,7 +92,7 @@ class GameController < ApplicationController
   	  	if game.away_team_id == team.id
   	  	  opp_pitcher = game.lancers.where(starter: true, team_id: game.home_team_id).first
   	  	else
-  		  opp_pitcher = game.lancers.where(starter: true, team_id: game.away_team_id).first
+  		    opp_pitcher = game.lancers.where(starter: true, team_id: game.away_team_id).first
   	  	end
 
   	  	if opp_pitcher.player.throwhand == opp_throwhand
@@ -88,8 +100,8 @@ class GameController < ApplicationController
   	  	end
   	  end
 
-	  if game_day.id == 1
-  	  	return Array.new
+  	  if game_day.id == 1
+    	  	return Array.new
   	  end
 
     end
