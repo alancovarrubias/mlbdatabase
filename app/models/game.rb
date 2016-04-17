@@ -14,9 +14,9 @@ class Game < ActiveRecord::Base
   has_many :innings
   has_many :pitcher_box_scores
   has_many :hitter_box_scores
-  has_many :weathers, dependent: destroy
-  has_many :lancers, dependent: destroy
-  has_many :batters, dependent: destroy
+  has_many :weathers, dependent: :destroy
+  has_many :lancers, dependent: :destroy
+  has_many :batters, dependent: :destroy
   
   def self.days_games(time)
     Game.where(:year => time.year.to_s, :month => "%02d" % time.month, :day => "%02d" % time.day)
