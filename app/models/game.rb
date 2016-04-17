@@ -9,8 +9,6 @@ class Game < ActiveRecord::Base
   belongs_to :away_team, :class_name => 'Team'
   belongs_to :home_team, :class_name => 'Team'
   belongs_to :game_day
-  has_many :pitchers
-  has_many :hitters
   has_many :innings
   has_many :pitcher_box_scores
   has_many :hitter_box_scores

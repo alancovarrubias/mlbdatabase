@@ -2,7 +2,7 @@ class CreateWeathers < ActiveRecord::Migration
   def change
     create_table :weathers do |t|
       t.belongs_to :game, index: true
-      t.string :station,     default: ""
+      t.string :station,  default: ""
       t.integer :hour,    default: 0
       t.string :wind,     default: ""
       t.string :humidity, default: ""
