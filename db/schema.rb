@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160413004658) do
+ActiveRecord::Schema.define(version: 20160417034251) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,108 +134,6 @@ ActiveRecord::Schema.define(version: 20160413004658) do
     t.datetime "updated_at"
   end
 
-  create_table "hitters", force: true do |t|
-    t.integer  "team_id"
-    t.integer  "game_id"
-    t.string   "name",            default: ""
-    t.string   "alias",           default: ""
-    t.integer  "fangraph_id",     default: 0
-    t.string   "bathand",         default: ""
-    t.string   "throwhand",       default: ""
-    t.integer  "lineup",          default: 0
-    t.boolean  "starter",         default: false
-    t.integer  "SB_L",            default: 0
-    t.integer  "wOBA_L",          default: 0
-    t.integer  "OBP_L",           default: 0
-    t.integer  "SLG_L",           default: 0
-    t.integer  "AB_L",            default: 0
-    t.integer  "BB_L",            default: 0
-    t.integer  "SO_L",            default: 0
-    t.float    "LD_L",            default: 0.0
-    t.integer  "wRC_L",           default: 0
-    t.integer  "SB_R",            default: 0
-    t.integer  "wOBA_R",          default: 0
-    t.integer  "OBP_R",           default: 0
-    t.integer  "SLG_R",           default: 0
-    t.integer  "AB_R",            default: 0
-    t.integer  "BB_R",            default: 0
-    t.integer  "SO_R",            default: 0
-    t.float    "LD_R",            default: 0.0
-    t.integer  "wRC_R",           default: 0
-    t.integer  "wOBA_14",         default: 0
-    t.integer  "OBP_14",          default: 0
-    t.integer  "SLG_14",          default: 0
-    t.integer  "AB_14",           default: 0
-    t.integer  "BB_14",           default: 0
-    t.integer  "SB_14",           default: 0
-    t.integer  "SO_14",           default: 0
-    t.float    "LD_14",           default: 0.0
-    t.integer  "wRC_14",          default: 0
-    t.integer  "SB_previous_L",   default: 0
-    t.integer  "wOBA_previous_L", default: 0
-    t.integer  "OBP_previous_L",  default: 0
-    t.integer  "SLG_previous_L",  default: 0
-    t.integer  "AB_previous_L",   default: 0
-    t.integer  "BB_previous_L",   default: 0
-    t.integer  "SO_previous_L",   default: 0
-    t.float    "LD_previous_L",   default: 0.0
-    t.integer  "wRC_previous_L",  default: 0
-    t.integer  "SB_previous_R",   default: 0
-    t.integer  "wOBA_previous_R", default: 0
-    t.integer  "OBP_previous_R",  default: 0
-    t.integer  "SLG_previous_R",  default: 0
-    t.integer  "AB_previous_R",   default: 0
-    t.integer  "BB_previous_R",   default: 0
-    t.integer  "SO_previous_R",   default: 0
-    t.float    "LD_previous_R",   default: 0.0
-    t.integer  "wRC_previous_R",  default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.float    "FB_L",            default: 0.0
-    t.float    "FB_R",            default: 0.0
-    t.float    "FB_14",           default: 0.0
-    t.float    "FB_previous_L",   default: 0.0
-    t.float    "FB_previous_R",   default: 0.0
-    t.float    "GB_L",            default: 0.0
-    t.float    "GB_R",            default: 0.0
-    t.float    "GB_14",           default: 0.0
-    t.float    "GB_previous_L",   default: 0.0
-    t.float    "GB_previous_R",   default: 0.0
-    t.integer  "OPS_L",           default: 0
-    t.integer  "OPS_R",           default: 0
-    t.integer  "OPS_14",          default: 0
-    t.integer  "OPS_previous_L",  default: 0
-    t.integer  "OPS_previous_R",  default: 0
-    t.integer  "SB_next_L",       default: 0
-    t.integer  "wOBA_next_L",     default: 0
-    t.integer  "OBP_next_L",      default: 0
-    t.integer  "SLG_next_L",      default: 0
-    t.integer  "AB_next_L",       default: 0
-    t.integer  "BB_next_L",       default: 0
-    t.integer  "SO_next_L",       default: 0
-    t.float    "LD_next_L",       default: 0.0
-    t.integer  "wRC_next_L",      default: 0
-    t.integer  "FB_next_L",       default: 0
-    t.integer  "GB_next_L",       default: 0
-    t.integer  "OPS_next_L",      default: 0
-    t.integer  "SB_next_R",       default: 0
-    t.integer  "wOBA_next_R",     default: 0
-    t.integer  "OBP_next_R",      default: 0
-    t.integer  "SLG_next_R",      default: 0
-    t.integer  "AB_next_R",       default: 0
-    t.integer  "BB_next_R",       default: 0
-    t.integer  "SO_next_R",       default: 0
-    t.float    "LD_next_R",       default: 0.0
-    t.integer  "wRC_next_R",      default: 0
-    t.integer  "FB_next_R",       default: 0
-    t.integer  "GB_next_R",       default: 0
-    t.integer  "OPS_next_R",      default: 0
-  end
-
-  add_index "hitters", ["alias"], name: "index_hitters_on_alias", using: :btree
-  add_index "hitters", ["fangraph_id"], name: "index_hitters_on_fangraph_id", using: :btree
-  add_index "hitters", ["name"], name: "index_hitters_on_name", using: :btree
-
   create_table "innings", force: true do |t|
     t.integer  "game_id"
     t.string   "number",     default: ""
@@ -303,100 +201,6 @@ ActiveRecord::Schema.define(version: 20160413004658) do
   end
 
   add_index "pitcher_stats", ["lancer_id"], name: "index_pitcher_stats_on_lancer_id", using: :btree
-
-  create_table "pitchers", force: true do |t|
-    t.integer  "team_id"
-    t.integer  "game_id"
-    t.string   "name",             default: ""
-    t.string   "alias",            default: ""
-    t.integer  "fangraph_id",      default: 0
-    t.string   "bathand",          default: ""
-    t.string   "throwhand",        default: ""
-    t.boolean  "starter",          default: false
-    t.boolean  "bullpen",          default: false
-    t.integer  "one",              default: 0
-    t.integer  "two",              default: 0
-    t.integer  "three",            default: 0
-    t.integer  "FIP",              default: 0
-    t.float    "LD_L",             default: 0.0
-    t.float    "WHIP_L",           default: 0.0
-    t.float    "IP_L",             default: 0.0
-    t.integer  "SO_L",             default: 0
-    t.integer  "BB_L",             default: 0
-    t.float    "ERA_L",            default: 0.0
-    t.integer  "wOBA_L",           default: 0
-    t.float    "FB_L",             default: 0.0
-    t.float    "xFIP_L",           default: 0.0
-    t.float    "KBB_L",            default: 0.0
-    t.float    "LD_R",             default: 0.0
-    t.float    "WHIP_R",           default: 0.0
-    t.float    "IP_R",             default: 0.0
-    t.integer  "SO_R",             default: 0
-    t.integer  "BB_R",             default: 0
-    t.float    "ERA_R",            default: 0.0
-    t.integer  "wOBA_R",           default: 0
-    t.float    "FB_R",             default: 0.0
-    t.float    "xFIP_R",           default: 0.0
-    t.float    "KBB_R",            default: 0.0
-    t.float    "LD_30",            default: 0.0
-    t.float    "WHIP_30",          default: 0.0
-    t.float    "IP_30",            default: 0.0
-    t.integer  "SO_30",            default: 0
-    t.integer  "BB_30",            default: 0
-    t.integer  "FIP_previous",     default: 0
-    t.float    "FB_previous_L",    default: 0.0
-    t.float    "FB_previous_R",    default: 0.0
-    t.float    "xFIP_previous_L",  default: 0.0
-    t.float    "xFIP_previous_R",  default: 0.0
-    t.float    "KBB_previous_L",   default: 0.0
-    t.float    "KBB_previous_R",   default: 0.0
-    t.integer  "wOBA_previous_L",  default: 0
-    t.integer  "wOBA_previous_R",  default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "tomorrow_starter"
-    t.float    "GB_R",             default: 0.0
-    t.float    "GB_L",             default: 0.0
-    t.float    "GB_previous_R",    default: 0.0
-    t.float    "GB_previous_L",    default: 0.0
-    t.integer  "four",             default: 0
-    t.integer  "five",             default: 0
-    t.float    "IP_previous_L",    default: 0.0
-    t.float    "IP_previous_R",    default: 0.0
-    t.integer  "OPS_L",            default: 0
-    t.integer  "OPS_R",            default: 0
-    t.integer  "OPS_previous_L",   default: 0
-    t.integer  "OPS_previous_R",   default: 0
-    t.integer  "FIP_next",         default: 0
-    t.float    "LD_next_L",        default: 0.0
-    t.float    "WHIP_next_L",      default: 0.0
-    t.float    "IP_next_L",        default: 0.0
-    t.integer  "SO_next_L",        default: 0
-    t.integer  "BB_next_L",        default: 0
-    t.float    "ERA_next_L",       default: 0.0
-    t.integer  "wOBA_next_L",      default: 0
-    t.float    "FB_next_L",        default: 0.0
-    t.float    "GB_next_L",        default: 0.0
-    t.float    "xFIP_next_L",      default: 0.0
-    t.float    "KBB_next_L",       default: 0.0
-    t.integer  "OPS_next_L",       default: 0
-    t.float    "LD_next_R",        default: 0.0
-    t.float    "WHIP_next_R",      default: 0.0
-    t.float    "IP_next_R",        default: 0.0
-    t.integer  "SO_next_R",        default: 0
-    t.integer  "BB_next_R",        default: 0
-    t.float    "ERA_next_R",       default: 0.0
-    t.integer  "wOBA_next_R",      default: 0
-    t.float    "FB_next_R",        default: 0.0
-    t.float    "GB_next_R",        default: 0.0
-    t.float    "xFIP_next_R",      default: 0.0
-    t.float    "KBB_next_R",       default: 0.0
-    t.integer  "OPS_next_R",       default: 0
-  end
-
-  add_index "pitchers", ["alias"], name: "index_pitchers_on_alias", using: :btree
-  add_index "pitchers", ["fangraph_id"], name: "index_pitchers_on_fangraph_id", using: :btree
-  add_index "pitchers", ["name"], name: "index_pitchers_on_name", using: :btree
 
   create_table "players", force: true do |t|
     t.integer  "team_id"
