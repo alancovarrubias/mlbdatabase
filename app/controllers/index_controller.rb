@@ -17,7 +17,6 @@ class IndexController < ApplicationController
 	time = Time.new(params[:year], params[:month], params[:day])
 	@head = Date::MONTHNAMES[time.month] + ' ' + time.day.ordinalize + ' Matchups'
 	@games = GameDay.search(time).games.order("home_team_id")
-	# @games = Game.where(year: params[:year], month: "%02d" % params[:month], day: "%02d" % params[:day])
   end
 
 

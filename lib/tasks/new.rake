@@ -7,7 +7,7 @@ namespace :new do
   task :ten => [:matchups]
 
   task delete: :environment do
-    game_day = GameDay.search(Time.now.tomorrow)
+    game_day = GameDay.search(Time.now)
     puts game_day.games.size
     game_day.games.each do |game|
       game.lancers.destroy_all
