@@ -163,6 +163,7 @@ namespace :new do
       month = "%02d" % game_day.month
       day = "%02d" % game_day.day
       url = "http://www.baseballpress.com/bullpenusage/#{year}-#{month}-#{day}"
+      puts url
       doc = download_document(url)
       player = nil
       var = one = 0
@@ -178,17 +179,13 @@ namespace :new do
           else
             one = text.to_i
           end
-
-          prev_game_day = game_day.prev_day(1)
-          unless prev_game_day
-            next
-          end
-          games = prev_game_day.games
+          games = game_day.games
           if games.empty?
             next
           end
           game_ids = games.map { |game| game.id }
           Lancer.where(player_id: player.id, game_id: game_ids).each do |lancer|
+            puts "#{player.name} #{lancer.game.new_url} pitches #{one}"
             lancer.update_attributes(pitches: one)
           end
         end
