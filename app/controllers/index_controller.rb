@@ -55,7 +55,7 @@ class IndexController < ApplicationController
 		game_days = GameDay.where(year: params[:year], month: params[:month])
 
 		(1..31).each do |day|
-			unless games.where(day: day).empty?
+			unless game_days.where(day: day).empty?
 				@days << day
 			end
 		end
