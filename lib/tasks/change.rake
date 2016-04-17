@@ -64,16 +64,16 @@ namespace :change do
 
 
   task create_game_days: :environment do
-  	(2014..2016).each do |year|
-      season = Season.where(year: year).first
-  	  (1..12).each do |month|
-  	  	(1..31).each do |day|
-  	  	  if Game.where(year: "%d" % year, month: "%02d" % month, day: "%02d" % day).size > 0
-  	  	  	GameDay.create(season_id: season.id, year: year, month: month, day: day)
-  	  	  end
-  	  	end
-  	  end
-  	end
+  	# (2014..2016).each do |year|
+   #    season = Season.where(year: year).first
+  	#   (1..12).each do |month|
+  	#   	(1..31).each do |day|
+  	#   	  if Game.where(year: "%d" % year, month: "%02d" % month, day: "%02d" % day).size > 0
+  	#   	  	GameDay.create(season_id: season.id, year: year, month: month, day: day)
+  	#   	  end
+  	#   	end
+  	#   end
+  	# end
 
     GameDay.all.each do |game_day|
       Game.where(year: "%d" % game_day.year, month: "%02d" % game_day.month, day: "%02d" % game_day.day).each do |game|
