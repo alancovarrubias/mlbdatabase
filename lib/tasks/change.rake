@@ -87,7 +87,7 @@ namespace :change do
 
       Game.all.each do |game|
 
-        unless game.batters.empty?
+        unless game.game_day
           next
         end
 
@@ -149,16 +149,6 @@ namespace :change do
         end
 
 
-
-
-
-
-
-
-
-
-
-
       end
 
 
@@ -200,17 +190,13 @@ namespace :change do
 
 
   task fix: :environment do
-    GameDay.search(Time.now.yesterday).games.each do |game|
-      game.weathers.each do |weather|
-        if weather.temp.size == 0
-          weather.destroy
-        end
+
+    Lancer.all.each do |lancer|
+      if lancer.stats.size == 3
+        puts lancer.stats.size
       end
     end
 
-    GameDay.search(Time.now).games.each do |game|
-      game.weathers.destroy_all
-    end
   end
 
 

@@ -102,11 +102,6 @@ module GameHelper
   end
 
 
-
-  def sum_batter_stats(season, batter)
-
-  end
-
   def handed_hitter_header(hand)
     if hand
       "LHP"

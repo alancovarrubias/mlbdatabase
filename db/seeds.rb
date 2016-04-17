@@ -11,9 +11,9 @@ include PlayerUpdate
   Season.create(year: i)
 end
 
-Season.all.each do |season|
-  Team.all.each do |team|
-  	create_players(season, team)
-  end
-end
+# Season.all.each do |season|
+#   Team.all.each do |team|
+#   	create_players(season, team)
+#   end
+# end
 
