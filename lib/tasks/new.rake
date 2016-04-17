@@ -155,5 +155,57 @@ namespace :new do
   end
 
 
+  task fix_bullpen_pitches: :environment do
+    include NewShare
+    GameDay.all.each do |game_day|
+
+      year = game_day.year
+      month = "%02d" % game_day.month
+      day = "%02d" % game_day.day
+      url = "http://www.baseballpress.com/bullpenusage/#{year}-#{month}-#{day}"
+      doc = download_document(url)
+      player = nil
+      var = one = 0
+      doc.css(".league td").each do |element|
+
+        text = element.text
+
+        case var
+        when 1
+          var = 0
+          if text == "N/G"
+            one = 0
+          else
+            one = text.to_i
+          end
+
+          prev_game_day = game_day.prev_day(1)
+          unless prev_game_day
+            next
+          end
+          games = prev_game_day.games
+          if games.empty?
+            next
+          end
+          game_ids = games.map { |game| game.id }
+          Lancer.where(player_id: player.id, game_id: game_ids).each do |lancer|
+            lancer.update_attributes(pitches: one)
+          end
+        end
+
+
+
+
+
+        if element.children.size == 2
+          identity, fangraph_id, name, handedness = pitcher_info(element)
+          player = Player.search(name, identity, fangraph_id)
+          var = 1
+        end
+      end
+    end
+  end
+
+
   
 end
