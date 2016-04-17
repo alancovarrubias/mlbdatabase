@@ -91,10 +91,6 @@ namespace :change do
           next
         end
 
-
-       # game.lancers.destroy_all
-       # game.batters.destroy_all
-       # game.weathers.destroy_all
         game_day = game.game_day
         season = Season.find_by_year(game_day.year)
 

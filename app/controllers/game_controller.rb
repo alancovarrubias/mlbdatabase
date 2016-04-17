@@ -181,14 +181,6 @@ class GameController < ApplicationController
 	@away_batters = @game.batters.where(team_id: @away_team.id).order("lineup")
 	@home_batters = @game.batters.where(team_id: @home_team.id).order("lineup")
 
-	# if @away_batters.empty? && !@home_starting_lancer.empty?
-	#   @away_projected = true
-	#   @away_batters = get_previous_lineup(@game_day, @away_team, @home_starting_lancer.first.player.throwhand)
-	# end
-	# if @home_batters.empty? && !@away_starting_lancer.empty?
-	#   @home_projected = true
-	#   @home_batters = get_previous_lineup(@game_day, @home_team, @away_starting_lancer.first.player.throwhand)
-	# end
 
 	unless @away_batters.empty?
 	  @away_batters.order("lineup")
@@ -197,18 +189,8 @@ class GameController < ApplicationController
 	  @home_batters.order("lineup")
 	end
 
-	unless @away_starting_lancer.empty?
-	  @home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
-	else
-	  @home_lefties = 0
-	  @home_righties = 0
-	end
-	unless @home_starting_lancer.empty?
-	  @away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
-	else
-	  @away_lefties = 0
-	  @away_righties = 0
-	end
+    @home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
+    @away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
 
 	@away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
 	@home_bullpen_lancers = @game.lancers.where(team_id: @home_team.id, bullpen: true)
@@ -280,6 +262,9 @@ class GameController < ApplicationController
   private
 
   def get_batters_handedness(lancer, batters)
+  	unless lancer
+  	  return 0, 0
+  	end
     lancer = lancer.player
     batters = batters.map { |batter| batter.player }
     same = diff = 0

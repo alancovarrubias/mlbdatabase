@@ -93,7 +93,7 @@ module GameHelper
     end
     games = game_day.games
     game_ids = games.map { |game| game.id }
-    lancer = Lancer.where(id: lancer.id, game_id: game_ids).first
+    lancer = Lancer.where(player_id: lancer.player_id, game_id: game_ids).first
     if lancer
       return lancer.pitches
     else
