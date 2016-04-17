@@ -15,7 +15,7 @@ module NewBullpen
   end
 
   def update_bullpen_pitches(player, one, two, three)
-    time = Time.now
+    time = Time.now.tomorrow
     (1..3).each do |n|
       time = time.yesterday
       game_day = GameDay.search(time)
