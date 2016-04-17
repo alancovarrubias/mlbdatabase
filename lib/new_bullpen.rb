@@ -17,6 +17,7 @@ module NewBullpen
   def update_bullpen_pitches(player, one, two, three)
     time = Time.now.tomorrow
     (1..3).each do |n|
+      puts player.name
       time = time.yesterday
       game_day = GameDay.search(time)
       games = game_day.games
@@ -32,9 +33,6 @@ module NewBullpen
       when 3
         pitches = three
       end
-      if pitches == 0
-      	next
-      end
       Lancer.where(player_id: player.id, game_id: game_ids).each do |lancer|
       	lancer.update_attributes(pitches: pitches)
       end
@@ -47,7 +45,7 @@ module NewBullpen
     year = time.year
     month = "%02d" % time.month
     day = "%02d" % time.day
-    url = "http://www.baseballpress.com/bullpenusage#{year}-#{month}-#{day}"
+    url = "http://www.baseballpress.com/bullpenusage/#{year}-#{month}-#{day}"
     doc = download_document(url)
 
     reset_bullpen
