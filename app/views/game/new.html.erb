@@ -9,8 +9,7 @@
   <ul>
 	  <li><%= link_to('Home Page', { controller: 'index', action: 'home'})%></li>
 	  <li><%= link_to(@date + ' Matchups', 
-	  { controller: 'index', action: 'game',
-	  year: params[:year], month: params[:month], day: params[:day] }) %>
+	  { controller: 'index', action: 'game', id: @game_day.id }) %>
     </li>
   </ul>
 </nav>

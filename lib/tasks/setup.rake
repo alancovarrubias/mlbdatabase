@@ -1,84 +1,37 @@
 namespace :setup do
 
 
-  task :delete => :environment do
-	Game.days_games(Time.now).each do |game|
-	  game.pitchers.destroy_all
-	  game.hitters.destroy_all
-	  game.destroy
-	end
-  end
-
-  task :create => [:create_teams, :create_players] do
-  end
-
-  task :daily => [:create_players, :fangraphs, :update_players, :boxscores, :innings] do
-  end
-
-  task :hourly => [:update_weather, :ump, :tomorrow, :closingline] do
-  end
-
-  task :ten => [:bullpen, :matchups] do
-  end
-
-  task :create_teams => :environment do
-    include Create
-	Create.teams
-  end
-
-  task :create_players => :environment do
-	Team.all.each do |team|
-	  team.create_players
-	end
-  end
-
-  task :update_players => :environment do
-	Team.all.each do |team|
-	  if (team.id < 7)
-	  	next
-	  end
-	  team.update_players
-	end
-  end
-
-  task :fangraphs => :environment do
-	Team.all.each do |team|
-	  team.fangraphs
-	end
-  end
-
-  task :update_weather => :environment do
-	Game.days_games(Time.now).each do |game|
-	  game.get_forecast(Time.now)
-	  game.get_weather
-	end
-	Game.days_games(Time.now.tomorrow).each do |game|
-	  game.get_forecast(Time.now.tomorrow)
-	end
-  end
-
-  task :matchups => :environment do
-	include Matchup
-    set_matchups(Time.now)
+  task test: :environment do
+  	include NewShare
+  	url = "http://www.accuweather.com/en/us/anaheim-ca/92805/hourly-weather-forecast/327150?hour=18"
+  	doc = download_document(url)
+  	var = row = 0
+  	doc.css("td").each_with_index do |stat, index|
+      if stat.children.size == 1
+        text = stat.text
+      elsif stat.children.size == 2
+        text = stat.children[-1].text
+      elsif stat.children.size == 3
+        text = stat.last_element_child.text
+      else
+        text = stat.text
+      end
+      if index == 40 || index == 73
+        var = 0
+        next
+      end
+      case var%8
+      when 0
+      	puts text
+      when 1
+      when 2
+        row += 1
+      end
+      var += 1
+  	end
   end
 
 
-  task :tomorrow => :environment do
-	include Matchup
-	set_matchups(Time.now.tomorrow)
-  end
-
-  task :ump => :environment do
-    include Matchup
-	url = "http://www.statfox.com/mlb/umpiremain.asp"
-	doc = Nokogiri::HTML(open(url))
-	set_umpire(doc)
-  end
-
-  task :bullpen => :environment do
-    include Bullpen
-	set_bullpen
-  end
 
 
 	task :boxscores => :environment do

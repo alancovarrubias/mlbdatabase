@@ -30,6 +30,7 @@ module WeatherUpdate
 
   # Data scraped from Accuweather
   def update_forecast(game, time)
+
   	# Game time must include a colon
   	game_time = game.time
   	unless game_time.include?(":")
@@ -45,37 +46,26 @@ module WeatherUpdate
   	  game_hour += 24
     end
 
- 	
     home_team = game.home_team
   	url = @@accuweather_urls[home_team.id-1]
     url += "?hour=#{game_hour}"
     doc = download_document(url)
-    @temp = Array.new
-    @humidity = Array.new
-    @rain = Array.new
-    @wind = Array.new
+    puts url
+    initialize_arrays
     var = row = 0
     doc.css("td").each_with_index do |stat, index|
-      if stat.children.size == 1
-        text = stat.text
-      elsif stat.children.size == 2
-        text = stat.children[-1].text
-      elsif stat.children.size == 3
-        text = stat.last_element_child.text
-      else
-        text = stat.text
-      end
+      text = get_accuweather_text(stat)
       if index == 40 || index == 73
         var = 0
         next
       end
       case var%8
       when 0
-        row(row, text)
+        add_to_array(row, text)
       when 1
-        row(row, text)
+        add_to_array(row, text)
       when 2
-        row(row, text)
+        add_to_array(row, text)
         row += 1
       end
       var += 1
@@ -88,7 +78,8 @@ module WeatherUpdate
     end
 
     game.weathers.where(station: "Forecast").order("hour").each_with_index do |weather, index|
-    	weather.update_attributes(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index])
+      puts @feel[index]
+    	weather.update(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index], feel: @feel[index], dew: @dew[index])
     end
   end
 
@@ -108,7 +99,6 @@ module WeatherUpdate
     game_hour_3, game_period_3 = next_hour(game_hour_2, game_period_2)
 
     url = @@wunderground_urls[home_team.id-1]
-    puts url
 
     page = mechanize_page(url)
     
@@ -151,6 +141,16 @@ module WeatherUpdate
   end
 
   private
+
+    def initialize_arrays
+      @temp = Array.new
+      @humidity = Array.new
+      @rain = Array.new
+      @wind = Array.new
+      @feel = Array.new
+      @dew = Array.new
+    end
+
     def convert_to_fahr(celsius)
       symbol = celsius[-1]
       celsius = celsius[0...-1].to_f
@@ -159,17 +159,33 @@ module WeatherUpdate
       return fahr
     end
 
-    def row(row, text)
+    def add_to_array(row, text)
       case row
       when 2
         @temp << text
+      when 3
+        puts text
+        @feel << text
       when 4
         @humidity << text
       when 6
         @rain << text
       when 10
         @wind << text
+      when 13
+        @dew << text
       end 
+    end
+
+    def get_accuweather_text(element)
+      if element.children.size == 2
+        text = element.children[-1].text
+      elsif element.children.size == 3
+        text = element.last_element_child.text
+      else
+        text = element.text
+      end
+      return text
     end
 
     def convert_to_military_hour(hour, period)

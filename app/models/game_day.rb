@@ -2,7 +2,7 @@ class GameDay < ActiveRecord::Base
   belongs_to :season
   has_many   :games
   def self.search(time)
-  	game_day = GameDay.where(year: time.year, month: time.month, day: time.day).first
+  	game_day = GameDay.find_by(year: time.year, month: time.month, day: time.day)
   	unless game_day
   	  game_day = GameDay.create(season_id: Season.find_by_year(time.year).id, year: time.year, month: time.month, day: time.day)
   	end
@@ -14,6 +14,16 @@ class GameDay < ActiveRecord::Base
   	num_days.times do
   	  date = date.prev_day
   	end
-  	return GameDay.where(year: date.year, month: date.month, day: date.day).first
+  	return GameDay.find_by(year: date.year, month: date.month, day: date.day)
   end
+
+
+
+
+
+
+
+
+
+
 end

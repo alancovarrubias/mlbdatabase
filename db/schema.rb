@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160417040340) do
+ActiveRecord::Schema.define(version: 20160418202926) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -225,6 +225,8 @@ ActiveRecord::Schema.define(version: 20160417040340) do
     t.string   "rain",       default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "dew",        default: ""
+    t.string   "feel",       default: ""
   end
 
   add_index "weathers", ["game_id"], name: "index_weathers_on_game_id", using: :btree
