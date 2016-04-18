@@ -176,11 +176,23 @@ body {
   overflow: scroll;
 }
 
+.image {
+  position: relative;
+  width: 700px;
+  float:right;
+
+}
+
+.image h2 {
+  position: absolute;
+  top:0;
+  left: 25%;
+}
+
 img {
   border-radius: 10%;
   z-index: -1;
-  margin: 20px;
-  float:right;
+  margin: 50px;
 }
 
 ul {

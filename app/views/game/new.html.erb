@@ -15,7 +15,11 @@
   </ul>
 </nav>
 
-<%= image_tag(@image_url, :width => '600') %>
+<div class="image">
+	<%= image_tag(@image_url, :width => '600') %>
+	<h2><%= @home_team.stadium + " Zipcode: " + @home_team.zipcode %></h2>
+</div>
+
 <%= render partial: "game/new/weather", locals: { caption: "Accuweather Weather Forecast", weathers: @forecasts } %>
 <%= render partial: "game/new/weather", locals: { caption: "Wunderground Weather Records", weathers: @weathers } %>
 
