@@ -1,0 +1,9 @@
+<td><%= pitcher.player.name %></td>
+<% stat = pitcher.pitcher_stats.find_by(handedness: "L") %>
+<td><%= stat.fip %></td>
+<td><%= stat.xfip %></td>
+<td><%= stat.kbb %></td>
+<td><%= stat.ops %></td>
+<td><%= stat.woba %></td>
+<td><%= stat.gb %></td>
+<td><%= stat.ld %></td>

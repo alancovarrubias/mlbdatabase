@@ -1,0 +1,50 @@
+<table class="game-index">
+
+  <thead>
+  	<tr>
+  		<th>Away @ Home</th>
+  		<th>Away Starter</th>
+  		<%= render "starter_header" %>
+  		<th></th>
+  		<th>Home Starter</th>
+  		<%= render "starter_header" %>
+  		<th></th>
+  		<th>Temp</th>
+  		<th>Feels Like</th>
+  		<th>Dew Point</th>
+  		<th>Wind</th>
+  		<th>Baro</th>
+  		<th>Humid</th>
+  		<th>Prec</th>
+    </tr>
+  </thead>
+  <tbody>
+  	<% @games.each do |game| %>
+  	<tr>
+	  	<td><%= link_to game_link(game), { controller: "game", action: "new", id: game.id } %></td>
+	  	<% pitcher = find_pitcher(game, true) %>
+	  	<% if pitcher %>
+	  	<%= render partial: "starter", locals: { pitcher: pitcher } %>
+	  	<% end %>
+	  	<td></td>
+	  	<% pitcher = find_pitcher(game, false) %>
+	  	<% if pitcher %>
+	  	<%= render partial: "starter", locals: { pitcher: pitcher } %>
+	  	<% end %>
+	  	<td></td>
+	  	<% weather = find_weather(game) %>
+	  	<% if weather %>
+	  	<td><%= weather.temp %></td>
+	  	<td><%= weather.temp %></td>
+	  	<td><%= weather.temp %></td>
+	  	<td><%= weather.wind %></td>
+	  	<td><%= weather.pressure %></td>
+	  	<td><%= weather.humidity %></td>
+	  	<td><%= weather.rain %></td>
+	  	<% end %>
+  	</tr>
+  	<% end %>
+  </tbody>
+
+
+</table>
