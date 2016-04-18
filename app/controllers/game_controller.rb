@@ -36,14 +36,6 @@ class GameController < ApplicationController
       @home_batters = get_previous_lineup(@game_day, @home_team, @home_starting_lancer.first.player.throwhand)
     end
 
-
-	  unless @away_batters.empty?
-	    @away_batters.order("lineup")
-	  end
-	  unless @home_batters.empty?
-	    @home_batters.order("lineup")
-	  end
-
     @home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
     @away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
 
