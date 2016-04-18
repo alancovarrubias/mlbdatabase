@@ -58,12 +58,12 @@
 
 
   <tbody class="bullpen">
-    <% lancers.each_with_index do |lancer, index| %>
+    <% lancers.sort_by(&:sort_by_bullpen).reverse.each_with_index do |lancer, index| %>
       <% stats = get_lancer_stats(lancer) %>
       <tr>
         <td class="name"><%= "#{lancer.player.name} (#{lancer.player.throwhand})" %></td>
         <% 5.times do |i| %>
-          <td><%= bullpen_pitches(lancer, i) %></td>
+          <td><%= lancer.prev_bullpen_pitches(i+1) %></td>
         <% end %>
         <%= render partial: "game/new/lancer_begin", locals: { stat: stats.first } %>
         <% stats.each do |stat| %>

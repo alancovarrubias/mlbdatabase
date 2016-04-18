@@ -1,5 +1,12 @@
 module GameHelper
 
+  def batter_class(predicted)
+    if predicted
+      "predicted batter"
+    else
+      "batter"
+    end
+  end
   
   def weather_time(game_time, weather_hour)
   	weather_hour -= 1
@@ -83,22 +90,6 @@ module GameHelper
     num += 1
     day = Date.parse("#{@game_day.year}-#{@game_day.month}-#{@game_day.day}").wday
     return Date::DAYNAMES[day-num]
-  end
-
-  def bullpen_pitches(lancer, i)
-    i += 1
-    game_day = @game_day.prev_day(i)
-    unless game_day
-      return 0
-    end
-    games = game_day.games
-    game_ids = games.map { |game| game.id }
-    lancer = Lancer.where(player_id: lancer.player_id, game_id: game_ids).first
-    if lancer
-      return lancer.pitches
-    else
-      return 0
-    end
   end
 
 

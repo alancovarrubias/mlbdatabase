@@ -22,7 +22,7 @@ class Lancer < ActiveRecord::Base
     unless handedness
       return self.pitcher_stats
     else
-      return self.pitcher_stats.where(handedness: handedness).first
+      return self.pitcher_stats.find_by(handedness: handedness)
     end
   end
 
@@ -33,6 +33,42 @@ class Lancer < ActiveRecord::Base
   	  new_stat.lancer_id = self.id
   	  new_stat.save
   	end
+  end
+
+  def sort_by_bullpen
+    unless self.game
+      return nil
+    end
+    game_day = self.game.game_day.prev_day(1)
+    unless game_day
+      return 0
+    end
+    games = game_day.games
+    game_ids = games.map { |game| game.id }
+    lancer = Lancer.find_by(player_id: self.player_id, game_id: game_ids)
+    if lancer
+      return lancer.pitches
+    else
+      return 0
+    end
+  end
+
+  def prev_bullpen_pitches(i)
+    unless self.game
+      return nil
+    end
+    game_day = self.game.game_day.prev_day(i)
+    unless game_day
+      return 0
+    end
+    games = game_day.games
+    game_ids = games.map { |game| game.id }
+    lancer = Lancer.find_by(player_id: self.player_id, game_id: game_ids)
+    if lancer
+      return lancer.pitches
+    else
+      return 0
+    end
   end
 
 end

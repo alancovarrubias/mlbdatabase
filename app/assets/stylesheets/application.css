@@ -222,7 +222,10 @@ table.batter {
 
 table.lancer {
   margin: 30px 10px;
+}
 
+table.predicted th {
+  background: #DC143C;;
 }
 
 
@@ -240,11 +243,6 @@ thead th, tbody td {
 td.name {
   text-align: left;
   white-space: nowrap;
-}
-
-
-th.projected {
-  background-color: #DC143C;
 }
 
 body {

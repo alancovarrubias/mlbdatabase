@@ -1,3 +1,5 @@
+<%= simple_format @game_day.to_yaml %>
+
 <div class="header">
 	<h1><%= @away_team.name + " @ " + @home_team.name %></h1>
 	<h2><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></h2>
@@ -22,10 +24,10 @@
 <%= render partial: "game/new/lancer", locals: { caption: "Starting Pitchers",
 							  lancers: @away_starting_lancer + @home_starting_lancer, left: @away_left } %>
 
-<%= render partial: "game/new/batter", locals: { caption: "#{@away_team.name} Batters",
-							  batters: @away_batters, left: @away_left } %>
-<%= render partial: "game/new/batter", locals: { caption: "#{@home_team.name} Batters",
-							  batters: @home_batters, left: @home_left } %>
+<%= render partial: "game/new/batter", locals: { caption: "#{@away_predicted}#{@away_team.name} Batters",
+									   predicted: @away_predicted, batters: @away_batters, left: @away_left } %>
+<%= render partial: "game/new/batter", locals: { caption: "#{@home_predicted}#{@home_team.name} Batters",
+									   predicted: @home_predicted, batters: @home_batters, left: @home_left } %>
 
 <%= render partial: "game/new/bullpen", locals: { caption: "#{@away_team.name} Bullpen",
 										 lancers: @away_bullpen_lancers }%>
