@@ -26,6 +26,8 @@ class GameController < ApplicationController
 	  @away_batters = @game.batters.where(team_id: @away_team.id)
 	  @home_batters = @game.batters.where(team_id: @home_team.id)
 
+    league = @home_team.league
+
     if @away_batters.empty? && !@away_starting_lancer.empty?
       @away_predicted = "Predicted "
       @away_batters = get_previous_lineup(@game_day, @away_team, @away_starting_lancer.first.player.throwhand)
@@ -34,10 +36,27 @@ class GameController < ApplicationController
     if @home_batters.empty? && !@home_starting_lancer.empty?
       @home_predicted = "Predicted "
       @home_batters = get_previous_lineup(@game_day, @home_team, @home_starting_lancer.first.player.throwhand)
+      if league == "NL"
+      end
     end
 
     @away_batters = @away_batters.order("lineup ASC")
     @home_batters = @home_batters.order("lineup ASC")
+
+    if @away_predicted && league == "NL"
+      @away_batters = @away_batters[0...-1]
+      batter = @away_starting_lancer.first.player.create_batter(@season)
+      batter.lineup = 9
+      @away_batters << batter
+    end
+
+    if @home_predicted && league == "NL"
+      @home_batters = @home_batters[0...-1]
+      batter = @home_starting_lancer.first.player.create_batter(@season)
+      batter.lineup = 9
+      @home_batters << batter
+    end
+
 
     @home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
     @away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
