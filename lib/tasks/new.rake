@@ -200,6 +200,12 @@ namespace :new do
     end
   end
 
+  task test: :environment do
+    (1..5).each_with_index do |i, index|
+      puts "#{i} #{index}"
+    end
+  end
+
 
   
 end

@@ -66,76 +66,33 @@ class Lancer < ActiveRecord::Base
     return count
 
   end
-
-
-  def opp_righties
-    self.batters_handedness("R")
-  end
-
-  def opp_lefties
-    self.batters_handedness("L")
-  end
   
 
-  def num_lefties(pitcher, batters)
 
-    unless pitcher
-      return 0, 0
-    end
-    
-    pitcher = pitcher.player
-    batters = batters.map { |batter| batter.player }
+  def sort_bullpen
 
-    same = diff = 0
-    batters.each do |batter|
-      if pitcher.throwhand == batter.bathand
-        same += 1
-      else
-        diff += 1
+    num_size = [10, 8, 6, 4, 2]
+    count = 0
+    (1..5).each_with_index do |days, index|
+      game_day = self.game.game_day.prev_day(days)
+      unless game_day
+        next
+      end
+      game_ids = game_day.games.map { |game| game.id }
+      lancer = Lancer.find_by(player_id: self.player_id, game_id: game_ids)
+
+      if lancer
+        count += lancer.pitches * 10 ** num_size[index]
       end
     end
 
-    if pitcher.throwhand == "R"
-      return diff, same
-    else
-      return same, diff
-    end
+    return count
 
-  end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  def sort_by_bullpen
-    unless self.game
-      return nil
-    end
-    game_day = self.game.game_day.prev_day(1)
-    unless game_day
-      return 0
-    end
-    games = game_day.games
-    game_ids = games.map { |game| game.id }
-    lancer = Lancer.find_by(player_id: self.player_id, game_id: game_ids)
-    if lancer
-      return lancer.pitches
-    else
-      return 0
-    end
   end
 
 
   def prev_bullpen_pitches(days)
+
     unless self.game
       return nil
     end

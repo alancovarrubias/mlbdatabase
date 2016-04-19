@@ -58,7 +58,7 @@
 
 
   <tbody class="bullpen">
-    <% lancers.sort_by(&:sort_by_bullpen).reverse.each_with_index do |lancer, index| %>
+    <% lancers.sort_by(&:sort_bullpen).each_with_index do |lancer, index| %>
       <% stats = lancer_stats(lancer) %>
       <tr>
         <td class="name"><%= "#{lancer.player.name} (#{lancer.player.throwhand})" %></td>
