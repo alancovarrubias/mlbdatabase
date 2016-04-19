@@ -188,9 +188,6 @@ namespace :new do
         end
 
 
-
-
-
         if element.children.size == 2
           identity, fangraph_id, name, handedness = pitcher_info(element)
           player = Player.search(name, identity, fangraph_id)

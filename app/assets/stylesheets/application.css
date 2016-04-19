@@ -243,7 +243,9 @@ table.predicted th {
 }
 
 table.game-index {
-  margin: 10px;
+    width:70%; 
+    margin-left:15%; 
+    margin-right:15%;
   white-space: nowrap;
 }
 
