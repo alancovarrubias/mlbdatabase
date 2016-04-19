@@ -26,18 +26,20 @@ class GameController < ApplicationController
 	  @away_batters = @game.batters.where(team_id: @away_team.id)
 	  @home_batters = @game.batters.where(team_id: @home_team.id)
 
+    # True if batters are facing a lefty or a righty
+    @away_left = @home_starting_lancer.first.player.throwhand == "L"
+    @home_left = @away_starting_lancer.first.player.throwhand == "L"
+
     league = @home_team.league
 
     if @away_batters.empty? && !@away_starting_lancer.empty?
       @away_predicted = "Predicted "
-      @away_batters = get_previous_lineup(@game_day, @away_team, @away_starting_lancer.first.player.throwhand)
+      @away_batters = predict_lineup(@game_day, @away_team, @away_starting_lancer.first.player.throwhand)
     end
 
     if @home_batters.empty? && !@home_starting_lancer.empty?
       @home_predicted = "Predicted "
-      @home_batters = get_previous_lineup(@game_day, @home_team, @home_starting_lancer.first.player.throwhand)
-      if league == "NL"
-      end
+      @home_batters = predict_lineup(@game_day, @home_team, @home_starting_lancer.first.player.throwhand)
     end
 
     @away_batters = @away_batters.order("lineup ASC")
@@ -57,23 +59,10 @@ class GameController < ApplicationController
       @home_batters << batter
     end
 
-
-    @home_lefties, @home_righties = get_batters_handedness(@away_starting_lancer.first, @home_batters)
-    @away_lefties, @away_righties = get_batters_handedness(@home_starting_lancer.first, @away_batters)
-
 	  @away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
 	  @home_bullpen_lancers = @game.lancers.where(team_id: @home_team.id, bullpen: true)
 
   end
-
-  def lefty?(throwhand)
-    if throwhand == "L"
- 	    true
- 	  else
- 	    false
-    end
-  end
-
 
   def team
 	  @team = Team.find_by_id(params[:id])
@@ -82,17 +71,9 @@ class GameController < ApplicationController
 	  else
 	    @left = false
 	  end
-
-	  if @left
-	    @pitchers = @team.pitchers.where(:game_id => nil).order(:IP_L).reverse
-	    @hitters = @team.hitters.where(:game_id => nil).order(:AB_L).reverse
-	  else
-	    @pitchers = @team.pitchers.where(:game_id => nil).order(:IP_R).reverse
-	    @hitters = @team.hitters.where(:game_id => nil).order(:AB_R).reverse.limit(20)
-	  end
   end
 
-  def get_previous_lineup(game_day, team, opp_throwhand)
+  def predict_lineup(game_day, team, opp_throwhand)
 
     i = 1
   	while true
@@ -130,36 +111,6 @@ class GameController < ApplicationController
     end
   end
 
-  def game_day?(time)
-  	hour, day, month, year = find_date(time)
-  	if year.to_i == params[:year].to_i && month.to_i == params[:month].to_i && day.to_i == params[:day].to_i
-  	  true
-  	else
-  	  false
-  	end
-  end
 
-  private
-
-  def get_batters_handedness(lancer, batters)
-  	unless lancer
-  	  return 0, 0
-  	end
-    lancer = lancer.player
-    batters = batters.map { |batter| batter.player }
-    same = diff = 0
-    batters.each do |batter|
-      if lancer.throwhand == batter.bathand
-        same += 1
-      else
-        diff += 1
-      end
-    end
-    if lancer.throwhand == "R"
-      return diff, same
-    else
-      return same, diff
-    end
-  end
 
 end

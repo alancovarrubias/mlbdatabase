@@ -18,12 +18,4 @@ class GameDay < ActiveRecord::Base
   end
 
 
-
-
-
-
-
-
-
-
 end

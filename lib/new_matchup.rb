@@ -89,7 +89,7 @@ module NewMatchup
 
 	  if new_game
 	  	new_game.update_attributes(time: convert_to_local_time(new_game, gametime[i]))
-		puts 'Game ' + new_game.new_url + ' created'
+		puts 'Game ' + new_game.url + ' created'
 	  end
 	end
   end

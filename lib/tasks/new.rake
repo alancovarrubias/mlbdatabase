@@ -55,11 +55,19 @@ namespace :new do
 	  end
   end
 
-  task :ump => :environment do
+  task ump: :environment do
     include Matchup
     url = "http://www.statfox.com/mlb/umpiremain.asp"
     doc = Nokogiri::HTML(open(url))
     set_umpire(doc)
+  end
+
+  task test: :environment do
+    bullpen_teams = [1, 2, 3, 4, 12, 13, 17, 21, 22, 23, 26, 28, 27, 29, 30, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 18, 19, 20, 24, 25]
+    bullpen_teams.each do |id|
+      puts Team.find(id).name
+      puts id
+    end
   end
 
   task :closingline => :environment do

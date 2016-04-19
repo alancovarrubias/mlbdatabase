@@ -16,13 +16,13 @@
   <tbody class="mixed">
 
     <% lancers.each_with_index do |lancer, index| %>
-      <% stats = get_lancer_stats(lancer) %>
-      <% lefty, righty = get_lefty_righty(index) %>
+      <% stats = lancer_stats(lancer) %>
+      <% lefty, righty = lefty_righty(index) %>
       <tr>
-        <td class="name"><%= "#{lancer.player.name} (#{lancer.player.throwhand})" %></td>
+        <td class="name"><%= "#{lancer.player.name} (#{lancer.throwhand})" %></td>
         <td><%= lefty %></td>
         <td><%= righty %></td>
-        <%= render partial: "game/new/lancer_handed", locals: { stats: stats, lefty: lefty, righty: righty } %>
+        <%= render partial: "game/new/pitcher_handed", locals: { stats: stats, lefty: lefty, righty: righty } %>
       </tr>
     <% end %>
 
@@ -85,15 +85,15 @@
 
   <tbody class="lancer">
     <% lancers.each_with_index do |lancer, index| %>
-      <% stats = get_lancer_stats(lancer) %>
-      <% lefty, righty = get_lefty_righty(index) %>
+      <% stats = lancer_stats(lancer) %>
+      <% lefty, righty = lefty_righty(index) %>
       <tr>
         <td class="name"><%= "#{lancer.player.name} (#{lancer.player.throwhand})" %></td>
         <td><%= lefty %></td>
         <td><%= righty %></td>
-        <%= render partial: "game/new/lancer_begin", locals: { stat: stats.first } %>
+        <%= render partial: "game/new/pitcher_begin", locals: { stat: stats.first } %>
         <% stats.each do |stat| %>
-          <%= render partial: "game/new/lancer_stat", locals: { stat: stat } %>
+          <%= render partial: "game/new/pitcher_stat", locals: { stat: stat } %>
         <% end %>
         <% stats.each do |stat| %>
           <td><%= stat.first.gb %></td>

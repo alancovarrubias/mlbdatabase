@@ -22,8 +22,8 @@
 <%= render partial: "game/new/weather", locals: { caption: "Accuweather Weather Forecast", weathers: @forecasts } %>
 <%= render partial: "game/new/weather", locals: { caption: "Wunderground Weather Records", weathers: @weathers } %>
 
-<%= render partial: "game/new/lancer", locals: { caption: "Starting Pitchers",
-							  lancers: @away_starting_lancer + @home_starting_lancer, left: @away_left } %>
+<%= render partial: "game/new/pitcher", locals: { caption: "Starting Pitchers",
+							  lancers: @away_starting_lancer + @home_starting_lancer  } %>
 
 <%= render partial: "game/new/batter", locals: { caption: "#{@away_predicted}#{@away_team.name} Batters",
 									   predicted: @away_predicted, batters: @away_batters, left: @away_left } %>

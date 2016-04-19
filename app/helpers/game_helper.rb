@@ -35,9 +35,9 @@ module GameHelper
   end
 
 
-  def get_batter_stats(batter, left)
+  def batter_stats(batter, left)
     stat_array = Array.new
-    handed = get_handed(left)
+    handed = handedness(left)
     stats = batter.stats
     stat_array << stats.where(handedness: handed).first
     stat_array << stats.where(handedness: "").first
@@ -51,7 +51,7 @@ module GameHelper
     return stat_array
   end
 
-  def get_handed(left)
+  def handedness(left)
     if left
       "L"
     else
@@ -59,46 +59,47 @@ module GameHelper
     end
   end
 
-  def get_lancer_stats(lancer)
+  def lancer_stats(pitcher)
     stat_array = Array.new
-    stat_array << lancer.stats
-    player = lancer.player
-    season = Season.find_by_year(lancer.season.year-1)
+    stat_array << pitcher.stats
+    player = pitcher.player
+    season = Season.find_by_year(pitcher.season.year-1)
     while season
-      lancer = player.create_lancer(season)
-      stat_array << lancer.stats
+      pitcher = player.create_lancer(season)
+      stat_array << pitcher.stats
       season = Season.find_by_year(season.year-1)
     end
     return stat_array
   end
 
 
-  def get_lefty_righty(index)
-    if index == 0
-      return @home_lefties, @home_righties
-    else
-      return @away_lefties, @away_righties
-    end
-  end
+  def lefty_righty(index)
 
-  def mixed_stat(lefty_stat, righty_stat, lefties, righties)
-    ((lefty_stat * lefties + righty_stat * righties)/9).round(2)
+    if index == 0
+      return num_batters_with_handedness(@away_starting_lancer.first, @home_batters)
+    else
+      return num_batters_with_handedness(@home_starting_lancer.first, @away_batters)
+    end
+
   end
 
   def bullpen_day_name(num)
-    require 'date'
+
     num += 1
     day = Date.parse("#{@game_day.year}-#{@game_day.month}-#{@game_day.day}").wday
     return Date::DAYNAMES[day-num]
+
   end
 
 
-  def handed_hitter_header(hand)
-    if hand
+  def handedness_header(left)
+
+    if left
       "LHP"
     else
       "RHP"
     end
+
   end
 
 end
