@@ -145,7 +145,7 @@ namespace :new do
     (0...size).each do |i|
       game = game_array[i]
       if game
-        puts game.new_url
+        puts game.url
         game.update_attributes(:away_money_line => away_money_line[i], :home_money_line => home_money_line[i], :away_total => away_totals[i], :home_total => home_totals[i])
       end
     end
@@ -182,7 +182,7 @@ namespace :new do
           end
           game_ids = games.map { |game| game.id }
           Lancer.where(player_id: player.id, game_id: game_ids).each do |lancer|
-            puts "#{player.name} #{lancer.game.new_url} pitches #{one}"
+            puts "#{player.name} #{lancer.game.url} pitches #{one}"
             lancer.update_attributes(pitches: one)
           end
         end
