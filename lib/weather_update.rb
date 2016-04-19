@@ -86,7 +86,7 @@ module WeatherUpdate
   # Data scraped from wunderground
   def update_weather(game)
     
-    puts game.new_url
+    puts game.url
     home_team = game.home_team
     game_time = game.time
     unless game_time.include?(":")
