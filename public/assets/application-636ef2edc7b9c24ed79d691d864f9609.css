@@ -879,13 +879,28 @@ body {
   font-family: arial;
   border: 1px solid #666666;
   border-top: none;
+  overflow: scroll;
+  margin-left: 1%; margin-right: 1%;
+}
+
+.image {
+  position: relative;
+  width: 700px;
+  float:right;
+
+}
+
+.image h2 {
+  position: absolute;
+  top:0;
+  left: 25%;
+  text-align: center;
 }
 
 img {
   border-radius: 10%;
   z-index: -1;
-  margin: 20px;
-  float:right;
+  margin: 50px;
 }
 
 ul {
@@ -927,7 +942,17 @@ table.batter {
 
 table.lancer {
   margin: 30px 10px;
+}
 
+table.predicted th {
+  background: #DC143C;;
+}
+
+table.game-index {
+    width:70%; 
+    margin-left:15%; 
+    margin-right:15%;
+  white-space: nowrap;
 }
 
 
@@ -946,21 +971,6 @@ td.name {
   text-align: left;
   white-space: nowrap;
 }
-
-
-th.projected {
-  background-color: #DC143C;
-}
-
-body {
-  margin-left: 1%; margin-right: 1%;
-}
-
-
-
-
-
-
 
 
 
