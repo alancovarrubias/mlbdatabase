@@ -103,7 +103,7 @@ class GameController < ApplicationController
   	  end
 
   	  if prev_game_day.id == 1
-    	  	return nonea
+    	  return Batter.none
   	  end
 
       i += 1

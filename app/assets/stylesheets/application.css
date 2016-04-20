@@ -266,6 +266,10 @@ td.name {
   white-space: nowrap;
 }
 
+td.border, th.border {
+  background-color: gray;
+}
+
 
 
 

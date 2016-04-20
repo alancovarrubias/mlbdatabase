@@ -4,13 +4,13 @@
   	<tr>
   		<th><%= @head %></th>
   		<th colspan="8">Pitchers</th>
-  		<th bgcolor="gray"></th>
+  		<th class="border"></th>
   		<th colspan="7">Weather</th>
   	</tr>
   	<tr>
   		<th>Away @ Home</th>
   		<%= render "starter_header" %>
-  		<th bgcolor="gray"></th>
+  		<th class="border"></th>
   		<th>Temp</th>
   		<th>FL</th>
   		<th>DP</th>
@@ -28,7 +28,7 @@
 	  	<% if pitcher %>
 	  	<%= render partial: "starter", locals: { pitcher: pitcher } %>
 	  	<% end %>
-	  	<td rowspan="2" bgcolor="gray"></td>
+	  	<td rowspan="2" class="border"></td>
 	  	<% weather = find_weather(game) %>
 	  	<% if weather %>
 	  	<td rowspan="2"><%= weather.temp %></td>
@@ -45,9 +45,6 @@
       <% if pitcher %>
       <%= render partial: "starter", locals: { pitcher: pitcher } %>
       <% end %>
-    </tr>
-    <tr>
-      
     </tr>
   	<% end %>
   </tbody>
