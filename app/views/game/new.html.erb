@@ -1,8 +1,9 @@
 <div class="header">
-	<h1><%= @away_team.name + " @ " + @home_team.name %></h1>
-	<h2><%= 'Odds: ' + @game.away_money_line + ' @ ' + @game.home_money_line   %></h2>
-	<h2><%= 'Totals: ' + @game.away_total + ' @ ' + @game.home_total %></h2>
-	<h3><%= "Gametime: " + @game.time + ' Local Time' %></h3>
+	<h1><%= "#{@away_team.name} @ #{@home_team.name}" %></h1>
+	<h2><%= "Odds: #{@game.away_money_line} @ #{@game.home_money_line}" %></h2>
+	<h2><%= "Totals: #{@game.away_total} @ #{@game.home_total}" %></h2>
+	<h3><%= "Gametime: #{@game.time} Local Time" %></h3>
+	<h3><%= "Ump: #{@game.ump}" %></h3>
 </div>
 
 <nav>
