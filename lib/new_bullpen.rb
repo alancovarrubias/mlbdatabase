@@ -84,8 +84,52 @@ module NewBullpen
         lancer.update_attributes(bullpen: true)
   		  var = 1
   	  end
-
   	end
   end
+
+  def fix_bullpen
+
+    GameDay.all.each do |game_day|
+      
+      url = "http://www.baseballpress.com/bullpenusage/%d-%02d-%02d" % [game_day.year, game_day.month, game_day.day]
+      puts url
+      doc = download_document(url)
+      player = nil
+      var = one = 0
+      doc.css(".league td").each do |element|
+
+        text = element.text
+
+        case var
+        when 1
+          var = 0
+          if text == "N/G"
+            one = 0
+          else
+            one = text.to_i
+          end
+          games = game_day.games
+          if games.empty?
+            next
+          end
+          game_ids = games.map { |game| game.id }
+          Lancer.where(player_id: player.id, game_id: game_ids).each do |lancer|
+            puts "#{player.name} #{lancer.game.url} pitches #{one}"
+            lancer.update_attributes(pitches: one)
+          end
+        end
+
+        if element.children.size == 2
+          identity, fangraph_id, name, handedness = pitcher_info(element)
+          player = Player.search(name, identity, fangraph_id)
+          var = 1
+        end
+
+      end
+    end
+    
+  end
+
+
 
 end
