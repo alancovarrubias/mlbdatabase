@@ -39,35 +39,95 @@ class Lancer < ActiveRecord::Base
     self.player.throwhand
   end
 
+  def opp_team
+    unless game = self.game
+      return nil
+    end
+    return self.team == game.away_team ? game.home_team : game.away_team
+  end
 
 
+  def predict_opposing_lineup
+    game = self.game
+    game_day = game.game_day
+    opp_team = self.opp_team
+    throwhand = self.throwhand
+
+    i = 1
+    # Iterate through previous games until you find one that the opposing team played a pitcher with the same handedness
+    while true
+      prev_game_day = game_day.prev_day(i)
+      unless prev_game_day
+        i += 1
+        next
+      end
+
+      games = prev_game_day.games.where("away_team_id = #{opp_team.id} OR home_team_id = #{opp_team.id}")
+
+      games.each do |game|
+
+        if game.away_team_id == opp_team.id
+          opp_pitcher = game.lancers.find_by(starter: true, team_id: game.home_team_id)
+        else
+          opp_pitcher = game.lancers.find_by(starter: true, team_id: game.away_team_id)
+        end
+
+        if opp_pitcher.player.throwhand == throwhand
+          lineup = game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
+          if game.home_team.league == "NL"
+            lineup = lineup[0...-1]
+            batter = game.lancers.find_by(starter: true, team_id: opp_team.id).create_batter(game_day.season)
+            batter.lineup = 9
+            lineup << batter
+          end
+          return lineup
+        end
+      end
+
+      if prev_game_day.id == 1
+        return Batter.none
+      end
+
+      i += 1
+    end
+  end
 
 
-
-
-  def batters_handedness(hand)
+  def opposing_lineup
 
     unless game = self.game
       return nil
     end
 
-    opp_team = self.team == game.away_team ? game.home_team : game.away_team
-    opp_batters = game.batters.where(team_id: opp_team.id)
-
-    count = 0
-    opp_batters.where(team_id: opp_team.id).each do |batter|
-
-      if batter.throwhand == hand
-        count += 1
-      end
-
-    end
-
-    return count
+    opp_team = self.opp_team
+    opp_lineup = game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
+    return opp_lineup
 
   end
-  
 
+
+  def opposing_batters_handedness
+
+    unless game = self.game
+      return nil
+    end
+
+    opp_lineup = self.opposing_lineup
+    if opp_lineup.size == 0
+      opp_lineup = self.predict_opposing_lineup
+    end
+
+    throwhand = self.throwhand
+    same = opp_lineup.select { |batter| batter.bathand == throwhand }.size
+    diff = opp_lineup.size - same
+
+    if throwhand == "L"
+      return same, diff
+    else
+      return diff, same
+    end
+
+  end
 
   def sort_bullpen
 

@@ -72,7 +72,6 @@ namespace :new do
   end
 
   task test: :environment do
-    puts "HI"
   end
   
 end

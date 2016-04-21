@@ -31,6 +31,10 @@ class Batter < ActiveRecord::Base
     end
   end
 
+  def bathand
+    self.player.bathand
+  end
+
 
 
 end
