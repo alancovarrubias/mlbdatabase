@@ -15,7 +15,11 @@ module ApplicationHelper
   end
 
   def mixed_statistic(lefty_stat, righty_stat, num_lefty, num_righty)
-  	((lefty_stat * num_lefty + righty_stat * num_righty)/(num_lefty + num_righty)).round(2)
+    if num_lefty + num_righty == 0
+      lefty_stat
+    else
+      ((lefty_stat * num_lefty + righty_stat * num_righty)/(num_lefty + num_righty)).round(2)
+    end
   end
 
 end

@@ -27,6 +27,8 @@
 	  	<% pitcher = find_pitcher(game, true) %>
 	  	<% if pitcher %>
 	  	<%= render partial: "starter", locals: { pitcher: pitcher } %>
+      <% else %>
+      <%= render partial: "not_found" %>
 	  	<% end %>
 	  	<td rowspan="2" class="border"></td>
 	  	<% weather = find_weather(game) %>
@@ -44,6 +46,8 @@
       <% pitcher = find_pitcher(game, false) %>
       <% if pitcher %>
       <%= render partial: "starter", locals: { pitcher: pitcher } %>
+      <% else %>
+      <%= render partial: "not_found" %>
       <% end %>
     </tr>
   	<% end %>
