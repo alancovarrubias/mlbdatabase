@@ -17,6 +17,9 @@ class IndexController < ApplicationController
   	game_day = GameDay.find(params[:id])
   	@head = "#{Date::MONTHNAMES[game_day.month]} #{game_day.day.ordinalize}"
 	@games = game_day.games.order("home_team_id")
+	if game_day.id == 261
+	  @games = @games[0..1]
+	end
   end
 
 
