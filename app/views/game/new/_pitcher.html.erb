@@ -17,7 +17,7 @@
 
     <% lancers.each_with_index do |lancer, index| %>
       <% stats = lancer_stats(lancer) %>
-      <% lefty, righty = lefty_righty(index) %>
+      <% lefty, righty = lancer.opposing_batters_handedness %>
       <tr>
         <td class="name"><%= "#{lancer.player.name} (#{lancer.throwhand})" %></td>
         <td><%= lefty %></td>
@@ -86,7 +86,7 @@
   <tbody class="lancer">
     <% lancers.each_with_index do |lancer, index| %>
       <% stats = lancer_stats(lancer) %>
-      <% lefty, righty = lefty_righty(index) %>
+      <% lefty, righty = lancer.opposing_batters_handedness  %>
       <tr>
         <td class="name"><%= "#{lancer.player.name} (#{lancer.player.throwhand})" %></td>
         <td><%= lefty %></td>

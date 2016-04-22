@@ -23,24 +23,30 @@ class GameController < ApplicationController
 	@away_starting_lancer = @game.lancers.where(team_id: @away_team.id, starter: true)
 	@home_starting_lancer = @game.lancers.where(team_id: @home_team.id, starter: true)
 
-	# True if batters are facing a lefty or a righty
-	@away_left = @home_starting_lancer.first.throwhand == "L"
-	@home_left = @away_starting_lancer.first.throwhand == "L"
-
-	@away_batters = @home_starting_lancer.first.opposing_lineup
-	@home_batters = @away_starting_lancer.first.opposing_lineup
-
-	league = @home_team.league
-
-	if @away_batters.empty?
-	  @away_predicted = "Predicted "
-	  @away_batters = @home_starting_lancer.first.predict_opposing_lineup
+	unless @away_starting_lancer.empty?
+		@home_left = @away_starting_lancer.first.throwhand == "L"
+		@home_batters = @away_starting_lancer.first.opposing_lineup
+		if @home_batters.empty?
+		  @home_predicted = "Predicted "
+		  @home_batters = @away_starting_lancer.first.predict_opposing_lineup
+		end
+	else
+		@home_batters = Batter.none
 	end
 
-	if @home_batters.empty?
-	  @home_predicted = "Predicted "
-	  @home_batters = @away_starting_lancer.first.predict_opposing_lineup
+	unless @home_starting_lancer.empty?
+		@away_left = @home_starting_lancer.first.throwhand == "L"
+		@away_batters = @home_starting_lancer.first.opposing_lineup
+		if @away_batters.empty?
+		  @away_predicted = "Predicted "
+		  @away_batters = @home_starting_lancer.first.predict_opposing_lineup
+		end
+	else
+		@away_batters = Batter.none
 	end
+
+
+
 
 	@away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
 	@home_bullpen_lancers = @game.lancers.where(team_id: @home_team.id, bullpen: true)
