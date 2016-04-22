@@ -168,6 +168,7 @@ class Lancer < ActiveRecord::Base
     else
       return 0
     end
+    
   end
 
 end
