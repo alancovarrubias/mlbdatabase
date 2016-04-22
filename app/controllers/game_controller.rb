@@ -34,12 +34,12 @@ class GameController < ApplicationController
 
     if @away_batters.empty?
       @away_predicted = "Predicted "
-      @away_batters = @home_starting_lancer.predict_opposing_lineup
+      @away_batters = @home_starting_lancer.first.predict_opposing_lineup
     end
 
     if @home_batters.empty?
       @home_predicted = "Predicted "
-      @home_batters = @away_starting_lancer.predict_opposing_lineup
+      @home_batters = @away_starting_lancer.first.predict_opposing_lineup
     end
 
 	  @away_bullpen_lancers = @game.lancers.where(team_id: @away_team.id, bullpen: true)
