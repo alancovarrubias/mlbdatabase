@@ -21,7 +21,7 @@ class IndexController < ApplicationController
 	  @games = @games[0..4] + @games[6..-1]
 	end
 	if params[:test]
-	  @games = @games[5]
+	  @games = @games[5..6]
 	end
   end
 
