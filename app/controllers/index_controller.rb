@@ -20,6 +20,9 @@ class IndexController < ApplicationController
 	if game_day.id == 261
 	  @games = @games[0..4] + @games[6..-1]
 	end
+	if params[:test]
+	  @games = @games[5]
+	end
   end
 
 
