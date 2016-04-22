@@ -72,7 +72,7 @@ class Lancer < ActiveRecord::Base
           opp_pitcher = game.lancers.find_by(starter: true, team_id: game.away_team_id)
         end
 
-        if opp_pitcher.player && opp_pitcher.player.throwhand == throwhand
+        if opp_pitcher && opp_pitcher.player.throwhand == throwhand
           lineup = game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
           if game.home_team.league == "NL"
             lineup = lineup[0...-1]
