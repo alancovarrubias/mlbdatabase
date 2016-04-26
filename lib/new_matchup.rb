@@ -262,7 +262,7 @@ module NewMatchup
 
   	url = "http://www.baseballpress.com/lineups/%d-%02d-%02d" % [time.year, time.month, time.day]
   	doc = download_document(url)
-
+  	puts url
   	game_day = GameDay.search(time)
   	create_games(doc, game_day)
 

@@ -17,7 +17,9 @@ default: &default
   encoding: unicode
 
 development:
-  <<: *default
+  adapter: postgresql
+  host: localhost
+  username: pguser
   database: mlb_app_development
 
 # Warning: The database defined as "test" will be erased and
