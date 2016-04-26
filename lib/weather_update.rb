@@ -90,7 +90,7 @@ module WeatherUpdate
   end
 
   # Data scraped from wunderground
-  def update_weather(game)
+  def update_true_weather(game)
     
     game_time = game.time
     unless game_time.include?(":")

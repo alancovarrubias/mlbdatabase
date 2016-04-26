@@ -19,7 +19,7 @@ class Game < ActiveRecord::Base
     create_weathers(self)
     update_forecast(self)
     update_pressure_forecast(self)
-    update_weather(self)
+    update_true_weather(self)
   end
 
 end
