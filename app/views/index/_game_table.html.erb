@@ -21,7 +21,11 @@
     </tr>
   </thead>
   <tbody>
-
+    <% @games.each do |game| %>
+    <tr>
+      <td rowspan="2"><%= link_to game_link(game), { controller: "game", action: "new", id: game.id } %></td>
+    </tr>
+    <% end %>
   </tbody>
 
 
