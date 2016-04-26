@@ -34,14 +34,6 @@ module NewShare
     return time.hour, time.day, time.month, time.year
   end
 
-  def is_preseason?(time)
-    hour, day, month, year = find_date(time)
-    if month.to_i < 4 || (month.to_i == 4 && day.to_i < 3)
-  	  true
-  	else
-  	  false
-  	end
-  end
 
   def pitcher_info(element)
     name = element.child.text

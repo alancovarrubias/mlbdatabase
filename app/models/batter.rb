@@ -6,7 +6,7 @@ class Batter < ActiveRecord::Base
   has_many   :batter_stats, dependent: :destroy
 
   def self.starters
-    Lancer.where(game_id: nil, starter: true)
+    Batter.where(game_id: nil, starter: true)
   end
 
   def stats(handedness=nil)

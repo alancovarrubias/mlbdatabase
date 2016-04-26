@@ -13,37 +13,44 @@ module WeatherUpdate
 
   # Data scraped from Wunderground
   def update_pressure_forecast(game)
+    game_day = game.game_day
+    unless game_day == GameDay.search(Time.now)
+      return
+    end
   	home_team = game.home_team
   	url = "https://www.wunderground.com/cgi-bin/findweather/getForecast?query=#{home_team.zipcode}"
 	  page = mechanize_page(url)
 
     page.search("#current td").each_with_index do |stat, index|
-	  if index == 1
-	    pressure = stat.text.strip[0..4] + ' in'
+	    if index == 1
+	      pressure = stat.text.strip[0..4] + ' in'
         game.weathers.where(station: "Forecast").each do |weather|
           weather.update_attributes(pressure: pressure)
         end
         break
-	  end
+	    end
     end
   end
 
   # Data scraped from Accuweather
-  def update_forecast(game, time)
+  def update_forecast(game)
 
+    game_day = game.game_day
   	# Game time must include a colon
   	game_time = game.time
   	unless game_time.include?(":")
   	  return
   	end
 
-  	game_hour = game_time[0..game_time.index(":")].to_i
+  	game_hour = game_time[0...game_time.index(":")].to_i
   	period = game_time[-2..-1]
-
   	game_hour = convert_to_military_hour(game_hour, period)
 
-  	if time.day == Time.now.tomorrow.day
+    if game_day == GameDay.search(Time.now)
+  	elsif game_day == GameDay.search(Time.now.tomorrow)
   	  game_hour += 24
+    else
+      return
     end
 
     home_team = game.home_team
@@ -78,7 +85,6 @@ module WeatherUpdate
     end
 
     game.weathers.where(station: "Forecast").order("hour").each_with_index do |weather, index|
-      puts @feel[index]
     	weather.update(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index], feel: @feel[index], dew: @dew[index])
     end
   end
@@ -86,12 +92,14 @@ module WeatherUpdate
   # Data scraped from wunderground
   def update_weather(game)
     
-    puts game.url
-    home_team = game.home_team
     game_time = game.time
     unless game_time.include?(":")
       return
     end
+
+    puts game.url
+    game_day = game.game_day
+    home_team = game.home_team
 
     # Store all the values of time for the three hours
     game_hour_1, game_period_1 = parse_time_string_get_hour_period(game_time)
@@ -99,6 +107,9 @@ module WeatherUpdate
     game_hour_3, game_period_3 = next_hour(game_hour_2, game_period_2)
 
     url = @@wunderground_urls[home_team.id-1]
+    find = "#{Time.now.year}/#{Time.now.month}/#{Time.now.day}"
+    replace = "#{game_day.year}/#{game_day.month}/#{game_day.day}"
+    url = url.gsub(/#{find}/, replace)
 
     page = mechanize_page(url)
     
@@ -164,7 +175,6 @@ module WeatherUpdate
       when 2
         @temp << text
       when 3
-        puts text
         @feel << text
       when 4
         @humidity << text

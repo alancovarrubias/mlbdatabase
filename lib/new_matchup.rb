@@ -2,24 +2,15 @@ module NewMatchup
 
   include NewShare
 
-  def check_which_day(time)
-  	if time.day == Time.now.day
-  	  today = true
-  	  date = DateTime.now.to_date
-  	elsif time.day == Time.now.tomorrow.day
-  	  today = false
-  	  date = DateTime.now.tomorrow.to_date
-  	end
-  	return today, date
-  end
-
   def set_game_info_arrays(doc)
     home = Array.new
 	away = Array.new
 	gametime = Array.new
+	# Fill array with game times
 	doc.css(".game-time").each do |time|
 	  gametime << time.text
 	end
+	# Fill arrays with teams playing
 	doc.css(".team-name").each_with_index do |stat, index|
 	  team = Team.find_by_name(stat.text)
 	  if index%2 == 0
@@ -28,49 +19,54 @@ module NewMatchup
 		home << team
 	  end
 	end
+	# Find any teams playing double headers
 	teams = home + away
 	duplicates = teams.select{ |e| teams.count(e) > 1 }.uniq
 	return home, away, gametime, duplicates
   end
 
-  def convert_to_local_time(game, time)
-
-    unless colon = time.index(":")
-	  return
-	end
-
-	eastern_hour = time[0...colon].to_i
-	local_hour = eastern_hour + game.home_team.timezone
-
-	period = time[colon..-4]
-	if (eastern_hour == 12 && local_hour < 12) || local_hour < 0
-	  period[period.index("P")] = "A"
-	end
-
-	if local_hour < 1
-	  local_hour += 12
-	end
-
-	return local_hour.to_s + period
-
-  end
-
-  def reset_starters
-  	Batter.where(game_id: nil, starter: true).update_all(starter: false)
-  	Lancer.where(game_id: nil, starter: true).update_all(starter: false)
+  def is_preseason?(game_day)
+    if game_day.month < 4 || (game_day.month == 4 && game_day.day < 3)
+  	  true
+  	else
+  	  false
+  	end
   end
 
   def create_game(game_day, home_team, away_team, num)
   	Game.create(game_day_id: game_day.id, home_team_id: home_team.id, away_team_id: away_team.id, num: num)
   end
 
+  def convert_to_local_time(game, time)
+    unless colon = time.index(":")
+	  return time
+	end
+	eastern_hour = time[0...colon].to_i
+	local_hour = eastern_hour + game.home_team.timezone
+	period = time[colon..-4]
 
-  def create_games(game_day, gametime, home, away, duplicates, time)
+	# If eastern time is 12PM and the local time is before that
+	# Or if local time is a negative hour
+	# Switch from PM to AM
+	if (eastern_hour == 12 && local_hour < 12) || local_hour < 0
+	  period[period.index("P")] = "A"
+	end
+
+	# Add twelve hours to local time if hour makes no sense
+	if local_hour < 1
+	  local_hour += 12
+	end
+
+	return local_hour.to_s + period
+  end
+
+  def create_games(doc, game_day)
+  	home, away, gametime, duplicates = set_game_info_arrays(doc)
   	ball_games = game_day.games
-  	preseason = is_preseason?(time)
+  	preseason = is_preseason?(game_day)
 	# Create games that have not been created yet
 	(0...gametime.size).each do |i|
-	  games = ball_games.where(:home_team_id => home[i].id, :away_team_id => away[i].id)
+	  games = ball_games.where(home_team_id: home[i].id, away_team_id: away[i].id)
 	  if preseason
 		if games.empty?
 		  new_game = create_game(game_day, time, home[i], away[i], '0')
@@ -134,13 +130,14 @@ module NewMatchup
 	end
   end
 
-  def create_game_stats(doc, games)
+  def create_game_stats(doc, game_day)
+  	games = game_day.games
 	game_index = -1
 	away_lineup = home_lineup = false
 	away_team = home_team = nil
 	team_index = pitcher_index = batter_index = 0
 	elements = doc.css(".players div, .team-name+ div, .team-name, .game-time")
-	season = Season.find_by_year(Time.now.year)
+	season = Season.find_by_year(game_day.year)
 	elements.each_with_index do |element, index|
 	  type = element_type(element)
 	  case type
@@ -178,7 +175,7 @@ module NewMatchup
 		team = find_team_from_pitcher_index(pitcher_index, away_team, home_team)
 		pitcher_index += 1
 	  when 'batter'
-		identifier, fangraph_id, name, handedness, lineup, position = batter_info(element)
+		identity, fangraph_id, name, handedness, lineup, position = batter_info(element)
 		team = find_team_from_batter_index(batter_index, away_team, home_team, away_lineup, home_lineup)
 		batter_index += 1
 	  end
@@ -201,7 +198,7 @@ module NewMatchup
 	  game = games.order("id")[game_index]
 
 	  # Set the season player and the game player to true
-	  # This will help in determining whether or not to keep a player
+	  # This will help in determining whether or not to delete a player
   	  if type == 'pitcher'
   	  	lancer = player.create_lancer(season)
   	  	lancer.update_attributes(starter: true)
@@ -244,30 +241,11 @@ module NewMatchup
 	end
   end
 
-  def create_bullpen(games)
-	Lancer.bullpen.each do |lancer|
-	  player = lancer.player
-	  team = player.team
-	  if team
-	    games.where("away_team_id = #{team.id} OR home_team_id = #{team.id}").each do |game|
-	  	  lancer = player.create_lancer(lancer.season, team, game)
-	  	  lancer.update_attributes(bullpen: true)
-	    end
-  	  end
-  	end
-  end
-
-  def remove_excess_starters(games)
-  	games.each do |game|
+  def remove_excess_starters(game_day)
+  	game_day.games.each do |game|
   	  game.lancers.where(starter: true).each do |game_lancer|
   	  	lancer = game_lancer.player.find_lancer(game_lancer.season)
   	  	unless lancer.starter
-  	  	  game_lancer.destroy
-  	  	end
-  	  end
-	  game.lancers.where(bullpen: true).each do |game_lancer|
-	  	lancer = game_lancer.player.find_lancer(game_lancer.season)
-  	  	unless lancer.bullpen
   	  	  game_lancer.destroy
   	  	end
   	  end
@@ -282,25 +260,17 @@ module NewMatchup
 
   def set_matchups(time)
 
-  	today, date = check_which_day(time)
-  	url = "http://www.baseballpress.com/lineups/#{date}"
+  	url = "http://www.baseballpress.com/lineups/%d-%02d-%02d" % [time.year, time.month, time.day]
   	doc = download_document(url)
 
   	game_day = GameDay.search(time)
-  	home, away, gametime, duplicates = set_game_info_arrays(doc)
-  	create_games(game_day, gametime, home, away, duplicates, time)
-  	games = game_day.games
+  	create_games(doc, game_day)
 
-  	reset_starters
+  	Batter.starters.update_all(starter: false)
+  	Lancer.starters.update_all(starter: false)
 
-  	if today
-  	  create_game_stats(doc, games)
-  	  create_bullpen(games)
-  	else
-  	  create_tomorrow_stats(doc, games.order("id"), away, home)
-  	end
-
-    remove_excess_starters(games)
+  	create_game_stats(doc, game_day)
+    remove_excess_starters(game_day)
 
   end
 

@@ -2,6 +2,20 @@ module NewBullpen
 
   include NewShare
 
+  def create_bullpen(game_day)
+    games = game_day.games
+    Lancer.bullpen.each do |lancer|
+      player = lancer.player
+      team = player.team
+      if team
+        games.where("away_team_id = #{team.id} OR home_team_id = #{team.id}").each do |game|
+          lancer = player.create_lancer(lancer.season, team, game)
+          lancer.update_attributes(bullpen: true)
+        end
+      end
+    end
+  end
+
   def get_pitches(text)
     if text == "N/G"
   	  return 0
@@ -10,15 +24,10 @@ module NewBullpen
   	end
   end
 
-  def reset_bullpen
-    Lancer.where(game_id: nil, bullpen: true).update_all(bullpen: false)
-  end
-
-  def update_bullpen_pitches(player, one, two, three)
-    time = Time.now.tomorrow
+  def update_bullpen_pitches(player, one, two, three, time)
     (1..3).each do |n|
-      time = time.yesterday
       game_day = GameDay.search(time)
+      time = time.yesterday
       games = game_day.games
       if games.empty?
       	next
@@ -38,20 +47,16 @@ module NewBullpen
     end
   end
 
-  def set_bullpen
+  def set_bullpen(time)
     @bullpen_teams = [1, 2, 3, 4, 12, 13, 17, 21, 22, 23, 26, 27, 28, 29, 30, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 18, 19, 20, 24, 25]
-    time = Time.now
-    year = time.year
-    month = "%02d" % time.month
-    day = "%02d" % time.day
-    url = "http://www.baseballpress.com/bullpenusage/#{year}-#{month}-#{day}"
+    url = "http://www.baseballpress.com/bullpenusage/%d-%02d-%02d" % [time.year, time.month, time.day]
     doc = download_document(url)
 
-    reset_bullpen
+    Lancer.bullpen.update_all(bullpen: false)
   	player = nil
   	var = one = two = three = 0
     team_index = -1
-    season = Season.find_by_year(Time.now.year)
+    season = Season.find_by_year(time.year)
   	doc.css(".league td").each do |element|
   	  text = element.text
 
@@ -68,7 +73,7 @@ module NewBullpen
   		  var += 1
   	  when 3
   		  three = get_pitches(text)
-  		  update_bullpen_pitches(player, one, two, three)
+  		  update_bullpen_pitches(player, one, two, three, time)
   		  var = 0
 	    end
 
@@ -85,6 +90,8 @@ module NewBullpen
   		  var = 1
   	  end
   	end
+    game_day = GameDay.search(time)
+    create_bullpen(game_day)
   end
 
   def fix_bullpen

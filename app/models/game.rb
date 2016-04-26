@@ -9,22 +9,15 @@ class Game < ActiveRecord::Base
   has_many :lancers, dependent: :destroy
   has_many :batters, dependent: :destroy
 
-
-
-
   def url
     game_day = self.game_day
 	  return self.home_team.game_abbr + game_day.year.to_s + "%02d" % game_day.month + "%02d" % game_day.day + self.num
   end
 
-
-
-
-
-
-
   def update_weather
-    update_forecast(self, time)
+    game_day = self.game_day
+    create_weathers(self)
+    update_forecast(self)
     update_pressure_forecast(self)
     update_weather(self)
   end

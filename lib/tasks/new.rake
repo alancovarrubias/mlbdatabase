@@ -2,11 +2,15 @@ namespace :new do
 
   task daily: [:update_players]
 
-  task hourly: [:update_weather, :ump, :bettinglines]
+  task hourly: [:update_weather, :update_game]
 
   task ten: [:matchups]
 
   task delete: :environment do
+    # game_day = GameDay.search(Time.now)
+    # game_day.games.each do |game|
+    #   game.destroy
+    # end
     game_day = GameDay.search(Time.now.tomorrow)
     game_day.games.each do |game|
       game.destroy
@@ -14,7 +18,7 @@ namespace :new do
   end
 
   task update_players: :environment do
-  	include PlayerUpdate
+  	include StatUpdate
 
   	Team.all.each do |team|
   	  fangraphs(team)
@@ -32,37 +36,31 @@ namespace :new do
   task matchups: :environment do
     include NewMatchup
     include NewBullpen
-    set_bullpen
-    set_matchups(Time.now)
-    set_matchups(Time.now.tomorrow)
+    time = Time.now
+    set_matchups(time)
+    set_bullpen(time)
+    time = time.tomorrow
+    set_matchups(time)
   end
 
   task update_weather: :environment do
-  	include WeatherUpdate
 
+  	include WeatherUpdate
   	time = Time.now
   	GameDay.search(time).games.each do |game|
-  	  create_weathers(game)
-	    update_pressure_forecast(game)
-	    update_forecast(game, time)
-	    update_weather(game)
+      game.update_weather
 	  end
 
-	  time = Time.now.tomorrow
+    time = time.tomorrow
 	  GameDay.search(time).games.each do |game|
-	    create_weathers(game)
-  	  update_pressure_forecast(game)
-	    update_forecast(game, time)
+      game.update_weather
 	  end
+
   end
 
-  task ump: :environment do
+  task :update_game => :environment do
     include GameUpdate
     set_umpire
-  end
-
-  task :bettinglines => :environment do
-    include GameUpdate
     closingline
   end
 
@@ -72,6 +70,8 @@ namespace :new do
   end
 
   task test: :environment do
+    include Create
+    Create.new_teams
   end
   
 end
