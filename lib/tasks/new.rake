@@ -8,7 +8,7 @@ namespace :new do
 
   task delete: :environment do
 
-    game_day = GameDay.search(Time.now.tomorrow)
+    game_day = GameDay.search(Time.now)
     game_day.games.each do |game|
       game.destroy
     end
@@ -34,8 +34,8 @@ namespace :new do
     include NewMatchup
     include NewBullpen
     time = Time.now
-    # set_matchups(time)
-    # set_bullpen(time)
+    set_matchups(time)
+    set_bullpen(time)
     time = time.tomorrow
     set_matchups(time)
   end
