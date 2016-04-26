@@ -24,6 +24,27 @@
     <% @games.each do |game| %>
     <tr>
       <td rowspan="2"><%= link_to game_link(game), { controller: "game", action: "new", id: game.id } %></td>
+      <% pitcher = find_pitcher(game, true) %>
+      <% if pitcher %>
+      <%= render partial: "not_found" %>
+      <% end %>
+      <td rowspan="2" class="border"></td>
+      <% weather = find_weather(game) %>
+      <% if weather %>
+      <td rowspan="2"><%= weather.temp %></td>
+      <td rowspan="2"><%= weather.feel %></td>
+      <td rowspan="2"><%= weather.dew %></td>
+      <td rowspan="2"><%= weather.wind %></td>
+      <td rowspan="2"><%= weather.pressure %></td>
+      <td rowspan="2"><%= weather.humidity %></td>
+      <td rowspan="2"><%= weather.rain %></td>
+      <% end %>
+    </tr>
+    <tr> 
+      <% pitcher = find_pitcher(game, false) %>
+      <% if pitcher %>
+      <%= render partial: "not_found" %>
+      <% end %>
     </tr>
     <% end %>
   </tbody>
