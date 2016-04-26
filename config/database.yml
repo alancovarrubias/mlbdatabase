@@ -11,7 +11,7 @@
 #
 default: &default
   host: localhost
-  username: pguser
+  username: alancovarrubias
   password: whoppermac
   adapter: postgresql
   encoding: unicode
@@ -19,7 +19,7 @@ default: &default
 development:
   adapter: postgresql
   host: localhost
-  username: pguser
+  username: alancovarrubias
   database: mlb_app_development
 
 # Warning: The database defined as "test" will be erased and
