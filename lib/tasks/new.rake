@@ -45,12 +45,12 @@ namespace :new do
   	include WeatherUpdate
   	time = Time.now
   	GameDay.search(time).games.each do |game|
-      game.update_weather
+      game.update_weather(game)
 	  end
 
     time = time.tomorrow
 	  GameDay.search(time).games.each do |game|
-      game.update_weather
+      game.update_weather(game)
 	  end
 
   end
