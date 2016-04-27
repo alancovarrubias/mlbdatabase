@@ -30,7 +30,7 @@
   	  <td></td>
   	  <td bgcolor="#DC143C">Totals</td>
   	  <td></td>
-  	  <td bgcolor="#DC143C"><%= prev_pitchers.map {|pitcher| pitcher.ip }.sum.round(1) %></td>
+  	  <td bgcolor="#DC143C"><%= add_innings(prev_pitchers.map {|pitcher| pitcher.ip }) %></td>
   	  <td bgcolor="#DC143C"><%= prev_pitchers.map {|pitcher| pitcher.bb }.sum %></td>
   	  <td bgcolor="#DC143C"><%= prev_pitchers.map {|pitcher| pitcher.h }.sum %></td>
   	  <td bgcolor="#DC143C"><%= prev_pitchers.map {|pitcher| pitcher.r }.sum %></td>

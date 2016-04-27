@@ -1,5 +1,17 @@
 module GameHelper
 
+  def add_innings(ip_array)
+    sum = 0
+    decimal = 0
+    ip_array.each do |i|
+      decimal += i.modulo(1)
+      sum += i.to_i
+    end
+    thirds = (decimal*10).to_i
+    sum += thirds/3
+    return sum += (thirds%3).to_f/10
+  end
+
   def batter_class(predicted)
     if predicted
       "predicted batter"
