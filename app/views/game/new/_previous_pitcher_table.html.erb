@@ -1,0 +1,40 @@
+<table class="previous">
+  <caption><%= "#{pitcher.name} Previous Games"%></caption>
+  <thead>
+	<tr>
+	  <th></th><th>Date</th><th>VS</th><th>IP</th><th>BB</th><th>H</th><th>R</th>
+	  <th>Temp</th><th>Wind</th><th>Direct</th><th>Baro</th><th>Humi</th><th>Park</th>
+	</tr>
+  </thead>
+  <tbody>
+  	<% prev_pitchers = pitcher.prev_pitchers[0..11] %>
+  	<% prev_pitchers.each_with_index do |pitcher, index| %>
+	  	<tr>
+	  		<td><%= index+1 %></td>
+	  		<td><%= pitcher.game.game_day.date %></td>
+	  		<td><%= pitcher.opp_team.abbr %></td>
+	  		<td><%= pitcher.ip %></td>
+	  		<td><%= pitcher.bb %></td>
+	  		<td><%= pitcher.h %></td>
+	  		<td><%= pitcher.r %></td>
+	  		<% weather = pitcher.game.true_weather %>
+	  		<td><%= weather.temp %></td>
+	  		<td><%= weather.speed %></td>
+	  		<td><%= weather.dir %></td>
+	  		<td><%= weather.pressure %></td>
+	  		<td><%= weather.humidity %></td>
+	  		<td><%= pitcher.game.home_team.abbr %></td>
+	  	</tr>
+  	<% end %>
+  	<tr>
+  	  <td></td>
+  	  <td bgcolor="#DC143C">Totals</td>
+  	  <td></td>
+  	  <td bgcolor="#DC143C"><%= prev_pitchers.map {|pitcher| pitcher.ip }.sum %></td>
+  	  <td bgcolor="#DC143C"><%= prev_pitchers.map {|pitcher| pitcher.bb }.sum %></td>
+  	  <td bgcolor="#DC143C"><%= prev_pitchers.map {|pitcher| pitcher.h }.sum %></td>
+  	  <td bgcolor="#DC143C"><%= prev_pitchers.map {|pitcher| pitcher.r }.sum %></td>
+  	  <td colspan="6"></td>
+  	</tr>
+  </tbody>
+</table>

@@ -1,6 +1,6 @@
 namespace :new do
 
-  task daily: [:update_players]
+  task daily: [:update_players, :pitcher_box]
 
   task hourly: [:update_weather, :update_game]
 
@@ -55,10 +55,16 @@ namespace :new do
 
   end
 
-  task :update_game => :environment do
+  task update_game: :environment do
     include GameUpdate
     set_umpire
     closingline
+  end
+
+  task pitcher_box: :environment do
+    include PlayerUpdate
+    game_day = GameDay.search(Time.now.yesterday)
+    game_pitchers(game_day)
   end
 
   task fix_bullpen: :environment do
@@ -66,9 +72,26 @@ namespace :new do
     fix_bullpen
   end
 
-  task test: :environment do
-    include Create
-    Create.new_teams
+  task fix_pitcher_past: :environment do
+    include PlayerUpdate
+    today_day = GameDay.search(Time.now)
+    tomorrow_day = GameDay.search(Time.now.tomorrow)
+    GameDay.all.each do |game_day|
+      if game_day.is_preseason? || game_day == today_day || game_day == tomorrow_day
+        next
+      end
+      game_pitchers(game_day)
+    end
+  end
+
+  task fix_weather: :environment do
+    include WeatherUpdate
+    Game.all.each do |game|
+      unless game.true_weather.speed == ""
+        next
+      end
+      update_true_weather(game)
+    end
   end
   
 end

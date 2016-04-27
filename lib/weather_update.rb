@@ -14,7 +14,7 @@ module WeatherUpdate
   # Data scraped from Wunderground
   def update_pressure_forecast(game)
     game_day = game.game_day
-    unless game_day == GameDay.search(Time.now)
+    unless game_day == GameDay.search(Time.now) || game_day == GameDay.search(Time.now.tomorrow)
       return
     end
   	home_team = game.home_team
@@ -41,11 +41,9 @@ module WeatherUpdate
   	unless game_time.include?(":")
   	  return
   	end
-
   	game_hour = game_time[0...game_time.index(":")].to_i
   	period = game_time[-2..-1]
   	game_hour = convert_to_military_hour(game_hour, period)
-
     if game_day == GameDay.search(Time.now)
   	elsif game_day == GameDay.search(Time.now.tomorrow)
   	  game_hour += 24
@@ -86,6 +84,7 @@ module WeatherUpdate
 
     game.weathers.where(station: "Forecast").order("hour").each_with_index do |weather, index|
     	weather.update(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index], feel: @feel[index], dew: @dew[index])
+      # weather.update(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index], feel: @feel[index], dew: @dew[index])
     end
   end
 
@@ -97,7 +96,6 @@ module WeatherUpdate
       return
     end
 
-    puts game.url
     game_day = game.game_day
     home_team = game.home_team
 
@@ -112,6 +110,8 @@ module WeatherUpdate
     url = url.gsub(/#{find}/, replace)
 
     page = mechanize_page(url)
+
+    puts url
     
     size = page.search("#obsTable th").size
     elements = page.search("#obsTable td")
@@ -124,11 +124,11 @@ module WeatherUpdate
         time = stat.text.strip
         hour, period = parse_time_string_get_hour_period(time)
         if hour == game_hour_1 && game_period_1 == period
-          weather = weathers.where(hour: 1).first
+          weather = weathers.find_by(hour: 1)
         elsif hour == game_hour_2 && game_period_2 == period
-          weather = weathers.where(hour: 2).first
+          weather = weathers.find_by(hour: 2)
         elsif hour == game_hour_3 && game_period_3 == period
-          weather = weathers.where(hour: 3).first
+          weather = weathers.find_by(hour: 3)
         else
           weather = nil
         end
@@ -145,7 +145,7 @@ module WeatherUpdate
       when size - 3
         rain = stat.text.strip
         if weather
-          weather.update_attributes(wind: speed + " " + dir, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
+          weather.update_attributes(wind: speed + " " + dir, speed: speed, dir: dir, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
         end
       end
     end

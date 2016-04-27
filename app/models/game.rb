@@ -15,11 +15,22 @@ class Game < ActiveRecord::Base
   end
 
   def update_weather
-    game_day = self.game_day
     create_weathers(self)
     update_forecast(self)
     update_pressure_forecast(self)
     update_true_weather(self)
   end
 
+  def away_pitcher
+    self.lancers.find_by(starter: true, team_id: self.away_team_id)
+  end
+
+  def home_pitcher
+    self.lancers.find_by(starter: true, team_id: self.home_team_id)
+  end
+
+  def true_weather
+    self.weathers.find_by(hour: 1, station: "Actual")
+  end
+  
 end

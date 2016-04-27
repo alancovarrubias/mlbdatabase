@@ -17,5 +17,20 @@ class GameDay < ActiveRecord::Base
   	return GameDay.find_by(year: date.year, month: date.month, day: date.day)
   end
 
+  def index
+    self.year * 366 + self.month * 31 + self.day 
+  end
+
+  def date
+    "#{self.month}/#{self.day}"
+  end
+
+  def is_preseason?
+    if self.month < 4 || (self.month == 4 && self.day < 3)
+      true
+    else
+      false
+    end
+  end
 
 end

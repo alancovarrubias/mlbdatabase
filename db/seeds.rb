@@ -5,6 +5,5 @@
 #   Season.create(year: i)
 # end
 
-Team.all.each_with_index do |team, index|
-  puts @@team_attributes[index][:name]
-end
+include Create
+Create.teams

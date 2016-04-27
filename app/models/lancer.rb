@@ -5,12 +5,18 @@ class Lancer < ActiveRecord::Base
   belongs_to :season
   has_many   :pitcher_stats, dependent: :destroy
 
+  include PlayerUpdate
+
   def self.starters
     Lancer.where(game_id: nil, starter: true)
   end
 
   def self.bullpen
     Lancer.where(game_id: nil, bullpen: true)
+  end
+
+  def name
+    self.player.name
   end
 
   def stats(handedness=nil)
@@ -100,8 +106,7 @@ class Lancer < ActiveRecord::Base
     end
 
     opp_team = self.opp_team
-    opp_lineup = game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
-    return opp_lineup
+    return game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
 
   end
 
@@ -150,7 +155,6 @@ class Lancer < ActiveRecord::Base
 
   end
 
-
   def prev_bullpen_pitches(days)
 
     unless self.game
@@ -170,5 +174,21 @@ class Lancer < ActiveRecord::Base
     end
     
   end
+
+  def sort_pitchers
+    self.game.game_day.index
+  end
+
+  # Find previous starting games
+  def prev_pitchers
+    unless self.game
+      return nil
+    end
+    index = self.game.game_day.index
+    lancers = Lancer.where.not(game_id: nil).where(starter: true, player_id: self.player_id).find_all { |lancer| lancer.game.game_day.index < index }
+    lancers = lancers.find_all { |lancer| !lancer.game.game_day.is_preseason? }
+    return lancers.sort_by(&:sort_pitchers).reverse
+  end
+
 
 end

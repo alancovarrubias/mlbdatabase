@@ -25,14 +25,6 @@ module NewMatchup
 	return home, away, gametime, duplicates
   end
 
-  def is_preseason?(game_day)
-    if game_day.month < 4 || (game_day.month == 4 && game_day.day < 3)
-  	  true
-  	else
-  	  false
-  	end
-  end
-
   def create_game(game_day, home_team, away_team, num)
   	Game.create(game_day_id: game_day.id, home_team_id: home_team.id, away_team_id: away_team.id, num: num)
   end
@@ -63,11 +55,10 @@ module NewMatchup
   def create_games(doc, game_day)
   	home, away, gametime, duplicates = set_game_info_arrays(doc)
   	ball_games = game_day.games
-  	preseason = is_preseason?(game_day)
 	# Create games that have not been created yet
 	(0...gametime.size).each do |i|
 	  games = ball_games.where(home_team_id: home[i].id, away_team_id: away[i].id)
-	  if preseason
+	  if game_day.is_preseason?
 		if games.empty?
 		  new_game = create_game(game_day, time, home[i], away[i], '0')
 		end
