@@ -28,11 +28,6 @@ module NewBullpen
     (1..3).each do |n|
       game_day = GameDay.search(time)
       time = time.yesterday
-      games = game_day.games
-      if games.empty?
-      	next
-      end
-      game_ids = games.map { |game| game.id }
 	    case n
       when 1
         pitches = one
@@ -41,8 +36,9 @@ module NewBullpen
       when 3
         pitches = three
       end
-      Lancer.where(player_id: player.id, game_id: game_ids).each do |lancer|
-      	lancer.update_attributes(pitches: pitches)
+      lancers = player.game_day_lancers(game_day)
+      lancers.each do |lancer|
+        lancer.update(pitches: pitches)
       end
     end
   end
@@ -50,6 +46,7 @@ module NewBullpen
   def set_bullpen(time)
     @bullpen_teams = [1, 2, 3, 4, 12, 13, 17, 21, 22, 23, 26, 27, 28, 29, 30, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 18, 19, 20, 24, 25]
     url = "http://www.baseballpress.com/bullpenusage/%d-%02d-%02d" % [time.year, time.month, time.day]
+    puts url
     doc = download_document(url)
 
     Lancer.bullpen.update_all(bullpen: false)
@@ -84,9 +81,9 @@ module NewBullpen
         unless player
           player = Player.create(name: name, identity: identity, throwhand: handedness)
         end
-        player.update_attributes(team_id: @bullpen_teams[team_index])
+        player.update(team_id: @bullpen_teams[team_index])
         lancer = player.create_lancer(season)
-        lancer.update_attributes(bullpen: true)
+        lancer.update(bullpen: true)
   		  var = 1
   	  end
   	end
@@ -99,7 +96,6 @@ module NewBullpen
     GameDay.all.each do |game_day|
       
       url = "http://www.baseballpress.com/bullpenusage/%d-%02d-%02d" % [game_day.year, game_day.month, game_day.day]
-      puts url
       doc = download_document(url)
       player = nil
       var = one = 0
@@ -122,7 +118,7 @@ module NewBullpen
           game_ids = games.map { |game| game.id }
           Lancer.where(player_id: player.id, game_id: game_ids).each do |lancer|
             puts "#{player.name} #{lancer.game.url} pitches #{one}"
-            lancer.update_attributes(pitches: one)
+            lancer.update(pitches: one)
           end
         end
 

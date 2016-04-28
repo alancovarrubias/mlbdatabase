@@ -65,6 +65,11 @@ class Player < ActiveRecord::Base
     end
   end
 
+  def game_day_lancers(game_day)
+    game_ids = game_day.games.map { |game| game.id }
+    Lancer.where(player_id: self.id, game_id: game_ids)
+  end
+
   private
 
   @nicknames = {

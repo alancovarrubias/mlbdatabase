@@ -33,11 +33,11 @@ namespace :new do
   task matchups: :environment do
     include NewMatchup
     include NewBullpen
-    time = Time.now
-    set_matchups(time)
+    time = Time.now.yesterday
+    # set_matchups(time)
     set_bullpen(time)
-    time = time.tomorrow
-    set_matchups(time)
+    # time = time.tomorrow
+    # set_matchups(time)
   end
 
   task update_weather: :environment do
