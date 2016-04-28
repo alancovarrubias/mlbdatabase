@@ -33,7 +33,7 @@ namespace :new do
   task matchups: :environment do
     include NewMatchup
     include NewBullpen
-    time = Time.now.yesterday
+    time = Time.now
     # set_matchups(time)
     set_bullpen(time)
     # time = time.tomorrow
