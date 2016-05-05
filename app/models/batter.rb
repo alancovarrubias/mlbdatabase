@@ -6,7 +6,7 @@ class Batter < ActiveRecord::Base
   has_many   :batter_stats, dependent: :destroy
 
   def self.starters
-    Batter.where(game_id: nil, starter: true)
+    where(game_id: nil, starter: true)
   end
 
   def stats(handedness=nil)
@@ -16,9 +16,9 @@ class Batter < ActiveRecord::Base
       BatterStat.create(batter_id: self.id, range: "14 Days", handedness: "")
   	end
     unless handedness
-  	  return self.batter_stats
+  	  return batter_stats
     else
-      return self.batter_stats.where(handedness: handedness).first
+      return batter_stats.find_by(handedness: handedness)
     end
   end
 
@@ -32,7 +32,7 @@ class Batter < ActiveRecord::Base
   end
 
   def bathand
-    self.player.bathand
+    player.bathand
   end
 
 

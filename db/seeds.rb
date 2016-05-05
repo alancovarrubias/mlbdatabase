@@ -4,6 +4,3 @@
 # (2014..2016).each do |i|
 #   Season.create(year: i)
 # end
-
-include Create
-Create.teams

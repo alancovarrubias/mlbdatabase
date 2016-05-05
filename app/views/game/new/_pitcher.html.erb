@@ -12,6 +12,8 @@
       <th colspan="2">wOBA</th>
     <% end %>
     <th colspan="6">GB</th>
+    <th colspan="6">LD</th>
+    <th colspan="6">TLD</th>
   </thead>
   <tbody class="mixed">
 
@@ -36,8 +38,10 @@
       <% Season.all.order("id DESC").each do |season| %>
         <th colspan="11"><%= season.year %></th>
       <% end %>
-      <% Season.all.order("id DESC").each do |season| %>
-        <th colspan="2"><%= season.year %></th>
+      <% 3.times do %>
+        <% Season.all.order("id DESC").each do |season| %>
+          <th colspan="2"><%= season.year %></th>
+        <% end %>
       <% end %>
     </tr>
     <tr>
@@ -74,6 +78,14 @@
         <th>GB LHB</th>
         <th>GB RHB</th>
       <% end %>
+      <% (Season.all.size).times do %>
+        <th>LD LHB</th>
+        <th>LD RHB</th>
+      <% end %>
+      <% (Season.all.size).times do %>
+        <th>TLD LHB</th>
+        <th>TLD RHB</th>
+      <% end %>
 
     </tr>
   </thead>
@@ -96,6 +108,10 @@
         <% stats.each do |stat| %>
           <td><%= stat.first.gb %></td>
           <td><%= stat.second.gb %></td>
+        <% end %>
+        <% stats.each do |stat| %>
+          <td><%= stat.first.ld %></td>
+          <td><%= stat.second.ld %></td>
         <% end %>
       </tr>
     <% end %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160428231045) do
+ActiveRecord::Schema.define(version: 20160505010039) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(version: 20160428231045) do
     t.integer  "day"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "index",      default: 0
   end
 
   create_table "games", force: true do |t|
@@ -225,6 +226,7 @@ ActiveRecord::Schema.define(version: 20160428231045) do
     t.string   "password_digest", default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "admin",           default: false
   end
 
   create_table "weathers", force: true do |t|

@@ -33,7 +33,7 @@ class Lancer < ActiveRecord::Base
   end
 
   def create_game_stats
-  	lancer = self.player.create_lancer(self.season)
+  	lancer = player.create_lancer(self.season)
   	lancer.stats.order("id").each do |stat|
   	  new_stat = stat.dup
   	  new_stat.lancer_id = self.id
@@ -46,10 +46,10 @@ class Lancer < ActiveRecord::Base
   end
 
   def opp_team
-    unless game = self.game
+    unless game
       return nil
     end
-    return self.team == game.away_team ? game.home_team : game.away_team
+    return team == game.away_team ? game.home_team : game.away_team
   end
 
 
@@ -173,10 +173,10 @@ class Lancer < ActiveRecord::Base
 
   # Find previous starting games
   def prev_pitchers
-    unless self.game
+    unless game
       return nil
     end
-    index = self.game.game_day.index
+    index = game.game_day.index
     lancers = Lancer.where.not(game_id: nil).where(starter: true, player_id: self.player_id).find_all { |lancer| lancer.game.game_day.index < index }
     lancers = lancers.find_all { |lancer| !lancer.game.game_day.is_preseason? }
     return lancers.sort_by(&:sort_pitchers).reverse

@@ -7,11 +7,6 @@ namespace :new do
   task ten: [:matchups]
 
   task delete: :environment do
-
-    game_day = GameDay.search(Time.now)
-    game_day.games.each do |game|
-      game.destroy
-    end
   end
 
   task update_players: :environment do
@@ -91,6 +86,12 @@ namespace :new do
         next
       end
       update_true_weather(game)
+    end
+  end
+
+  task fix_game_day_index: :environment do
+    GameDay.where(index: 0).each do |game_day|
+      game_day.update(index: game_day.find_index)
     end
   end
   
