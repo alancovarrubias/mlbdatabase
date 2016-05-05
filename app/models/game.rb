@@ -10,8 +10,7 @@ class Game < ActiveRecord::Base
   has_many :batters, dependent: :destroy
 
   def url
-    game_day = self.game_day
-	  return self.home_team.game_abbr + game_day.year.to_s + "%02d" % game_day.month + "%02d" % game_day.day + self.num
+    "#{home_team.game_abbr}#{game_day.year}%02d%02d#{num}" % [game_day.month, game_day.day]
   end
 
   def update_weather
@@ -22,15 +21,24 @@ class Game < ActiveRecord::Base
   end
 
   def away_pitcher
-    self.lancers.find_by(starter: true, team_id: self.away_team_id)
+    lancers.find_by(starter: true, team_id: self.away_team_id)
   end
 
   def home_pitcher
-    self.lancers.find_by(starter: true, team_id: self.home_team_id)
+    lancers.find_by(starter: true, team_id: self.home_team_id)
   end
 
   def true_weather
-    self.weathers.find_by(hour: 1, station: "Actual")
+    weathers.find_by(hour: 1, station: "Actual")
+  end
+
+  def create_weathers
+    if weathers.size == 0
+      (1..3).each do |i|
+        Weather.create(game: game, station: "Forecast", hour: i)
+        Weather.create(game: game, station: "Actual", hour: i)
+      end
+    end
   end
   
 end

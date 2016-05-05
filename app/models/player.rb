@@ -19,19 +19,18 @@ class Player < ActiveRecord::Base
     elsif fangraph_id != 0 && player = Player.find_by_fangraph_id(fangraph_id)
       return player
     end
-    return nil
   end
 
   def create_batter(season, team=nil, game=nil)
     if game
-      unless batter = self.batters.where(season_id: season.id, team_id: team.id, game_id: game.id).first
-        batter = Batter.create(player_id: self.id, season_id: season.id, team_id: team.id, game_id: game.id)
+      unless batter = batters.find_by(season: season, team: team, game: game)
+        batter = Batter.create(player: self, season: season, team: team, game: game)
         puts "#{self.name} batter created for #{game.url}"
         batter.create_game_stats
       end
     else
-      unless batter = self.batters.where(season_id: season.id, team_id: nil, game_id: nil).first
-        batter = Batter.create(player_id: self.id, season_id: season.id)
+      unless batter = batters.find_by(season: season, team: nil, game: nil)
+        batter = Batter.create(player: self, season: season)
       end
     end
     return batter
@@ -39,14 +38,14 @@ class Player < ActiveRecord::Base
 
   def create_lancer(season, team=nil, game=nil)
     if game
-      unless lancer = self.lancers.where(season_id: season.id, team_id: team.id, game_id: game.id).first
-        lancer = Lancer.create(player_id: self.id, season_id: season.id, team_id: team.id, game_id: game.id)
+      unless lancer = lancers.find_by(season: season, team_id: team, game: game)
+        lancer = Lancer.create(player: self, season: season, team: team, game: game)
         puts "#{self.name} lancer created for #{game.url}"
         lancer.create_game_stats
       end
     else
-      unless lancer = self.lancers.where(season_id: season.id, team_id: nil, game_id: nil).first
-        lancer = Lancer.create(player_id: self.id, season_id: season.id)
+      unless lancer = lancers.find_by(season: season, team: nil, game: nil)
+        lancer = Lancer.create(player: self, season: season)
       end
     end
     return lancer
@@ -54,23 +53,22 @@ class Player < ActiveRecord::Base
 
   def find_batter(season, team=nil, game=nil)
     if game
-      return self.batters.where(season_id: season.id, team_id: team.id, game_id: game.id).first
+      batters.find_by(season: season, team: team, game: game)
     else
-      return self.batters.where(season_id: season.id, team_id: nil, game_id: nil).first
+      batters.find_by(season: season, team: nil, game: nil)
     end
   end
 
   def find_lancer(season, team=nil, game=nil)
     if game
-      return self.lancers.where(season_id: season.id, team_id: team.id, game_id: game.id).first
+      lancers.find_by(season: season, team: team, game: game)
     else
-      return self.lancers.where(season_id: season.id, team_id: nil, game_id: nil).first
+      lancers.find_by(season: season, team: nil, game: nil)
     end
   end
 
   def game_day_lancers(game_day)
-    game_ids = game_day.games.map { |game| game.id }
-    Lancer.where(player_id: self.id, game_id: game_ids)
+    Lancer.where(player: self, game: game_day.games)
   end
 
   private

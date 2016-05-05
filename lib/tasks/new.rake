@@ -33,6 +33,7 @@ namespace :new do
     set_bullpen(time)
     time = time.tomorrow
     set_matchups(time)
+    set_bullpen(time)
   end
 
   task update_weather: :environment do
