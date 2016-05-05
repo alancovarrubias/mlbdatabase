@@ -266,6 +266,9 @@ module StatUpdate
 	end
 
 	team.players.each do |player|
+	  unless player.identity
+	  	next
+	  end
   	  if player.identity == "" || player.identity.include?("\n") || player.find_lancer(season) == nil
   	  	next
   	  end
