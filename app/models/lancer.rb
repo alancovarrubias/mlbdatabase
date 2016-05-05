@@ -97,11 +97,9 @@ class Lancer < ActiveRecord::Base
 
 
   def opposing_lineup
-
     if game
-      game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
+      game.batters.where(team: opp_team, starter: true).order("lineup ASC")
     end
-
   end
 
 
@@ -177,9 +175,22 @@ class Lancer < ActiveRecord::Base
       return nil
     end
     index = game.game_day.index
-    lancers = Lancer.where.not(game_id: nil).where(starter: true, player_id: self.player_id).find_all { |lancer| lancer.game.game_day.index < index }
+    lancers = Lancer.where.not(game: nil).where(starter: true, player: self.player).find_all { |lancer| lancer.game.game_day.index < index }
     lancers = lancers.find_all { |lancer| !lancer.game.game_day.is_preseason? }
     return lancers.sort_by(&:sort_pitchers).reverse
+  end
+
+  def self.add_innings
+    ip_array = all.map {|pitcher| pitcher.ip}
+    sum = 0
+    decimal = 0
+    ip_array.each do |i|
+      decimal += i.modulo(1)
+      sum += i.to_i
+    end
+    thirds = (decimal*10).to_i
+    sum += thirds/3
+    return sum += (thirds%3).to_f/10
   end
 
 

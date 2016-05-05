@@ -15,3 +15,9 @@
 <% stats.each do |stat| %>
 	<td colspan="2"><%= mixed_statistic(stat.first.gb, stat.second.gb, lefty, righty) %></td>
 <% end %>
+<% stats.each do |stat| %>
+	<td colspan="2"><%= mixed_statistic(stat.first.ld, stat.second.ld, lefty, righty) %></td>
+<% end %>
+<% stats.each do |stat| %>
+	<td colspan="2"><%= mixed_statistic(stat.first.tld, stat.second.tld, lefty, righty) %></td>
+<% end %>

@@ -3,10 +3,10 @@
   <thead>
     <tr>
       <th></th>
-      <th colspan="8"><%= "#{@season.year} vs #{handedness_header(left)}" %></th>
-      <th colspan="8">Last 14 Days</th>
+      <th colspan="9"><%= "#{@season.year} vs #{handedness_header(left)}" %></th>
+      <th colspan="9">Last 14 Days</th>
       <% Season.all.order("id DESC")[1..-1].each do |season| %>
-      <th colspan="8"><%= "#{season.year} vs #{handedness_header(left)}" %></th>
+      <th colspan="9"><%= "#{season.year} vs #{handedness_header(left)}" %></th>
       <% end %>
       <th colspan="2"><%= "#{@season.year}" %></th>
       <th colspan="2">Last 14 Days</th>
@@ -25,6 +25,7 @@
         <th>FB%</th>
         <th>GB%</th>
         <th>LD%</th>
+        <th>TLD%</th>
       <% end %>
       <% (Season.all.size + 1).times do %>
         <th>Rank</th>

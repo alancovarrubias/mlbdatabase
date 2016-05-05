@@ -113,6 +113,10 @@
           <td><%= stat.first.ld %></td>
           <td><%= stat.second.ld %></td>
         <% end %>
+        <% stats.each do |stat| %>
+          <td><%= stat.first.tld %></td>
+          <td><%= stat.second.tld %></td>
+        <% end %>
       </tr>
     <% end %>
 

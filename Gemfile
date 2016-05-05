@@ -33,3 +33,5 @@ gem 'bcrypt', '~> 3.1.7'
 
 gem 'mechanize', '~> 2.6.0'
 
+gem 'wunderground'
+

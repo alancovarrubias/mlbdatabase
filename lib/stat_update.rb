@@ -183,15 +183,16 @@ module StatUpdate
   	  end
   	end
 
-  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
-	url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
+  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37,7&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
+	url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37,7&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
 	urls = [url_l, url_r]
-	player = name = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = gb = nil
+	player = name = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = gb = h = nil
 	urls.each_with_index do |url, url_index|
 	  doc = download_document(url)
+	  puts url
 	  doc.css(".grid_line_regular").each_with_index do |element, index|
 	    text = element.text
-	    case index%13
+	    case index%14
 	    when 1
 		  name = text
 	  	  fangraph_id = parse_fangraph_id(element)
@@ -221,11 +222,13 @@ module StatUpdate
 		  woba = (text.to_f*1000).to_i
 		when 12
 		  gb = text[0...-2].to_f
+		when 13
+		  h = text.to_i
 		  if player
 		  	handedness = get_handedness(url_index)
 		  	lancer = player.create_lancer(season)
-		  	pitcher_stat = lancer.stats.where(handedness: handedness).first
-		  	pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, era: era, fb: fb, xfip: xfip, kbb: kbb, woba: woba, gb: gb)
+		  	pitcher_stat = lancer.stats.find_by(handedness: handedness)
+		  	pitcher_stat.update(ld: ld, whip: whip, ip: ip, so: so, bb: bb, era: era, fb: fb, xfip: xfip, kbb: kbb, woba: woba, gb: gb, h: h)
 		  end
 		end
 	  end
@@ -257,13 +260,13 @@ module StatUpdate
 		if player
 		  lancer = player.create_lancer(season)
 		  pitcher_stat = lancer.stats.where(handedness: "").first
-		  pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb)
+		  pitcher_stat.update(ld: ld, whip: whip, ip: ip, so: so, bb: bb)
 		end
 	  end
 	end
 
 	team.players.each do |player|
-  	  if player.identity == "" || player.find_lancer(season) == nil
+  	  if player.identity == "" || player.identity.include?("\n") || player.find_lancer(season) == nil
   	  	next
   	  end
   	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{player.identity}&year=#{year}&t=p"

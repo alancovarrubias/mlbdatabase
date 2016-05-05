@@ -7,6 +7,8 @@ namespace :new do
   task ten: [:matchups]
 
   task delete: :environment do
+    GameDay.search(Time.now).games.destroy_all
+    GameDay.search(Time.now.tomorrow).games.destroy_all
   end
 
   task update_players: :environment do
@@ -17,6 +19,7 @@ namespace :new do
   	end
 
   	Season.all.each do |season|
+    season = Season.last
   	  Team.all.each do |team|
   	  	update_batters(season, team)
   	    update_pitchers(season, team)

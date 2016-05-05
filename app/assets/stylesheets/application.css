@@ -136,7 +136,8 @@ table.game-index {
 
 table.previous {
   /*display: inline-block;*/
-  margin: 10px 30px;
+  /*margin: 10px 30px;*/
+  margin: 0 5px;
   float: right;
 }
 
@@ -233,6 +234,14 @@ tbody.bullpen td:nth-child(n+55):nth-child(-n+60) {
   background-color: #DC143C;
 }
 
+tbody.bullpen td:nth-child(n+61):nth-child(-n+66) {
+  background-color: #FF7F00;
+}
+
+tbody.bullpen td:nth-child(n+67):nth-child(-n+72) {
+  background-color: #6495ED;
+}
+
 
 
 tbody.mixed td:nth-child(n+2):nth-child(-n+3){
@@ -261,6 +270,14 @@ tbody.mixed td:nth-child(n+15):nth-child(-n+18){
 
 tbody.mixed td:nth-child(n+19):nth-child(-n+21){
   background-color: #DC143C;
+}
+
+tbody.mixed td:nth-child(n+22):nth-child(-n+24){
+  background-color: #FF7F00;
+}
+
+tbody.mixed td:nth-child(n+25):nth-child(-n+27){
+  background-color: #6495ED;
 }
 
 tbody.lancer td:nth-child(n+2):nth-child(-n+3){
@@ -315,28 +332,36 @@ tbody.lancer td:nth-child(n+52):nth-child(-n+57) {
   background-color: #DC143C;
 }
 
-
-tbody.batter td:nth-child(n+2):nth-child(-n+9){
-  background-color: #7FFFD4;
+tbody.lancer td:nth-child(n+58):nth-child(-n+63) {
+  background-color: #FF7F00;
 }
 
-tbody.batter td:nth-child(n+10):nth-child(-n+17) {
-  background-color: #EA8DFE;
-}
-
-tbody.batter td:nth-child(n+18):nth-child(-n+25) {
-  background-color: #FFF8DC;
-}
-
-tbody.batter td:nth-child(n+26):nth-child(-n+33) {
-  background-color: #FFD700;
-}
-
-tbody.batter td:nth-child(n+34):nth-child(-n+41):nth-child(odd){
+tbody.lancer td:nth-child(n+64):nth-child(-n+69) {
   background-color: #6495ED;
 }
 
-tbody.batter td:nth-child(n+34):nth-child(-n+41):nth-child(even){
+
+tbody.batter td:nth-child(n+2):nth-child(-n+10){
+  background-color: #7FFFD4;
+}
+
+tbody.batter td:nth-child(n+11):nth-child(-n+19) {
+  background-color: #EA8DFE;
+}
+
+tbody.batter td:nth-child(n+20):nth-child(-n+28) {
+  background-color: #FFF8DC;
+}
+
+tbody.batter td:nth-child(n+29):nth-child(-n+37) {
+  background-color: #FFD700;
+}
+
+tbody.batter td:nth-child(n+38):nth-child(-n+45):nth-child(odd){
+  background-color: #6495ED;
+}
+
+tbody.batter td:nth-child(n+38):nth-child(-n+45):nth-child(even){
   background-color: #FF7F00;
 }
 

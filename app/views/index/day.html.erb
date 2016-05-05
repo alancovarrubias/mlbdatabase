@@ -2,8 +2,8 @@
 	<h2><%= Date::MONTHNAMES[params[:month].to_i] + ' ' + params[:year]  %></h2>
 </div>
 
-<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
-<%= link_to(params[:year], {:controller => 'index', :action => 'month', :year => params[:year], :month => params[:month]})%>
+<%= link_to('Home Page', {controller: 'index', action: 'home'})%></br>
+<%= link_to(params[:year], {controller: 'index', action: 'month', year: params[:year], month: params[:month]})%>
 
 <div id="main">
 	<div id="content">
