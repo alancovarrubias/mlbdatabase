@@ -87,7 +87,7 @@ namespace :new do
   task fix_weather: :environment do
     include WeatherUpdate
     Game.all.each do |game|
-      unless game.true_weather.speed == ""
+      unless game.true_weather.dew == ""
         next
       end
       update_true_weather(game)

@@ -77,11 +77,10 @@ body {
 img {
   border-radius: 10%;
   z-index: -1;
-  margin: 50px;
+  margin: 50px 50px 0 50px;
 }
 
 ul {
-    /*list-style-type: none;*/
     background-color: #f1f1f1;
     text-align: center;
     border: 1px solid #555;
@@ -105,18 +104,21 @@ table {
   color: #363636;
   background: #f6f6f6;
   text-align: center;
-  margin: 30px;
   float: left;
   clear: left;
 }
 
+table.weather {
+  margin: 10px;
+}
+
 table.batter {
-  margin: 30px 10px;
+  margin: 10px;
   clear:none;
 }
 
 table.lancer {
-  margin: 30px 10px;
+  margin: 10px;
 }
 
 table.predicted th {
@@ -133,10 +135,9 @@ table.game-index {
 
 
 table.previous {
-  display: inline-block;
-  margin: 0px 30px;
-  float: none;
-  clear: none;
+  /*display: inline-block;*/
+  margin: 10px 30px;
+  float: right;
 }
 
 caption {
@@ -158,19 +159,6 @@ td.name {
 td.border, th.border {
   background-color: gray;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -244,14 +232,6 @@ tbody.bullpen td:nth-child(n+51):nth-child(-n+54) {
 tbody.bullpen td:nth-child(n+55):nth-child(-n+60) {
   background-color: #DC143C;
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -367,96 +347,6 @@ td.blue {
 tr.total td {
   background-color: #f6f6f6;
 }
-
-/*tbody.hitter td:nth-child(1) {
-  background-color: #f6f6f6;
-  white-space: nowrap;
-  text-align: left;
-}
-
-tbody.hitter td:nth-child(n+2):nth-child(-n+9) {
-  background-color: #7FFFD4;
-}
-
-tbody.hitter td:nth-child(n+10):nth-child(-n+17) {
-  background-color: #EA8DFE;
-}
-
-tbody.hitter td:nth-child(n+18):nth-child(-n+25) {
-  background-color: #FFF8DC;
-}
-
-tbody.hitter td:nth-child(n+26):nth-child(even):nth-child(-n+31) {
-  background-color: #FF7F00;
-}
-tbody.hitter td:nth-child(n+26):nth-child(odd):nth-child(-n+31) {
-  background-color: #6495ED;
-}
-
-tbody.pitcher td:nth-child(1) {
-  background-color: #f6f6f6;
-  white-space: nowrap;
-  text-align: left;
-}
-
-tbody.pitcher td:nth-child(n+2):nth-child(-n+3) {
-  background-color: #DC143C;
-}
-
-tbody.pitcher td:nth-child(n+4):nth-child(-n+13) {
-  background-color: #7FFFD4;
-}
-
-tbody.pitcher td:nth-child(n+14):nth-child(-n+18) {
-  background-color: #EA8DFE;
-}
-
-
-tbody.pitcher td:nth-child(19){
-  background-color: #D3D3D3;
-}
-
-tbody.pitcher td:nth-child(n+21):nth-child(-n+24) {
-  background-color: #D3D3D3;
-}
-
-tbody.pitcher td:nth-child(n+26):nth-child(-n+29) {
-  background-color: #D3D3D3;
-}
-
-
-tbody.pitcher td:nth-child(30) {
-  background-color: #FFF8DC;
-}
-tbody.pitcher td:nth-child(n+32):nth-child(-n+35) {
-  background-color: #FFF8DC;
-}
-
-tbody.pitcher td:nth-child(n+37):nth-child(-n+40) {
-  background-color: #FFF8DC;
-}
-
-
-tbody.pitcher td:nth-child(41){
-  background-color: #FF7F00;
-}
-tbody.pitcher td:nth-child(n+43):nth-child(-n+46) {
-  background-color: #FF7F00;
-}
-
-tbody.pitcher td:nth-child(n+48):nth-child(-n+51) {
-  background-color: #FF7F00;
-}
-
-tbody.pitcher td:nth-child(n+52):nth-child(-n+57) {
-  background-color: #DC143C;
-}
-
-
-tbody.pitcher td.blue {
-  background-color: #6495ED;
-}*/
-
 
 
 

@@ -20,8 +20,6 @@
       <% lefty, righty = lancer.opposing_batters_handedness %>
       <tr>
         <td class="name"><%= "#{lancer.player.name} (#{lancer.throwhand})" %></td>
-        <td><%= lefty %></td>
-        <td><%= righty %></td>
         <%= render partial: "game/new/pitcher_handed", locals: { stats: stats, lefty: lefty, righty: righty } %>
       </tr>
     <% end %>

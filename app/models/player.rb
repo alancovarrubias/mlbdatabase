@@ -1,9 +1,12 @@
 class Player < ActiveRecord::Base
+  validates :name,        presence: true
   validates :identity,    uniqueness: :true, allow_blank: true
   validates :fangraph_id, uniqueness: :true, allow_nil: true
+
   belongs_to :team
   has_many :lancers, dependent: :destroy
   has_many :batters, dependent: :destroy
+  has_many :transactions, dependent: :destroy
 
   def self.search(name, identity=nil, fangraph_id=0)
     if @nicknames[name]

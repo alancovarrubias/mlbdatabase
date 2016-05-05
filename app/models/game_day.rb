@@ -1,6 +1,7 @@
 class GameDay < ActiveRecord::Base
   belongs_to :season
-  has_many   :games
+  has_many   :games,        dependent: :destroy
+  has_many   :transactions, dependent: :destroy
   def self.search(time)
   	game_day = GameDay.find_by(year: time.year, month: time.month, day: time.day)
   	unless game_day
@@ -22,14 +23,12 @@ class GameDay < ActiveRecord::Base
   end
 
   def date
-    "#{self.month}/#{self.day}"
+    "#{self.year}/#{self.month}/#{self.day}"
   end
 
   def is_preseason?
     if self.month < 4 || (self.month == 4 && self.day < 3)
       true
-    else
-      false
     end
   end
 

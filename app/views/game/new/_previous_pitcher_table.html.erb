@@ -11,6 +11,7 @@
   	<% prev_pitchers.each_with_index do |pitcher, index| %>
 	  	<tr>
 	  		<td><%= index+1 %></td>
+	  		<td><%= pitcher.game_id %></td>
 	  		<td><%= pitcher.game.game_day.date %></td>
 	  		<td><%= pitcher.opp_team.abbr %></td>
 	  		<td><%= pitcher.ip %></td>

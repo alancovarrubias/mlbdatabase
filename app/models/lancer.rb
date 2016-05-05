@@ -8,15 +8,15 @@ class Lancer < ActiveRecord::Base
   include PlayerUpdate
 
   def self.starters
-    Lancer.where(game_id: nil, starter: true)
+    where(game_id: nil, starter: true)
   end
 
   def self.bullpen
-    Lancer.where(game_id: nil, bullpen: true)
+    where(game_id: nil, bullpen: true)
   end
 
   def name
-    self.player.name
+    player.name
   end
 
   def stats(handedness=nil)
@@ -42,7 +42,7 @@ class Lancer < ActiveRecord::Base
   end
 
   def throwhand
-    self.player.throwhand
+    player.throwhand
   end
 
   def opp_team
@@ -54,10 +54,7 @@ class Lancer < ActiveRecord::Base
 
 
   def predict_opposing_lineup
-    game = self.game
     game_day = game.game_day
-    opp_team = self.opp_team
-    throwhand = self.throwhand
 
     i = 1
     # Iterate through previous games until you find one that the opposing team played a pitcher with the same handedness
@@ -101,26 +98,21 @@ class Lancer < ActiveRecord::Base
 
   def opposing_lineup
 
-    unless game = self.game
-      return nil
+    if game
+      game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
     end
-
-    opp_team = self.opp_team
-    return game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
 
   end
 
 
   def opposing_batters_handedness
 
-    unless game = self.game
+    unless game
       return nil
     end
 
     opp_lineup = self.opposing_lineup
-    if opp_lineup.size == 0
-      opp_lineup = self.predict_opposing_lineup
-    end
+    opp_lineup = self.predict_opposing_lineup if opp_lineup.size == 0
 
     throwhand = self.throwhand
     same = opp_lineup.select { |batter| batter.bathand == throwhand }.size
@@ -176,7 +168,7 @@ class Lancer < ActiveRecord::Base
   end
 
   def sort_pitchers
-    self.game.game_day.index
+    game.game_day.index
   end
 
   # Find previous starting games

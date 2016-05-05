@@ -84,7 +84,6 @@ module WeatherUpdate
 
     game.weathers.where(station: "Forecast").order("hour").each_with_index do |weather, index|
     	weather.update(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index], feel: @feel[index], dew: @dew[index])
-      # weather.update(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index], feel: @feel[index], dew: @dew[index])
     end
   end
 
@@ -115,7 +114,7 @@ module WeatherUpdate
     
     size = page.search("#obsTable th").size
     elements = page.search("#obsTable td")
-    temp = humidity = pressure = rain = dir = speed  = nil
+    temp = humidity = pressure = rain = dir = speed  = dew = nil
     weathers = game.weathers.where(station: "Actual")
     weather = nil
     elements.each_with_index do |stat, index|
@@ -134,6 +133,8 @@ module WeatherUpdate
         end
       when 1
         temp = stat.text.strip
+      when 2
+        dew = stat.text.strip
       when size - 9
         humidity = stat.text.strip
       when size - 8
@@ -145,7 +146,7 @@ module WeatherUpdate
       when size - 3
         rain = stat.text.strip
         if weather
-          weather.update_attributes(wind: speed + " " + dir, speed: speed, dir: dir, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
+          weather.update_attributes(wind: speed + " " + dir, speed: speed, dir: dir, dew: dew, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
         end
       end
     end

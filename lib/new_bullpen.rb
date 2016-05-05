@@ -56,11 +56,9 @@ module NewBullpen
     season = Season.find_by_year(time.year)
   	doc.css(".league td").each do |element|
   	  text = element.text
-
       if text == "Pitcher"
         team_index += 1
       end
-
   	  case var
   	  when 1
   	    one = get_pitches(text)
@@ -73,7 +71,6 @@ module NewBullpen
   		  update_bullpen_pitches(player, one, two, three, time)
   		  var = 0
 	    end
-
   	  # Elements with two children contain the pitcher information
   	  if element.children.size == 2
   	  	identity, fangraph_id, name, handedness = pitcher_info(element)
@@ -111,12 +108,8 @@ module NewBullpen
           else
             one = text.to_i
           end
-          games = game_day.games
-          if games.empty?
-            next
-          end
-          game_ids = games.map { |game| game.id }
-          Lancer.where(player_id: player.id, game_id: game_ids).each do |lancer|
+          lancers = player.game_day_lancers(game_day)
+          lancers.each do |lancer|
             puts "#{player.name} #{lancer.game.url} pitches #{one}"
             lancer.update(pitches: one)
           end
