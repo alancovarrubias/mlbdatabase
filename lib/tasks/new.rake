@@ -19,7 +19,6 @@ namespace :new do
   	end
 
   	Season.all.each do |season|
-    season = Season.last
   	  Team.all.each do |team|
   	  	update_batters(season, team)
   	    update_pitchers(season, team)
@@ -97,6 +96,10 @@ namespace :new do
     GameDay.where(index: 0).each do |game_day|
       game_day.update(index: game_day.find_index)
     end
+  end
+
+  task test: :environment do
+    Create::Players.new
   end
   
 end

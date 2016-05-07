@@ -1,16 +1,11 @@
 module Update
   class Pitchers
 
-  	attr_accessor :season, :team
+  	include NewShare
 
-  	def initialize(season, team)
-  		@season = season
-  		@team = team
-  	end
-
-  	def update_stat
+  	def run(season, team)
   		year = season.year
-  		puts "Update " + team.name + " " + year.to_s + " Pitchers"
+  		puts "Update #{team.name} #{year} Pitchers"
 
 	  	url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=1&season=#{year}&month=0&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
 	  	doc = download_document(url)
@@ -144,9 +139,9 @@ module Update
 	  end
 
 
-    def game_pitchers(game_day)
+    def game_day_pitchers(game_day)
       game_day.games.each do |game|
-      	@pitchers = Array.new
+      	@pitchers = Player.none
 		    url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
 		    puts url
 		    doc = download_document(url)
@@ -195,13 +190,34 @@ module Update
 					  	  lancer = player.create_lancer(game.game_day.season, team, game)
 					  	  lancer.update(starter: true)
 					  	end
-				  	    # puts lancer.player.name
-			  		    lancer.update(ip: ip, h: h, r: r, bb: bb)
+		  		    lancer.update(ip: ip, h: h, r: r, bb: bb)
 					  end
 					  break
 					end
 			  end
 			end
+
+		  def parse_fangraph_id(element)
+		    href = element.child['href']
+		    if href
+			  	first = href.index('=')+1
+			  	last = href.index('&')
+			  	return href[first...last].to_i
+		    end
+		  end
+
+    	def get_handedness(url_index)
+	  	  handedness = nil
+	  	  case url_index
+	  	  when 0
+	  	  	handedness = "L"
+	  	  when 1
+	  	  	handedness = "R"
+	  	  when 2
+	  	  	handedness = ""
+	  	  end
+	  	  return handedness
+	  	end
 
   end
 end

@@ -1,7 +1,7 @@
 module Create
   class Teams
 
-  	def self.teams
+  	def self.create
   	  @@team_attributes.each do |team_params|
   	    unless team = Team.find_by_name(team_params[:name])
   	  	  team = Team.create(name: team_params[:name])

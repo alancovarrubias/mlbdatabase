@@ -1,17 +1,11 @@
 module Update
 	class Batters
 
-		attr_accessor :season, :team
+		include NewShare
 
-		def initialize(season, team)
-			@season = season
-			@team = team
-		end
-
-	  def update
+	  def run(season, team)
 	  	year = season.year
-	  	puts "Update " + team.name + " " + year.to_s + " Batters"
-
+	  	puts "Update #{team.name} #{year} Batters"
 	    url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{year}.shtml"
 	    puts url
 	    doc = download_document(url)
@@ -32,8 +26,6 @@ module Update
 	              stat.update_attributes(ops: ops)
 	            end
 	          end
-	        else
-	          puts "Player " + name + " not found"
 	        end
 	      end
 	    end
@@ -87,6 +79,38 @@ module Update
 	  	  end
 	  	end
 	  end
+
+	  private
+
+	  	def parse_identity(element)
+			  href = element.child.child['href']
+			  if href == nil
+					href = element.child['href']
+			  end
+			  return href[11..href.index(".")-1]
+			end
+
+		  def parse_fangraph_id(element)
+		    href = element.child['href']
+		    if href
+			  	first = href.index('=')+1
+			  	last = href.index('&')
+			  	return href[first...last].to_i
+		    end
+		  end
+
+    	def get_handedness(url_index)
+	  	  handedness = nil
+	  	  case url_index
+	  	  when 0
+	  	  	handedness = "L"
+	  	  when 1
+	  	  	handedness = "R"
+	  	  when 2
+	  	  	handedness = ""
+	  	  end
+	  	  return handedness
+	  	end
 
 	end
 end

@@ -1,14 +1,10 @@
 module Create
 	class Games
 
-		attr_accessor :game_day
-
-		def initialize(game_day)
-			@game_day = game_day
-		end
-
-	  def create
-
+		include NewShare
+		
+	  def create(time)
+	  	game_day = GameDay.search(time)
 	  	url = "http://www.baseballpress.com/lineups/%d-%02d-%02d" % [game_day.year, game_day.month, game_day.day]
 	  	doc = download_document(url)
 	  	puts url
@@ -16,7 +12,6 @@ module Create
 	  	set_starters_false
 	  	create_game_stats(doc, game_day)
 	    remove_excess_starters(game_day)
-
 	  end
 
 	  private

@@ -3,13 +3,7 @@ module Create
 
     include NewShare
 
-    attr_accessor :season
-
-    def initialize(season)
-      @season = season
-    end
-
-    def create
+    def create(season)
       game_days = season.game_days
       (1..12).each do |month|
         Team.all.each do |team|

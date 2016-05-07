@@ -8,31 +8,31 @@ module StatUpdate
   	url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{year}-roster.shtml"
   	doc = download_document(url)
   	modulus = get_modulus(season.year)
-	name = identity = bathand = throwhand = nil
-	doc.css("#appearances td").each_with_index do |element, index|
-	  text = element.text
-	  case index%modulus
-	  when 0
-	  	name = text
-	  	identity = parse_identity(element)
-	  when 3
-	  	bathand = text
-	  when 4
-	  	throwhand = text
-	  when 13
-	  	is_pitcher = (text.to_i != 0)
-	  	unless player = Player.search(name, identity)
-	  	  player = Player.create(name: name, identity: identity)
-	  	  puts "Player " + player.name + " created"
-	  	end
-	  	player.update_attributes(team_id: team.id, identity: identity, bathand: bathand, throwhand: throwhand)
-	  	player.create_batter(season)
-	  	if is_pitcher
-	  	  player.create_lancer(season)
-	  	end
-	  	check_exceptions(player)
-	  end
-	end
+  	name = identity = bathand = throwhand = nil
+  	doc.css("#appearances td").each_with_index do |element, index|
+  	  text = element.text
+  	  case index%modulus
+  	  when 0
+  	  	name = text
+  	  	identity = parse_identity(element)
+  	  when 3
+  	  	bathand = text
+  	  when 4
+  	  	throwhand = text
+  	  when 13
+  	  	is_pitcher = (text.to_i != 0)
+  	  	unless player = Player.search(name, identity)
+  	  	  player = Player.create(name: name, identity: identity)
+  	  	  puts "Player " + player.name + " created"
+  	  	end
+  	  	player.update_attributes(team_id: team.id, identity: identity, bathand: bathand, throwhand: throwhand)
+  	  	player.create_batter(season)
+  	  	if is_pitcher
+  	  	  player.create_lancer(season)
+  	  	end
+  	  	check_exceptions(player)
+  	  end
+  	end
   end
 
   # Updates fangraph_ids of players for easier updating
@@ -97,8 +97,6 @@ module StatUpdate
               stat.update_attributes(ops: ops)
             end
           end
-        else
-          puts "Player " + name + " not found"
         end
       end
     end
@@ -117,9 +115,6 @@ module StatUpdate
   	  	  name = text
   	  	  fangraph_id = parse_fangraph_id(element)
   	  	  player = Player.search(name, nil, fangraph_id)
-  	  	  unless player
-  	  	    puts "Player " + name + " not found" 
-  	  	  end
   	  	when 2
   	  	  ab = text.to_i
   	  	when 3
@@ -146,7 +141,7 @@ module StatUpdate
   	  	  	handedness = get_handedness(url_index)
   	  	  	batter = player.create_batter(season)
   	  	  	batter_stat = batter.stats.where(handedness: handedness).first
-		  	batter_stat.update_attributes(ab: ab, sb: sb, bb: bb, so: so, slg: slg, obp: obp, woba: woba, wrc: wrc, ld: ld, gb: gb, fb: fb)
+		  	   batter_stat.update(ab: ab, sb: sb, bb: bb, so: so, slg: slg, obp: obp, woba: woba, wrc: wrc, ld: ld, gb: gb, fb: fb)
   	  	  end
   	  	end
   	  end
@@ -156,6 +151,8 @@ module StatUpdate
   def update_pitchers(season, team)
   	year = season.year
   	puts "Update " + team.name + " " + year.to_s + " Pitchers"
+
+  	byebug
 
   	url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=1&season=#{year}&month=0&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
   	doc = download_document(url)
@@ -225,9 +222,11 @@ module StatUpdate
 		when 13
 		  h = text.to_i
 		  if player
+		  	puts "#{player.name} #{ip}"
 		  	handedness = get_handedness(url_index)
 		  	lancer = player.create_lancer(season)
 		  	pitcher_stat = lancer.stats.find_by(handedness: handedness)
+		  	puts pitcher_stat.id
 		  	pitcher_stat.update(ld: ld, whip: whip, ip: ip, so: so, bb: bb, era: era, fb: fb, xfip: xfip, kbb: kbb, woba: woba, gb: gb, h: h)
 		  end
 		end

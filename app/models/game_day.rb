@@ -10,7 +10,7 @@ class GameDay < ActiveRecord::Base
   def self.search(time)
   	game_day = GameDay.find_by(year: time.year, month: time.month, day: time.day)
   	unless game_day
-  	  game_day = GameDay.create(season_id: Season.find_by_year(time.year).id, year: time.year, month: time.month, day: time.day)
+  	  game_day = GameDay.create(season: Season.find_by_year(time.year), year: time.year, month: time.month, day: time.day)
       game_day.update(index: game_day.find_index)
   	end
   	return game_day
