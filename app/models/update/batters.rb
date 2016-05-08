@@ -3,7 +3,7 @@ module Update
 
 		include NewShare
 
-	  def run(season, team)
+	  def update(season, team)
 	  	year = season.year
 	  	puts "Update #{team.name} #{year} Batters"
 	    url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{year}.shtml"

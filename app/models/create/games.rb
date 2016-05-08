@@ -3,8 +3,7 @@ module Create
 
 		include NewShare
 		
-	  def create(time)
-	  	game_day = GameDay.search(time)
+	  def create(game_day)
 	  	url = "http://www.baseballpress.com/lineups/%d-%02d-%02d" % [game_day.year, game_day.month, game_day.day]
 	  	doc = download_document(url)
 	  	puts url
@@ -73,7 +72,7 @@ module Create
 		  	ball_games = game_day.games
 				# Create games that have not been created yet
 				(0...gametime.size).each do |i|
-				  games = ball_games.where(home_team_id: home[i].id, away_team_id: away[i].id)
+				  games = ball_games.where(home_team: home[i], away_team: away[i])
 				  if game_day.is_preseason?
 						if games.empty?
 						  new_game = create_game(game_day, time, home[i], away[i], '0')
@@ -218,33 +217,6 @@ module Create
 				end
 			end
 
-		  def create_tomorrow_stats(doc, games, away, home)
-		  	season = Season.find_by_year(Time.now.tomorrow.year)
-		    doc.css(".team-name+ div").each_with_index do |element, index|
-			  	if element.text == "TBD"
-			    	next
-			  	end
-			  	game = games[index/2]
-			  	if index%2 == 0
-						team = away[index/2]
-			  	else
-						team = home[index/2]
-			  	end
-
-				  identity, fangraph_id, name, handedness = pitcher_info(element)
-				  player = Player.search(name, identity)
-				  unless player
-				  	player = Player.create(name: name, identity: identity, throwhand: handedness)
-				  end
-				  player.update_attributes(team_id: team.id)
-
-				  lancer = player.create_lancer(season)
-				  lancer.update_attributes(starter: true)
-				  game_lancer = player.create_lancer(season, team, game)
-				  game_lancer.update_attributes(starter: true)
-
-				end
-		  end
 
 		  def remove_excess_starters(game_day)
 		  	game_day.games.each do |game|

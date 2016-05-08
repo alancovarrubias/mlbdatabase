@@ -10,7 +10,7 @@ module NewBullpen
       if team
         games.where("away_team_id = #{team.id} OR home_team_id = #{team.id}").each do |game|
           lancer = player.create_lancer(lancer.season, team, game)
-          lancer.update_attributes(bullpen: true)
+          lancer.update(bullpen: true)
         end
       end
     end
@@ -99,7 +99,6 @@ module NewBullpen
       doc.css(".league td").each do |element|
 
         text = element.text
-
         case var
         when 1
           var = 0
@@ -120,7 +119,6 @@ module NewBullpen
           player = Player.search(name, identity, fangraph_id)
           var = 1
         end
-
       end
     end
     

@@ -1,21 +1,17 @@
 class TestClass
 
-  def initialize
-    @var = 1
-  end
-
   def set
-    @var = 1
+    @var = Array.new
+    checkit
+    puts @var.size
   end
 
-  def self.main
-    puts @var
-  end
-
-  def main
-    puts @var
+  def checkit
+    @var << 1
+    puts @var.size
   end
 
 end
 
-puts TestClass.new.instance_variables
+# TestClass.main
+TestClass.new.set

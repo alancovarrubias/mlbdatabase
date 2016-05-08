@@ -39,16 +39,19 @@ namespace :new do
   end
 
   task update_weather: :environment do
-
-  	include WeatherUpdate
+    
   	time = Time.now
   	GameDay.search(time).games.each do |game|
+      game.create_weather
       game.update_weather
+      game.update_forecast
 	  end
 
     time = time.tomorrow
 	  GameDay.search(time).games.each do |game|
+      game.create_weather
       game.update_weather
+      game.update_forecast
 	  end
 
   end
@@ -92,14 +95,5 @@ namespace :new do
     end
   end
 
-  task fix_game_day_index: :environment do
-    GameDay.where(index: 0).each do |game_day|
-      game_day.update(index: game_day.find_index)
-    end
-  end
-
-  task test: :environment do
-    Create::Players.new
-  end
   
 end

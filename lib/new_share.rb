@@ -1,18 +1,16 @@
 module NewShare
 
-  require 'open-uri'
-  require 'open_uri_redirections'
-  require 'nokogiri'
-  require 'mechanize'
-  require 'timeout'
-
   def mechanize_page(url)
     page = nil
+    count = 3
     begin
-      Timeout::timeout(3){
-        page = Mechanize.new.get(url)
-      }
-    rescue Errno::ECONNREFUSED, Timeout::Error, URI::InvalidURIError => e
+      if count > 0
+        count -= 1
+        Timeout::timeout(3){
+          page = Mechanize.new.get(url)
+        }
+      end
+    rescue => e
       retry
     end
     return page
@@ -20,11 +18,15 @@ module NewShare
   
   def download_document(url)
   	doc = nil
+    count = 3
     begin
-      Timeout::timeout(3){
-  	    doc = Nokogiri::HTML(open(url, allow_redirections: :all))
-  	  }
-    rescue OpenURI::HTTPError, Errno::ECONNREFUSED, Errno::ECONNRESET, Timeout::Error, URI::InvalidURIError, Zlib::BufError => e
+      if count > 0
+        count -= 1
+        Timeout::timeout(3){
+    	    doc = Nokogiri::HTML(open(url, allow_redirections: :all))
+    	  }
+      end
+    rescue => e
       retry
     end
     return doc
@@ -33,7 +35,6 @@ module NewShare
   def find_date(time)
     return time.hour, time.day, time.month, time.year
   end
-
 
   def pitcher_info(element)
     name = element.child.text

@@ -74,6 +74,8 @@ class Player < ActiveRecord::Base
   private
 
   @nicknames = {
+    "Timoth Adleman" => "Tim Adleman",
+    "Benjamin Gamel" => "Ben Gamel",
     "Jonathon Niese" => "Jon Niese",
     "Phil Gosselin" => "Philip Gosselin",
     "Thomas Pham" => "Tommy Pham",

@@ -3,7 +3,11 @@ class Team < ActiveRecord::Base
 	has_many :lancers
 	has_many :batters
 
+  def self.create_teams
+    Create::Teams.create
+  end
+
 	def css
-	  (self.city + self.name).gsub(/\s+/, "")
+	  (city + name).gsub(/\s+/, "")
 	end
 end

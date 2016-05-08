@@ -1,8 +1,9 @@
 module Create
   class Bullpen
 
-    def create(time)
-      game_day = GameDay.search(time)
+    include NewShare
+
+    def create(game_day)
       set_bullpen(game_day)
       create_bullpen(game_day)
     end
@@ -35,7 +36,7 @@ module Create
             var += 1
           when 3
             three = get_pitches(text)
-            update_bullpen_pitches(player, one, two, three, time)
+            update_bullpen_pitches(player, one, two, three, game_day.time)
             var = 0
           end
 

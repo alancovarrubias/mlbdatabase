@@ -3,7 +3,7 @@ module Update
 
   	include NewShare
 
-  	def run(season, team)
+  	def update(season, team)
   		year = season.year
   		puts "Update #{team.name} #{year} Pitchers"
 
@@ -113,11 +113,15 @@ module Update
 			end
 
 			team.players.each do |player|
-	  	  if player.identity == "" || player.find_lancer(season) == nil
-	  	  	next
-	  	  end
+				unless player.find_lancer(season)
+					next
+				end
 	  	  url = "http://www.baseball-reference.com/players/split.cgi?id=#{player.identity}&year=#{year}&t=p"
 	  	  doc = download_document(url)
+	  	  unless doc
+	  	  	puts "#{player.name} not found"
+	  	  	next
+	  	  end
 	  	  row = 0
 	  	  doc.css("#plato td").each_with_index do |element, index|
 	  	  	case index%28
@@ -139,17 +143,16 @@ module Update
 	  end
 
 
-    def game_day_pitchers(game_day)
+    def box_scores(game_day)
       game_day.games.each do |game|
-      	@pitchers = Player.none
+      	@pitcher_ids = Array.new
 		    url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
 		    puts url
 		    doc = download_document(url)
 		    team_pitchers(doc, game, game.away_team)
 		    team_pitchers(doc, game, game.home_team)
-		    player_ids = @pitchers.map { |player| player.id }
 		    game.lancers.where(starter: true).each do |lancer|
-		      unless player_ids.include? lancer.player_id
+		      unless @pitcher_ids.include? lancer.player_id
 		      	puts "#{lancer.player.name} destroyed"
 		      	lancer.destroy
 		      end
@@ -184,7 +187,7 @@ module Update
 					  bb = element.text.to_i
 					when 6
 					  if player = Player.search(name, identity)
-					  	@pitchers << player
+					  	@pitcher_ids << player.id
 					  	lancer = game.lancers.where(starter: true).find_by(player_id: player.id)
 					  	unless lancer
 					  	  lancer = player.create_lancer(game.game_day.season, team, game)

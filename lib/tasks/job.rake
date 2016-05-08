@@ -1,47 +1,53 @@
 namespace :job do
 
+  task daily: [:create_players, :update_batters, :update_pitchers, :pitcher_box_score]
+
+  task hourly: [:update_weather, :update_forecast, :update_games]
+
+  task ten: [:create_games]
+
   task create_season: :environment do
-    Season.create(year: 2016)
+    Season.create_seasons
   end
   
   task create_teams: :environment do
-    Create::Teams.create
+    Team.create_teams
   end
 
   task create_players: :environment do
-    players_creator = Create::Players.new
-    Season.all.each do |season|
-      Team.all.each do |team|
-        players_creator.run(season, team)
-        players_creator.fangraphs(team)
-      end
-    end
+    Season.all.map { |season| season.create_players }
   end
 
   task update_batters: :environment do
-    batters_updater = Update::Batters.new
-    Season.all.each do |season|
-      Team.all.each do |team|
-        batters_updater.run(season, team)
-      end
-    end
+    Season.all.map { |season| season.update_batters }
   end
 
   task update_pitchers: :environment do
-    pitchers_updater = Update::Pitchers.new
-    Season.all.each do |season|
-      Team.all.each do |team|
-        pitchers_updater.run(season, team)
-      end
-    end
+    Season.all.map { |season| season.update_pitchers }
   end
 
-  task create_matchups: :environment do
-    game_creator = Create::Games.new
-    bullpen_creator = Create::Bullpen.new
-    time = Time.now
-    game_creator.create(time)
-    bullpen_creator.create(time)
+  task create_games: :environment do
+    [GameDay.today, GameDay.tomorrow].map { |game_day| game_day.create_games }
+  end
+
+  task update_games: :environment do
+    GameDay.today.update_games
+  end
+
+  task update_weather: :environment do
+    GameDay.today.update_weather
+  end
+
+  task update_forecast: :environment do
+    [GameDay.today, GameDay.tomorrow].map { |game_day| game_day.update_forecast }
+  end
+
+  task pitcher_box_score: :environment do
+    GameDay.yesterday.pitcher_box_score
+  end
+
+  task fix_weather: :environment do
+    GameDay.all.map { |game_day| game_day.update_weather }
   end
 
 end

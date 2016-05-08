@@ -1,90 +1,91 @@
 module Update
-  class Forecast
+  class Forecasts
 
-  	attr_accessor :game
+    include NewShare
 
-  	def initialize(game)
-  	  @game = game
-	  	@temp = Array.new
-      @humidity = Array.new
-      @rain = Array.new
-      @wind = Array.new
-      @feel = Array.new
-      @dew = Array.new
-  	end
-
-    def update_pressure_forecast
-      game_day = game.game_day
-      unless game_day == GameDay.search(Time.now) || game_day == GameDay.search(Time.now.tomorrow)
-        return
-      end
-  	  home_team = game.home_team
-  	  url = "https://www.wunderground.com/cgi-bin/findweather/getForecast?query=#{home_team.zipcode}"
-	  	page = mechanize_page(url)
-
-      page.search("#current td").each_with_index do |stat, index|
-	    	if index == 1
-	      	pressure = stat.text.strip[0..4] + ' in'
-          game.weathers.where(station: "Forecast").update_all(pressure: pressure)
-          break
-	    	end
-      end
-    end
-
-    def update_forecast
-
-      game_day = game.game_day
-  	  game_time = game.time
-  	  unless game_time.include?(":")
-  	    return
-  	  end
-  	  game_hour = game_time[0...game_time.index(":")].to_i
-  	  period = game_time[-2..-1]
-  	  game_hour = convert_to_military_hour(game_hour, period)
-      if game_day == GameDay.search(Time.now)
-  	  elsif game_day == GameDay.search(Time.now.tomorrow)
-  	    game_hour += 24
-      else
-        return
-      end
-
-      home_team = game.home_team
-  	  url = @@urls[home_team.id-1]
-      url += "?hour=#{game_hour}"
-      doc = download_document(url)
-      puts url
-      initialize_arrays
-      var = row = 0
-      doc.css("td").each_with_index do |stat, index|
-        text = get_accuweather_text(stat)
-        if index == 40 || index == 73
-          var = 0
-          next
-        end
-        case var%8
-        when 0
-          add_to_array(row, text)
-        when 1
-          add_to_array(row, text)
-        when 2
-          add_to_array(row, text)
-          row += 1
-        end
-        var += 1
-      end
-
-      if home_team.id == 4
-		    (0..2).each do |i|
-		      @temp[i] = convert_to_fahr(@temp[i])
-		    end
-      end
-
-      game.weathers.where(station: "Forecast").order("hour").each_with_index do |weather, index|
-    		weather.update(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index], feel: @feel[index], dew: @dew[index])
-      end
+    def update(game)
+      update_pressure(game)
+      update_forecast(game)
     end
 
     private
+
+      def update_pressure(game)
+        game_day = game.game_day
+    	  home_team = game.home_team
+    	  url = "https://www.wunderground.com/cgi-bin/findweather/getForecast?query=#{home_team.zipcode}"
+  	  	page = mechanize_page(url)
+
+        page.search("#current td").each_with_index do |stat, index|
+  	    	if index == 1
+  	      	pressure = stat.text.strip[0..4] + ' in'
+            game.weathers.where(station: "Forecast").update_all(pressure: pressure)
+            break
+  	    	end
+        end
+      end
+
+      def update_forecast(game)
+
+        game_day = game.game_day
+    	  game_time = game.time
+    	  unless game_time.include?(":")
+    	    return
+    	  end
+    	  game_hour = game_time[0...game_time.index(":")].to_i
+    	  period = game_time[-2..-1]
+    	  game_hour = convert_to_military_hour(game_hour, period)
+        if game_day == GameDay.search(Time.now)
+    	  elsif game_day == GameDay.search(Time.now.tomorrow)
+    	    game_hour += 24
+        else
+          return
+        end
+
+        home_team = game.home_team
+    	  url = @@urls[home_team.id-1]
+        url += "?hour=#{game_hour}"
+        doc = download_document(url)
+        puts url
+        initialize_arrays
+        var = row = 0
+        doc.css("td").each_with_index do |stat, index|
+          text = get_accuweather_text(stat)
+          if index == 40 || index == 73
+            var = 0
+            next
+          end
+          case var%8
+          when 0
+            add_to_array(row, text)
+          when 1
+            add_to_array(row, text)
+          when 2
+            add_to_array(row, text)
+            row += 1
+          end
+          var += 1
+        end
+
+        if home_team.id == 4
+  		    (0..2).each do |i|
+  		      @temp[i] = convert_to_fahr(@temp[i])
+  		    end
+        end
+
+        game.weathers.where(station: "Forecast").order("hour").each_with_index do |weather, index|
+      		weather.update(temp: @temp[index], humidity: @humidity[index], rain: @rain[index], wind: @wind[index], feel: @feel[index], dew: @dew[index])
+        end
+      end
+
+      def initialize_arrays
+        @temp = Array.new
+        @humidity = Array.new
+        @rain = Array.new
+        @wind = Array.new
+        @feel = Array.new
+        @dew = Array.new
+      end
 
 	    def convert_to_fahr(celsius)
 	      symbol = celsius[-1]

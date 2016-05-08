@@ -3,7 +3,7 @@ module Create
 
   	include NewShare
 
-  	def run(season, team)
+  	def create(season, team)
 
 		  puts "Create #{team.name} #{season.year} Players"
 		  url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{season.year}-roster.shtml"
