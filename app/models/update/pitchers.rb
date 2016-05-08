@@ -129,9 +129,9 @@ module Update
 	  	  	  ops = element.text.to_i
 	  	  	  case row
 	  	  	  when 0
-	  	  	  	player.create_lancer(season).stats.where(handedness: "R").first.update_attributes(ops: ops)
+	  	  	  	player.create_lancer(season).stats.find_by(handedness: "R").update_attributes(ops: ops)
 	  	  	  when 1
-	  	  	  	player.create_lancer(season).stats.where(handedness: "L").first.update_attributes(ops: ops)
+	  	  	  	player.create_lancer(season).stats.find_by(handedness: "L").update_attributes(ops: ops)
 	  	  	  end
 	  	  	  row += 1
 	  	  	end

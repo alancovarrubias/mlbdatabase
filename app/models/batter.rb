@@ -3,6 +3,7 @@ class Batter < ActiveRecord::Base
   belongs_to :player
   belongs_to :game
   belongs_to :season
+  # belongs_to :owner, polymorphic: true
   has_many   :batter_stats, dependent: :destroy
 
   def self.starters

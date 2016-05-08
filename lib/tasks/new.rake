@@ -7,7 +7,7 @@ namespace :new do
   task ten: [:matchups]
 
   task delete: :environment do
-    GameDay.search(Time.now).games.destroy_all
+    # GameDay.search(Time.now).games.destroy_all
     GameDay.search(Time.now.tomorrow).games.destroy_all
   end
 
@@ -93,6 +93,12 @@ namespace :new do
       end
       update_true_weather(game)
     end
+  end
+
+  task test: :environment do
+    include NewShare
+    url = ""
+    doc = download_document(url)
   end
 
   
