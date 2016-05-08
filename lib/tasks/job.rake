@@ -50,4 +50,8 @@ namespace :job do
     GameDay.all.map { |game_day| game_day.update_weather }
   end
 
+  task delete_games: :environment do
+    GameDay.today.delete_games
+  end
+
 end
