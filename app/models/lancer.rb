@@ -79,6 +79,7 @@ class Lancer < ActiveRecord::Base
           lineup = game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
           if game.home_team.league == "NL"
             lineup = lineup[0...-1]
+            puts game.id
             batter = game.lancers.find_by(starter: true, team_id: opp_team.id).player.create_batter(game_day.season)
             batter.lineup = 9
             lineup << batter

@@ -95,10 +95,9 @@ namespace :new do
     end
   end
 
-  task test: :environment do
-    include NewShare
-    url = ""
-    doc = download_document(url)
+  task fix: :environment do
+    game_day = GameDay.find(270)
+    Update::Pitchers.new.box_scores(game_day)
   end
 
   
