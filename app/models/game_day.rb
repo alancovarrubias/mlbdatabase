@@ -73,7 +73,7 @@ class GameDay < ActiveRecord::Base
   	GameDay.find_by(year: date.year, month: date.month, day: date.day)
   end
 
-  def date
+  def date_string
     "#{year}/#{month}/#{day}"
   end
 

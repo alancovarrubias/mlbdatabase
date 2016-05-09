@@ -54,4 +54,10 @@ namespace :job do
     GameDay.today.delete_games
   end
 
+  task fix_game_day: :environment do
+    GameDay.all.each do |game_day|
+      game_day.update(date: Date.new(game_day.year, game_day.month, game_day.day))
+    end
+  end
+
 end
