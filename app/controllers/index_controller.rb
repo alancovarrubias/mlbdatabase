@@ -7,9 +7,9 @@ class IndexController < ApplicationController
   end
 
   def home
-		@yesterday = Time.now.yesterday
-    @today = Time.now
-    @tomorrow = Time.now.tomorrow
+		@yesterday = GameDay.yesterday
+    @today = GameDay.today
+    @tomorrow = GameDay.tomorrow
   end
 
   def game

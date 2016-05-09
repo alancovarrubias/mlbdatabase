@@ -1,6 +1,6 @@
 namespace :job do
 
-  task daily: [:create_players, :update_batters, :update_pitchers, :pitcher_box_score]
+  task daily: [:pitcher_box_score, :create_players, :update_batters, :update_pitchers]
 
   task hourly: [:update_weather, :update_forecast, :update_games]
 
@@ -57,6 +57,12 @@ namespace :job do
   task fix_game_day: :environment do
     GameDay.all.each do |game_day|
       game_day.update(date: Date.new(game_day.year, game_day.month, game_day.day))
+    end
+  end
+
+  task fix_pitcher_box_score: :environment do
+    GameDay.where(date: (Date.today-7)..Date.today).each do |game_day|
+      game_day.pitcher_box_score
     end
   end
 

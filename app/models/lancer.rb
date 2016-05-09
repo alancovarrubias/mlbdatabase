@@ -28,7 +28,7 @@ class Lancer < ActiveRecord::Base
     unless handedness
       return pitcher_stats
     else
-pitcher_stats.find_by(handedness: handedness)
+      pitcher_stats.find_by(handedness: handedness)
     end
   end
 
@@ -47,7 +47,8 @@ pitcher_stats.find_by(handedness: handedness)
 
   def opp_team
     if game
-      return team == game.away_team ? game.home_team : game.away_team
+      team == game.away_team ? game.home_team : game.away_team
+    else
     end
   end
 
@@ -75,11 +76,11 @@ pitcher_stats.find_by(handedness: handedness)
         end
 
         if opp_pitcher && opp_pitcher.player.throwhand == throwhand
-          lineup = game.batters.where(team_id: opp_team.id, starter: true).order("lineup ASC")
+          lineup = game.batters.where(team: opp_team, starter: true).order("lineup ASC")
           if game.home_team.league == "NL"
             lineup = lineup[0...-1]
             puts game.id
-            batter = game.lancers.find_by(starter: true, team_id: opp_team.id).player.create_batter(game_day.season)
+            batter = game.lancers.find_by(starter: true, team: opp_team).player.create_batter(game_day.season)
             batter.lineup = 9
             lineup << batter
           end
@@ -134,7 +135,7 @@ pitcher_stats.find_by(handedness: handedness)
         next
       end
       game_ids = game_day.games.map { |game| game.id }
-      lancer = Lancer.find_by(player_id: self.player_id, game_id: game_ids)
+      lancer = Lancer.find_by(player: self.player, game_id: game_ids)
 
       if lancer
         count += lancer.pitches * 10 ** num_size[index]
@@ -150,11 +151,11 @@ pitcher_stats.find_by(handedness: handedness)
     unless game
       return nil
     end
-    game_day = game.game_day.previous_days(days)
-    unless game_day
+    prev_game_day = game.game_day.previous_days(days)
+    unless prev_game_day
       return 0
     end
-    games = game_day.games
+    games = prev_game_day.games
     lancer = Lancer.find_by(player: player, game: games)
     lancer ? lancer.pitches : 0
     
@@ -173,6 +174,18 @@ pitcher_stats.find_by(handedness: handedness)
     lancers = Lancer.where.not(game: nil).where(starter: true, player: self.player).find_all { |lancer| lancer.game.game_day.index < index }
     lancers = lancers.find_all { |lancer| !lancer.game.game_day.is_preseason? }
     return lancers.sort_by(&:sort_pitchers).reverse
+  end
+
+  def test_prev_pitchers
+    Lancer.includes(game: :game_day)
+    .where.not(game: nil)
+    .where(player: player)
+    .where("game_days.date < ?", game.game_day.date)
+    .order("game_days.date DESC")
+    # player_lancers = player.lancers
+    # prev_game_days = GameDay.includes(games: :lancers).where("date < ?", game_day.date).order("date DESC")
+    # prev_game_days.first.games.first.lancers
+    # prev_game_days.map { |game_day| player_lancers.find_by(game_id: game_day.games.map { |game| game.id}) 
   end
 
   def self.add_innings
