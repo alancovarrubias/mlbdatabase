@@ -51,8 +51,8 @@ module GameHelper
     stat_array = Array.new
     handed = handedness(left)
     stats = batter.stats
-    stat_array << stats.where(handedness: handed).first
-    stat_array << stats.where(handedness: "").first
+    stat_array << stats.find_by(handedness: handed)
+    stat_array << stats.find_by(handedness: "")
     player = batter.player
     season = Season.find_by_year(batter.season.year-1)
     while season
@@ -69,19 +69,6 @@ module GameHelper
     else
       "R"
     end
-  end
-
-  def lancer_stats(pitcher)
-    stat_array = Array.new
-    stat_array << pitcher.stats
-    player = pitcher.player
-    season = Season.find_by_year(pitcher.season.year-1)
-    while season
-      pitcher = player.create_lancer(season)
-      stat_array << pitcher.stats
-      season = Season.find_by_year(season.year-1)
-    end
-    return stat_array
   end
 
 

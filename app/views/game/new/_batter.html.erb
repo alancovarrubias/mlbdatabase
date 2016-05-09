@@ -1,22 +1,25 @@
+<% seasons = Season.greater_than(2014) %>
 <table class=<%= batter_class(predicted)%>>
   <caption><%= caption %></caption>
   <thead>
     <tr>
       <th></th>
-      <th colspan="9"><%= "#{@season.year} vs #{handedness_header(left)}" %></th>
-      <th colspan="9">Last 14 Days</th>
-      <% Season.all.order("id DESC")[1..-1].each do |season| %>
-      <th colspan="9"><%= "#{season.year} vs #{handedness_header(left)}" %></th>
+      <% seasons.each do |season| %>
+        <th colspan="9"><%= "#{season.year} vs #{handedness_header(left)}" %></th>
+        <% if season.year == Time.now.year%>
+          <th colspan="9">Last 14 Days</th>
+        <% end %>
       <% end %>
-      <th colspan="2"><%= "#{@season.year}" %></th>
-      <th colspan="2">Last 14 Days</th>
-      <% Season.all.order("id DESC")[1..-1].each do |season| %>
+      <% seasons.each do |season| %>
         <th colspan="2"><%= "#{season.year}" %></th>
+        <% if season.year == Time.now.year%>
+          <th colspan="2">Last 14 Days</th>
+        <% end %>
       <% end %>
     </tr>
     <tr>
       <th>Name</th>
-      <% (Season.all.size + 1).times do %>
+      <% (seasons.size + 1).times do %>
         <th>wOBA</th>
         <th>OPS+</th>
         <th>AB</th>
@@ -27,7 +30,7 @@
         <th>LD%</th>
         <th>TLD%</th>
       <% end %>
-      <% (Season.all.size + 1).times do %>
+      <% (seasons.size + 1).times do %>
         <th>Rank</th>
         <th>AB</th>
       <% end %>
@@ -35,17 +38,18 @@
   </thead>
   <tbody class="batter">
     <% batters.each do |batter| %>
+      <% stats = batter.view_stats(seasons, handedness(left)) %>
       <tr>
         <td class="name"><%= "#{batter.lineup}. #{batter.player.name} (#{batter.player.bathand})"%></td>
-        <% batter_stats(batter, left).each do |stat| %>
+        <% stats.each do |stat| %>
           <%= render partial: "game/new/batter_stat", locals: { stat: stat } %>
         <% end %>
-        <% batter_stats(batter, left).each do |stat| %>
+        <% stats.each do |stat| %>
           <td><%= stat.wrc %></td>
           <td><%= stat.ab %></td>
         <% end %>
       </tr>
     <% end %>
   </tbody>
-    <%= render partial: "game/new/sum_batter", locals: { batters: batters, left: handedness(left) } %>
+  <%= render partial: "game/new/sum_batter", locals: { batters: batters, left: handedness(left), seasons: seasons } %>
 </table>

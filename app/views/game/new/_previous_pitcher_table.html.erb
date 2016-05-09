@@ -7,7 +7,7 @@
 	</tr>
   </thead>
   <tbody>
-  	<% prev_pitchers = pitcher.prev_pitchers[0..11] %>
+  	<% prev_pitchers = pitcher.prev_pitchers %>
   	<% prev_pitchers.each_with_index do |pitcher, index| %>
 	  	<tr>
 	  		<td><%= index+1 %></td>

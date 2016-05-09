@@ -1,3 +1,4 @@
+<% seasons = Season.greater_than(2014) %>
 <table class="lancer">
   <caption><%= caption %></caption>
   <thead>
@@ -6,16 +7,16 @@
       <th colspan="5">Pitches Thrown</th>
       <th colspan="10"><%= @season.year %></th>
       <th colspan="5">Last 30 Days</th>
-      <% Season.all.order("id DESC").each do |season| %>
+      <% seasons.each do |season| %>
         <th colspan="11"><%= season.year %></th>
       <% end %>
-      <% Season.all.order("id DESC").each do |season| %>
+      <% seasons.each do |season| %>
         <th colspan="2"><%= season.year %></th>
       <% end %>
-      <% Season.all.order("id DESC").each do |season| %>
+      <% seasons.each do |season| %>
         <th colspan="2"><%= season.year %></th>
       <% end %>
-      <% Season.all.order("id DESC").each do |season| %>
+      <% seasons.each do |season| %>
         <th colspan="2"><%= season.year %></th>
       <% end %>
     </tr>
@@ -39,7 +40,7 @@
       <th>IP</th>
       <th>SO</th>
       <th>BB</th>
-      <% (Season.all.size).times do %>
+      <% seasons.size.times do %>
         <th>FIP-</th>
         <th>IP LHB</th>
         <th>xFIP LHB</th>
@@ -52,27 +53,24 @@
         <th>OPS+ RHB</th>
         <th>wOBA RHB</th>
       <% end %>
-      <% (Season.all.size).times do %>
+      <% seasons.size.times do %>
         <th>GB LHB</th>
         <th>GB RHB</th>
       <% end %>
-      <% (Season.all.size).times do %>
+      <% seasons.size.times do %>
         <th>LD LHB</th>
         <th>LD RHB</th>
       <% end %>
-      <% (Season.all.size).times do %>
+      <% seasons.size.times do %>
         <th>TLD LHB</th>
         <th>TLD RHB</th>
       <% end %>
     </tr>
   </thead>
 
-
-
-
   <tbody class="bullpen">
     <% lancers.sort_by(&:sort_bullpen).each_with_index do |lancer, index| %>
-      <% stats = lancer_stats(lancer) %>
+      <% stats = lancer.view_stats(seasons) %>
       <tr>
         <td class="name"><%= "#{lancer.player.name} (#{lancer.player.throwhand})" %></td>
         <% 5.times do |i| %>
@@ -82,7 +80,6 @@
         <% stats.each do |stat| %>
           <%= render partial: "game/new/pitcher_stat", locals: { stat: stat } %>
         <% end %>
-        <% stats = lancer_stats(lancer) %>
         <% stats.each do |stat| %>
           <td><%= stat.first.gb %></td>
           <td><%= stat.second.gb %></td>
@@ -97,6 +94,5 @@
         <% end %>
       </tr>
     <% end %>
-
   </tbody>
 </table>

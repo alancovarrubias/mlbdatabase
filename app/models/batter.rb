@@ -37,5 +37,19 @@ class Batter < ActiveRecord::Base
   end
 
 
+  def view_stats(seasons, handedness)
+    stat_array = Array.new
+    stats = self.stats
+    stat_array << stats.find_by(handedness: handedness)
+    stat_array << stats.find_by(handedness: "")
+    seasons.each do |season|
+      unless season == self.season
+        stat_array << player.create_batter(season).stats.find_by(handedness: handedness)
+      end
+    end
+    return stat_array
+  end
+
+
 
 end

@@ -3,6 +3,9 @@ class Season < ActiveRecord::Base
   has_many :lancers
   has_many :batters
 
+  scope :greater_than, -> (year) { where("year >= ?", year).order("year DESC") }
+  scope :less_than,    -> (year) { where("year <= ?", year).order("year DESC") }
+
   def self.create_seasons
     Season.create(year: 2016)
   end
