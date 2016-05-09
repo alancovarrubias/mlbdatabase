@@ -133,11 +133,13 @@ table.game-index {
   white-space: nowrap;
 }
 
-
-
 table.previous {
   margin: 0 30px;
   float: right;
+}
+
+table.bullpen {
+  overflow-x: scroll;
 }
 
 caption {

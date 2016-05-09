@@ -51,8 +51,9 @@ namespace :job do
   end
 
   task create_games: :environment do
-    Season.find_by_year(2013).create_games
-    Season.find_by_year(2015).create_games
+    season = Season.find_by_year(2013)
+    season.create_players
+    season.create_games
   end
 
   task delete_games: :environment do
