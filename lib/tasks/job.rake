@@ -52,6 +52,7 @@ namespace :job do
 
   task create_games: :environment do
     Season.find_by_year(2014).create_games
+    Season.find_by_year(2015).create_games
   end
 
   task delete_games: :environment do
