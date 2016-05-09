@@ -52,6 +52,7 @@
 }
 
 body {
+  width: 110%;
   background-color: #FFFAFA;
   font-family: arial;
   border: 1px solid #666666;
@@ -135,9 +136,7 @@ table.game-index {
 
 
 table.previous {
-  /*display: inline-block;*/
-  /*margin: 10px 30px;*/
-  margin: 0 5px;
+  margin: 0 30px;
   float: right;
 }
 
