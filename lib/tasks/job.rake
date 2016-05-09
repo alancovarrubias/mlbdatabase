@@ -51,7 +51,7 @@ namespace :job do
   end
 
   task create_games: :environment do
-    Season.find_by_year(2014).create_games
+    Season.find_by_year(2013).create_games
     Season.find_by_year(2015).create_games
   end
 
@@ -69,12 +69,6 @@ namespace :job do
     GameDay.all.each do |game_day|
       game_day.pitcher_box_score
     end
-  end
-
-  task test: :environment do
-    include NewShare
-    url = "http://www.baseball-reference.com/teams/HOU/2015-schedule-scores.shtml"
-    doc = download_document(url)
   end
 
 end

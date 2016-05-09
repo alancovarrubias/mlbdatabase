@@ -18,6 +18,7 @@
 	  		<td><%= pitcher.h %></td>
 	  		<td><%= pitcher.r %></td>
 	  		<% weather = pitcher.game.true_weather %>
+	  		<% if weather %>
 	  		<td><%= weather.temp %></td>
 	  		<td><%= weather.dew %></td>
 	  		<td><%= weather.speed %></td>
@@ -25,6 +26,7 @@
 	  		<td><%= weather.pressure %></td>
 	  		<td><%= weather.humidity %></td>
 	  		<td><%= pitcher.game.home_team.abbr %></td>
+	  		<% end %>
 	  	</tr>
   	<% end %>
   	<tr>
