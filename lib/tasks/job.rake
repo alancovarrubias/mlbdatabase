@@ -4,7 +4,7 @@ namespace :job do
 
   task hourly: [:update_weather, :update_forecast, :update_games]
 
-  task ten: [:create_games]
+  task ten: [:create_matchups]
 
   task create_season: :environment do
     Season.create_seasons
@@ -26,8 +26,8 @@ namespace :job do
     Season.all.map { |season| season.update_pitchers }
   end
 
-  task create_games: :environment do
-    [GameDay.today, GameDay.tomorrow].map { |game_day| game_day.create_games }
+  task create_matchups: :environment do
+    [GameDay.today, GameDay.tomorrow].map { |game_day| game_day.create_matchups }
   end
 
   task update_games: :environment do
@@ -50,6 +50,10 @@ namespace :job do
     GameDay.all.map { |game_day| game_day.update_weather }
   end
 
+  task create_games: :environment do
+    Season.find_by_year(2014).create_games
+  end
+
   task delete_games: :environment do
     GameDay.today.delete_games
   end
@@ -61,9 +65,15 @@ namespace :job do
   end
 
   task fix_pitcher_box_score: :environment do
-    GameDay.where(date: (Date.today-7)..Date.today).each do |game_day|
+    GameDay.all.each do |game_day|
       game_day.pitcher_box_score
     end
+  end
+
+  task test: :environment do
+    include NewShare
+    url = "http://www.baseball-reference.com/teams/HOU/2015-schedule-scores.shtml"
+    doc = download_document(url)
   end
 
 end

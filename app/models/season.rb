@@ -29,4 +29,11 @@ class Season < ActiveRecord::Base
     end
   end
 
+  def create_games
+    game_creator = Create::Games.new
+    Team.all.each do |team|
+      game_creator.create(self, team)
+    end
+  end
+
 end

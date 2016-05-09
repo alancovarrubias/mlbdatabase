@@ -188,7 +188,7 @@ module Update
 					when 6
 					  if player = Player.search(name, identity)
 					  	@pitcher_ids << player.id
-					  	lancer = game.lancers.where(starter: true).find_by(player_id: player.id)
+					  	lancer = game.lancers.where(starter: true).find_by(player: player)
 					  	unless lancer
 					  	  lancer = player.create_lancer(game.game_day.season, team, game)
 					  	  lancer.update(starter: true)

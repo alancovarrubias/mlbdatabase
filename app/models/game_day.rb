@@ -24,9 +24,9 @@ class GameDay < ActiveRecord::Base
     GameDay.search(DateTime.now.tomorrow.to_date)
   end
 
-  def create_games
+  def create_matchups
     if today? || tomorrow?
-      Create::Games.new.create(self)
+      Create::Matchups.new.create(self)
       Create::Bullpen.new.create(self)
     end
   end

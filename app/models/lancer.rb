@@ -21,9 +21,9 @@ class Lancer < ActiveRecord::Base
 
   def stats(handedness=nil)
   	if pitcher_stats.size == 0
-  	  PitcherStat.create(lancer_id: self.id, range: "Season", handedness: "L")
-      PitcherStat.create(lancer_id: self.id, range: "Season", handedness: "R")
-      PitcherStat.create(lancer_id: self.id, range: "30 Days", handedness: "")
+  	  PitcherStat.create(lancer: self, range: "Season", handedness: "L")
+      PitcherStat.create(lancer: self, range: "Season", handedness: "R")
+      PitcherStat.create(lancer: self, range: "30 Days", handedness: "")
   	end
     unless handedness
       return pitcher_stats
