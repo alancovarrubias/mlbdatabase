@@ -54,6 +54,9 @@ namespace :job do
     season = Season.find_by_year(2013)
     season.create_players
     season.create_games
+    season.game_days.each do |game_day|
+      game_day.pitcher_box_score
+    end
   end
 
   task delete_games: :environment do
