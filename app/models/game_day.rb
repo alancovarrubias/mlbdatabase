@@ -65,7 +65,7 @@ class GameDay < ActiveRecord::Base
     year * 366 + month * 31 + day 
   end
 
-  def prev_day(num_days)
+  def previous_days(num_days)
   	date = Date.parse("#{year}-#{month}-#{day}")
   	num_days.times do
   	  date = date.prev_day

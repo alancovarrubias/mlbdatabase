@@ -20,15 +20,15 @@ class Lancer < ActiveRecord::Base
   end
 
   def stats(handedness=nil)
-  	if self.pitcher_stats.size == 0
+  	if pitcher_stats.size == 0
   	  PitcherStat.create(lancer_id: self.id, range: "Season", handedness: "L")
       PitcherStat.create(lancer_id: self.id, range: "Season", handedness: "R")
       PitcherStat.create(lancer_id: self.id, range: "30 Days", handedness: "")
   	end
     unless handedness
-      return self.pitcher_stats
+      return pitcher_stats
     else
-      return self.pitcher_stats.find_by(handedness: handedness)
+pitcher_stats.find_by(handedness: handedness)
     end
   end
 
@@ -46,10 +46,9 @@ class Lancer < ActiveRecord::Base
   end
 
   def opp_team
-    unless game
-      return nil
+    if game
+      return team == game.away_team ? game.home_team : game.away_team
     end
-    return team == game.away_team ? game.home_team : game.away_team
   end
 
 
@@ -59,7 +58,7 @@ class Lancer < ActiveRecord::Base
     i = 1
     # Iterate through previous games until you find one that the opposing team played a pitcher with the same handedness
     while true
-      prev_game_day = game_day.prev_day(i)
+      prev_game_day = game_day.previous_days(i)
       unless prev_game_day
         i += 1
         next
@@ -130,7 +129,7 @@ class Lancer < ActiveRecord::Base
     num_size = [10, 8, 6, 4, 2]
     count = 0
     (1..5).each_with_index do |days, index|
-      game_day = self.game.game_day.prev_day(days)
+      game_day = self.game.game_day.previous_days(days)
       unless game_day
         next
       end
@@ -148,21 +147,16 @@ class Lancer < ActiveRecord::Base
 
   def prev_bullpen_pitches(days)
 
-    unless self.game
+    unless game
       return nil
     end
-    game_day = self.game.game_day.prev_day(days)
+    game_day = game.game_day.previous_days(days)
     unless game_day
       return 0
     end
     games = game_day.games
-    game_ids = games.map { |game| game.id }
-    lancer = Lancer.find_by(player_id: self.player_id, game_id: game_ids)
-    if lancer
-      return lancer.pitches
-    else
-      return 0
-    end
+    lancer = Lancer.find_by(player: player, game: games)
+    lancer ? lancer.pitches : 0
     
   end
 
