@@ -76,8 +76,8 @@ namespace :job do
     Update::WeatherSource.new.update(game)
   end
 
-  task test: :environment do
-    Game.all.each do |game|
+  task update_local_hour: :environment do
+    Game.where(local_hour: 0).each do |game|
       Update::LocalHour.new.update(game)
     end
   end
