@@ -82,4 +82,14 @@ namespace :job do
     end
   end
 
+
+
+
+  task check: :environment do
+    hour_updater = Update::LocalHour.new
+    GameDay.all.each do |game_day|
+      hour_updater.update(game_day)
+    end
+  end
+
 end
