@@ -5,8 +5,6 @@ class Lancer < ActiveRecord::Base
   belongs_to :season
   has_many   :pitcher_stats, dependent: :destroy
 
-  include PlayerUpdate
-
   def self.starters
     where(game_id: nil, starter: true)
   end

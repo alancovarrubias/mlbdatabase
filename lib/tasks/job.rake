@@ -27,7 +27,7 @@ namespace :job do
   end
 
   task create_matchups: :environment do
-    [GameDay.today, GameDay.tomorrow].map { |game_day| game_day.create_matchups }
+    [GameDay.yesterday, GameDay.today, GameDay.tomorrow].map { |game_day| game_day.create_matchups }
   end
 
   task update_games: :environment do
@@ -52,15 +52,11 @@ namespace :job do
 
   task create_games: :environment do
     season = Season.find_by_year(2013)
-    season.create_players
     season.create_games
-    season.game_days.each do |game_day|
-      game_day.pitcher_box_score
-    end
   end
 
   task delete_games: :environment do
-    GameDay.today.delete_games
+    GameDay.tomorrow.delete_games
   end
 
   task fix_game_day: :environment do
@@ -72,6 +68,17 @@ namespace :job do
   task fix_pitcher_box_score: :environment do
     GameDay.all.each do |game_day|
       game_day.pitcher_box_score
+    end
+  end
+
+  task api: :environment do
+    game = Game.find_by(local_hour: 14)
+    Update::WeatherSource.new.update(game)
+  end
+
+  task test: :environment do
+    Game.all.each do |game|
+      Update::LocalHour.new.update(game)
     end
   end
 

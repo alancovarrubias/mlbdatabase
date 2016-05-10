@@ -6,9 +6,10 @@ class Game < ActiveRecord::Base
   has_many :weathers, dependent: :destroy
   has_many :lancers, dependent: :destroy
   has_many :batters, dependent: :destroy
+  has_many :weather_sources, dependent: :destroy
 
   def url
-    "#{home_team.game_abbr}#{game_day.year}%02d%02d#{num}" % [game_day.month, game_day.day]
+    "#{home_team.game_abbr}%d%02d%02d#{num}" % [game_day.date.year, game_day.date.month, game_day.date.day]
   end
 
   def create_weather

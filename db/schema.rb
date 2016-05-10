@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160509014503) do
+ActiveRecord::Schema.define(version: 20160509223418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(version: 20160509014503) do
     t.string   "away_total",      default: ""
     t.string   "home_total",      default: ""
     t.integer  "game_day_id"
+    t.integer  "local_hour",      default: 0
   end
 
   add_index "games", ["game_day_id"], name: "index_games_on_game_day_id", using: :btree
@@ -230,6 +231,23 @@ ActiveRecord::Schema.define(version: 20160509014503) do
     t.datetime "updated_at"
     t.boolean  "admin",           default: false
   end
+
+  create_table "weather_sources", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "hour",       default: 0
+    t.float    "temp"
+    t.float    "precip"
+    t.float    "windSpd"
+    t.integer  "dewPt"
+    t.float    "feelsLike"
+    t.float    "relHum"
+    t.float    "sfcPres"
+    t.float    "spcHum"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "weather_sources", ["game_id"], name: "index_weather_sources_on_game_id", using: :btree
 
   create_table "weathers", force: true do |t|
     t.integer  "game_id"
