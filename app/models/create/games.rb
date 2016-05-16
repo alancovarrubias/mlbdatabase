@@ -1,5 +1,4 @@
 module Create
-
   class Games
 
     def create(season, team)
@@ -72,5 +71,4 @@ module Create
       end
 
   end
-
 end

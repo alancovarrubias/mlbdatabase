@@ -53,6 +53,10 @@ class GameDay < ActiveRecord::Base
     end
   end
 
+  def update_local_hour
+    Update::LocalHour.new.update(self)
+  end
+
   def pitcher_box_score
     Update::Pitchers.new.box_scores(self)
   end

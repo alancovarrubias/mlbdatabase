@@ -24,6 +24,10 @@ class Game < ActiveRecord::Base
     Update::Forecasts.new.update(self)
   end
 
+  def update_weather_source
+    Update::WeatherSources.new.update(self)
+  end
+
   def away_pitcher
     lancers.find_by(starter: true, team: away_team)
   end

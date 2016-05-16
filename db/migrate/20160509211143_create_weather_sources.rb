@@ -6,7 +6,8 @@ class CreateWeatherSources < ActiveRecord::Migration
       t.float      :temp
       t.float      :precip
       t.float      :windSpd
-      t.integer    :dewPt
+      t.float      :cldCvr
+      t.float      :dewPt
       t.float      :feelsLike
       t.float      :relHum
       t.float      :sfcPres
