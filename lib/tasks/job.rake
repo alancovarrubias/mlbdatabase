@@ -56,7 +56,7 @@ namespace :job do
   end
 
   task delete_games: :environment do
-    GameDay.tomorrow.delete_games
+    GameDay.today.delete_games
   end
 
   task fix_game_day: :environment do
