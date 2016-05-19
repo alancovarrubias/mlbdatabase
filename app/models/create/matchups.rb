@@ -197,7 +197,8 @@ module Create
 				  	puts "Player " + player.name + " created"
 				  end
 
-		  		player.update_attributes(team_id: team.id)
+
+		  		player.update(team: team)
 
 		  		game = games.order("id")[game_index]
 
@@ -207,12 +208,12 @@ module Create
 		  	  	lancer = player.create_lancer(season)
 		  	  	lancer.update_attributes(starter: true)
 				    game_lancer = player.create_lancer(season, team, game)
-				    game_lancer.update_attributes(starter: true)
+				    game_lancer.update(starter: true)
 				  elsif type == 'batter'
 				  	batter = player.create_batter(season)
-				  	batter.update_attributes(starter: true)
+				  	batter.update(starter: true)
 				  	game_batter = player.create_batter(season, team, game)
-				    game_batter.update_attributes(starter: true, position: position, lineup: lineup)
+				    game_batter.update(starter: true, position: position, lineup: lineup)
 		      end
 				end
 			end

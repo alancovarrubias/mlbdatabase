@@ -25,10 +25,10 @@ class GameDay < ActiveRecord::Base
   end
 
   def create_matchups
-    if today? || tomorrow?
+    # if today? || tomorrow?
       Create::Matchups.new.create(self)
       Create::Bullpen.new.create(self)
-    end
+    # end
   end
 
   def update_games

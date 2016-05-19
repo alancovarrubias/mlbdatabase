@@ -36,6 +36,10 @@ class Batter < ActiveRecord::Base
     player.bathand
   end
 
+  def name
+    player.name
+  end
+
 
   def view_stats(seasons, handedness)
     stat_array = Array.new
