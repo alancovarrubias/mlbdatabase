@@ -75,7 +75,7 @@ class Lancer < ActiveRecord::Base
         next
       end
 
-      games = prev_game_day.games.where("away_team_id = #{opp_team.id} OR home_team_id = #{opp_team.id}")
+      games = prev_game_day.games.includes(:lancers, :batters).where("away_team_id = #{opp_team.id} OR home_team_id = #{opp_team.id}")
 
       games.each do |game|
 
