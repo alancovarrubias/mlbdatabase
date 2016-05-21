@@ -24,7 +24,7 @@ class Lancer < ActiveRecord::Base
       PitcherStat.create(lancer: self, range: "30 Days", handedness: "")
   	end
     unless handedness
-      return pitcher_stats
+      pitcher_stats
     else
       pitcher_stats.find_by(handedness: handedness)
     end

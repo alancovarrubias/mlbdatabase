@@ -71,18 +71,10 @@ namespace :job do
     end
   end
 
-  task weather_source_api: :environment do
-    GameDay.where("date < ?", DateTime.now.to_date).order("date DESC").each do |game_day|
-      american_games = game_day.games.where.not(home_team: Team.find_by_name("Blue Jays"))
-      api_games = american_games.where.not(local_hour: 0)
-      api_games.each do |game|
-        next if game.weather_sources.size == 3
-        puts game.url
-        game.update_weather_source
-        sleep(20)
-      end
+  task wunderground: :environment do
+    GameDay.all.each do |game_day|
+      game_day.update_weather
     end
-
   end
 
   task update_local_hour: :environment do
