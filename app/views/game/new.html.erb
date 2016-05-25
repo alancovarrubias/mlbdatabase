@@ -37,7 +37,6 @@
 <%= render partial: "game/new/bullpen", locals: { caption: "#{@home_team.name} Bullpen",
 										 lancers: @home_bullpen_lancers }%>
 
-<%= button_to 'Make Public', confirm: 'Are you sure?', method: :put, remote: true %>
 
 <% unless @away_starting_lancer.empty? %>
 <%= render partial: "game/new/previous_pitcher_table", locals: { pitcher: @away_starting_lancer.first } %>
