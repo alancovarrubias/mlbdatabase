@@ -21,9 +21,9 @@ module Update
 	  	      puts "Player " + name + " not found" 
 	  	    end
 	  	  when 11
-	  	  	fip = text.to_i
+	  	  	fip = text.to_f
 	  	  when 15
-	  	  	siera = text.to_i
+	  	  	siera = text.to_f
 	  	  	if player
 	  	  	  lancer = player.create_lancer(season)
 	  	  	  lancer.stats.each_with_index do |pitcher_stat|
