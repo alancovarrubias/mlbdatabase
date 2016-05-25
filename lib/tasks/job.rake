@@ -23,7 +23,7 @@ namespace :job do
   end
 
   task update_pitchers: :environment do
-    Season.where(year: 2016).map { |season| season.update_pitchers }
+    Season.all.map { |season| season.update_pitchers }
   end
 
   task create_matchups: :environment do
