@@ -19,11 +19,11 @@ namespace :job do
   end
 
   task update_batters: :environment do
-    Season.all.map { |season| season.update_batters }
+    Season.where(year: 2016).map { |season| season.update_batters }
   end
 
   task update_pitchers: :environment do
-    Season.all.map { |season| season.update_pitchers }
+    Season.where(year: 2016).map { |season| season.update_pitchers }
   end
 
   task create_matchups: :environment do
@@ -57,7 +57,7 @@ namespace :job do
 
   task delete_games: :environment do
     GameDay.today.delete_games
-    GameDay.tomorrow.delete_games
+    GameDay.tomorrow.dele
   end
 
   task fix_game_day: :environment do
