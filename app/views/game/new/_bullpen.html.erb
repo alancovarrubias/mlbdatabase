@@ -6,9 +6,9 @@
       <th></th>
       <th colspan="5">Pitches Thrown</th>
       <th colspan="10"><%= @season.year %></th>
-      <th colspan="5">Last 30 Days</th>
+      <th colspan="6">Last 30 Days</th>
       <% seasons.each do |season| %>
-        <th colspan="11"><%= season.year %></th>
+        <th colspan="12"><%= season.year %></th>
       <% end %>
       <% seasons.each do |season| %>
         <th colspan="2"><%= season.year %></th>
@@ -37,13 +37,13 @@
       <th>BB RHB</th>
       <th>LD</th>
       <th>WHIP</th>
-      <!-- <th>siera</th> -->
+      <th>siera</th>
       <th>IP</th>
       <th>SO</th>
       <th>BB</th>
       <% seasons.size.times do %>
         <th>FIP-</th>
-        <!-- <th>siera</th> -->
+        <th>siera</th>
         <th>IP LHB</th>
         <th>xFIP LHB</th>
         <th>KBB LHB</th>

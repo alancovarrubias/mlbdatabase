@@ -9,7 +9,7 @@ module Update
 
 	  	url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=1&season=#{year}&month=0&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
 	  	doc = download_document(url)
-	  	player = name = nil
+	  	player = name = fip = siera = nil
 	  	doc.css(".grid_line_regular").each_with_index do |element, index|
 	  	  text = element.text
 	  	  case index%16
@@ -28,7 +28,7 @@ module Update
 	  	  	  lancer = player.create_lancer(season)
 	  	  	  lancer.stats.each_with_index do |pitcher_stat|
 	  	  	  	if pitcher_stat.handedness.size > 0
-	  	  	  	  pitcher_stat.update_attributes(fip: fip)
+	  	  	  	  pitcher_stat.update_attributes(fip: fip, siera: siera)
 	  	  	  	end
 	  	  	  end
 	  	  	end
@@ -84,12 +84,12 @@ module Update
 			end
 
 			# No handedness
-			url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,47,42,13,24,19&season=#{year}&month=3&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
+			url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,47,42,13,24,19,122&season=#{year}&month=3&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
 			doc = download_document(url)
-			name = ld = whip = ip = so = bb = nil
+			name = ld = whip = ip = so = bb = siera = nil
 			doc.css(".grid_line_regular").each_with_index do |element, index|
 			  text = element.text
-			  case index%7
+			  case index%8
 			  when 1
 					name = text
 			  	fangraph_id = parse_fangraph_id(element)
@@ -107,10 +107,12 @@ module Update
 					so = text.to_i
 			  when 6
 					bb = text.to_i
+				when 7
+					siera = text.to_f
 					if player
 					  lancer = player.create_lancer(season)
 					  pitcher_stat = lancer.stats.where(handedness: "").first
-					  pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb)
+					  pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, siera: siera)
 					end
 			  end
 			end
