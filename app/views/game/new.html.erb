@@ -17,7 +17,7 @@
 
 <div class="image">
 	<%= image_tag(@image_url, :width => '600') %>
-	<h2><%= @home_team.stadium + " Zipcode: " + @home_team.zipcode %></h2>
+	<h2 onclick="paintIt(this, '#990000')"><%= @home_team.stadium + " Zipcode: " + @home_team.zipcode %></h2>
 </div>
 
 <%= render partial: "game/new/weather", locals: { caption: "Accuweather Weather Forecast", weathers: @forecasts } %>
@@ -36,6 +36,8 @@
 
 <%= render partial: "game/new/bullpen", locals: { caption: "#{@home_team.name} Bullpen",
 										 lancers: @home_bullpen_lancers }%>
+
+<%= button_to 'Make Public', confirm: 'Are you sure?', method: :put, remote: true %>
 
 <% unless @away_starting_lancer.empty? %>
 <%= render partial: "game/new/previous_pitcher_table", locals: { pitcher: @away_starting_lancer.first } %>

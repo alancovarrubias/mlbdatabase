@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160509223418) do
+ActiveRecord::Schema.define(version: 20160524235657) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -175,6 +175,7 @@ ActiveRecord::Schema.define(version: 20160509223418) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "h",          default: 0
+    t.float    "siera",      default: 0.0
   end
 
   add_index "pitcher_stats", ["lancer_id"], name: "index_pitcher_stats_on_lancer_id", using: :btree
@@ -238,8 +239,7 @@ ActiveRecord::Schema.define(version: 20160509223418) do
     t.float    "temp"
     t.float    "precip"
     t.float    "windSpd"
-    t.float    "cldCvr"
-    t.float    "dewPt"
+    t.integer  "dewPt"
     t.float    "feelsLike"
     t.float    "relHum"
     t.float    "sfcPres"

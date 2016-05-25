@@ -22,6 +22,8 @@ module Update
 	  	    end
 	  	  when 11
 	  	  	fip = text.to_i
+	  	  when 15
+	  	  	siera = text.to_i
 	  	  	if player
 	  	  	  lancer = player.create_lancer(season)
 	  	  	  lancer.stats.each_with_index do |pitcher_stat|
@@ -81,6 +83,7 @@ module Update
 			  end
 			end
 
+			# No handedness
 			url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,47,42,13,24,19&season=#{year}&month=3&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
 			doc = download_document(url)
 			name = ld = whip = ip = so = bb = nil
