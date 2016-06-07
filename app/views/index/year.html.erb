@@ -1,0 +1,17 @@
+<div id="header">
+	<h2>History</h2>
+</div>
+
+<ul><li><%= link_to('Home Page', {controller: 'index', action: 'home'})%></li></ul>
+
+
+<!-- <div class="datepicker"></div> -->
+<div id="main">
+	<div id="content">
+		<h4>Years</h4>
+		<%= form_tag({controller: "index", action: "month"}, method: "get") do %>
+		  <%= select_tag(:year, options_for_select(@years)) %>
+		  <%= submit_tag("Submit") %>
+		<% end %>
+	</div>
+</div>

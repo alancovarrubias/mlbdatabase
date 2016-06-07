@@ -1,0 +1,20 @@
+<tr class="total">
+  <td>Total</td>
+  <% batter_stats = batters.map { |batter| batter.stats(left) } %>
+  <%= render partial: "game/new/sum", locals: { stats: batter_stats } %>
+  <% batter_stats = batters.map { |batter| batter.stats("") } %>
+  <%= render partial: "game/new/sum", locals: { stats: batter_stats } %>
+  <% seasons[1..-1].each do |season| %>
+    <% batter_stats = batters.map { |batter| batter.player.create_batter(season).stats(left) } %>
+    <%= render partial: "game/new/sum", locals: { stats: batter_stats } %>
+  <% end %>
+
+  <% batter_stats = batters.map { |batter| batter.stats(left) } %>
+  <%= render partial: "game/new/rank", locals: { stats: batter_stats } %>
+  <% batter_stats = batters.map { |batter| batter.stats("") } %>
+  <%= render partial: "game/new/rank", locals: { stats: batter_stats } %>
+  <% seasons[1..-1].each do |season| %>
+    <% batter_stats = batters.map { |batter| batter.player.create_batter(season).stats(left) } %>
+    <%= render partial: "game/new/rank", locals: { stats: batter_stats } %>
+  <% end %>
+</tr>

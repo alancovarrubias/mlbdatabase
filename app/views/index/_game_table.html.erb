@@ -1,0 +1,57 @@
+<table class="game-index">
+
+  <thead>
+  	<tr>
+  		<th><%= @head %></th>
+  		<th colspan="8">Pitchers</th>
+  		<th class="border"></th>
+  		<th colspan="7">Weather</th>
+  	</tr>
+  	<tr>
+  		<th>Away @ Home</th>
+  		<%= render "starter_header" %>
+  		<th class="border"></th>
+  		<th>Temp</th>
+  		<th>FL</th>
+  		<th>DP</th>
+  		<th>Wind</th>
+  		<th>Baro</th>
+  		<th>Humid</th>
+  		<th>Prec</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @games.each do |game| %>
+    <tr>
+      <td rowspan="2"><%= link_to game_link(game), { controller: "game", action: "new", id: game.id } %></td>
+      <% pitcher = game.away_pitcher %>
+      <% if pitcher %>
+      <%= render partial: "starter", locals: { pitcher: pitcher } %>
+      <% else %>
+      <%= render partial: "not_found" %>
+      <% end %>
+      <td rowspan="2" class="border"></td>
+      <% weather = game.weathers.find_by(hour: 1, station: "Forecast") %>
+      <% if weather %>
+      <td rowspan="2"><%= weather.temp %></td>
+      <td rowspan="2"><%= weather.feel %></td>
+      <td rowspan="2"><%= weather.dew %></td>
+      <td rowspan="2"><%= weather.wind %></td>
+      <td rowspan="2"><%= weather.pressure %></td>
+      <td rowspan="2"><%= weather.humidity %></td>
+      <td rowspan="2"><%= weather.rain %></td>
+      <% end %>
+    </tr>
+    <tr> 
+      <% pitcher = game.home_pitcher %>
+      <% if pitcher %>
+      <%= render partial: "starter", locals: { pitcher: pitcher } %>
+      <% else %>
+      <%= render partial: "not_found" %>
+      <% end %>
+    </tr>
+    <% end %>
+  </tbody>
+
+
+</table>

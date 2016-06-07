@@ -1,0 +1,9 @@
+<td><%= stats.map {|stat| stat.woba }.sum %></td>
+<td><%= stats.map {|stat| stat.ops }.sum %></td>
+<td><%= stats.map {|stat| stat.ab }.sum %></td>
+<td><%= stats.map {|stat| stat.so }.sum %></td>
+<td><%= stats.map {|stat| stat.bb }.sum %></td>
+<td><%= stats.map {|stat| stat.fb }.sum.round(1) %></td>
+<td><%= stats.map {|stat| stat.gb }.sum.round(1) %></td>
+<td><%= stats.map {|stat| stat.ld }.sum.round(1) %></td>
+<td><%= stats.map {|stat| stat.tld }.sum.round(1) %></td>

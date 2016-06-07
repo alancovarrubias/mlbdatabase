@@ -1,0 +1,20 @@
+<table>
+  <tr>
+	<th>Innings</th>
+	  <% @innings.each do |inning| %>
+		<th><%= inning %></th>
+	  <% end %>
+  </tr>
+  <tr>
+	<th><%= @away_team.name%></th>
+	  <% @away_score.each do |inning| %>
+		<td><%= inning %></td>
+	  <% end %>
+  </tr>
+  <tr>
+	<th><%= @home_team.name%></th>
+	  <% @home_score.each do |inning| %>
+		<td><%= inning %></td>
+	  <% end %>
+  </tr>
+</table>

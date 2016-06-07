@@ -1,0 +1,9 @@
+<div class="header">
+	<h1><%= @head + " Matchups"%></h1>
+</div>
+
+<ul>
+	<li><%= link_to 'Home', { action: 'home' }%></li>
+</ul>
+
+<%= render "game_table" %>

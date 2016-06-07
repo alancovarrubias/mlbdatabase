@@ -1,0 +1,48 @@
+
+
+<%= image_tag("#{@team.id}.png", :height => '400', :width => '800', :align => 'right') %>
+</br>
+
+<h2><%= @team.name %></h2>
+<%= link_to('Home Page', {:controller => 'index', :action => 'home'})%></br>
+<%= link_to('Teams', {:controller => 'index', :action => 'teams'}) %></br>
+
+<% if @left %>
+	<%= link_to('RH', {:controller => 'game', :action => 'team', :left => 0})%></br>
+<% else %>
+	<%= link_to('LH', {:controller => 'game', :action => 'team', :left => 1})%></br>
+<% end %>
+
+</br>
+
+<table>
+	<tr>
+		<th colspan="39"><%= "Pitchers" %></th>
+	</tr>
+	<%= render(:partial => "pitcherheader") %>
+
+	<% @pitchers.each do |pitcher| %>
+		<%= render(:partial => "pitcher", :locals => {:pitcher => pitcher}) %>
+	<% end %>
+</table>
+
+
+<table>
+	<tr>
+		<th colspan="28"><%= "Hitters" %></th>
+	</tr>
+
+	<% if @left %>
+		<%= render(:partial => "lefthitterheader") %>
+	<% else %>
+		<%= render(:partial => "righthitterheader") %>
+	<% end %>
+
+	<% @hitters.each do |hitter| %>
+		<% if @left %>
+			<%= render(:partial => "lefthitter", :locals => {:hitter => hitter}) %>
+		<% else %>
+			<%= render(:partial => "righthitter", :locals => {:hitter => hitter}) %>
+		<% end %>
+	<% end %>
+</table>

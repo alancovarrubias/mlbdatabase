@@ -1,0 +1,100 @@
+<% seasons = Season.greater_than(2014) %>
+<table class="lancer">
+  <caption><%= caption %></caption>
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="5">Pitches Thrown</th>
+      <th colspan="10"><%= @season.year %></th>
+      <th colspan="6">Last 30 Days</th>
+      <% seasons.each do |season| %>
+        <th colspan="12"><%= season.year %></th>
+      <% end %>
+      <% seasons.each do |season| %>
+        <th colspan="2"><%= season.year %></th>
+      <% end %>
+      <% seasons.each do |season| %>
+        <th colspan="2"><%= season.year %></th>
+      <% end %>
+      <% seasons.each do |season| %>
+        <th colspan="2"><%= season.year %></th>
+      <% end %>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <% 5.times do |i| %>
+        <th><%= bullpen_day_name(i) %></th>
+      <% end %>
+      <th>LD LHB</th>
+      <th>LD RHB</th>
+      <th>WHIP LHB</th>
+      <th>WHIP RHB</th>
+      <th>IP LHB</th>
+      <th>IP RHB</th>
+      <th>SO LHB</th>
+      <th>SO RHB</th>
+      <th>BB LHB</th>
+      <th>BB RHB</th>
+      <th>LD</th>
+      <th>WHIP</th>
+      <th>siera</th>
+      <th>IP</th>
+      <th>SO</th>
+      <th>BB</th>
+      <% seasons.size.times do %>
+        <th>FIP-</th>
+        <th>siera</th>
+        <th>IP LHB</th>
+        <th>xFIP LHB</th>
+        <th>KBB LHB</th>
+        <th>OPS+ LHB</th>
+        <th>wOBA LHB</th>
+        <th>IP RHB</th>
+        <th>xFIP RHB</th>
+        <th>KBB RHB</th>
+        <th>OPS+ RHB</th>
+        <th>wOBA RHB</th>
+      <% end %>
+      <% seasons.size.times do %>
+        <th>GB LHB</th>
+        <th>GB RHB</th>
+      <% end %>
+      <% seasons.size.times do %>
+        <th>LD LHB</th>
+        <th>LD RHB</th>
+      <% end %>
+      <% seasons.size.times do %>
+        <th>TLD LHB</th>
+        <th>TLD RHB</th>
+      <% end %>
+    </tr>
+  </thead>
+
+  <tbody class="bullpen">
+    <% lancers.sort_by(&:sort_bullpen).each_with_index do |lancer, index| %>
+      <% stats = lancer.view_stats(seasons) %>
+      <tr>
+        <td class="name"><%= "#{lancer.player.name} (#{lancer.player.throwhand})" %></td>
+        <% 5.times do |i| %>
+          <td><%= lancer.prev_bullpen_pitches(i+1) %></td>
+        <% end %>
+        <%= render partial: "game/new/pitcher_begin", locals: { stat: stats.first } %>
+        <% stats.each do |stat| %>
+          <%= render partial: "game/new/pitcher_stat", locals: { stat: stat } %>
+        <% end %>
+        <% stats.each do |stat| %>
+          <td><%= stat.first.gb %></td>
+          <td><%= stat.second.gb %></td>
+        <% end %>
+        <% stats.each do |stat| %>
+          <td><%= stat.first.ld %></td>
+          <td><%= stat.second.ld %></td>
+        <% end %>
+        <% stats.each do |stat| %>
+          <td><%= stat.first.tld %></td>
+          <td><%= stat.second.tld %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

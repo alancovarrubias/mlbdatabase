@@ -1,0 +1,12 @@
+<div class="header">
+	<h1>Home Page</h1>
+</div>
+
+<ul>
+	<li><%= link_to 'Teams', 					  		{ action: 'teams' } %></li>
+	<li><%= link_to @yesterday.date.strftime("%B %e"),  { action: 'game', id: @yesterday.id } %></li>
+	<li><%= link_to @today.date.strftime("%B %e"),      { action: 'game', id: @today.id } %></li>
+	<li><%= link_to @tomorrow.date.strftime("%B %e"),   { action: 'game', id: @tomorrow.id } %></li>
+	<li><%= link_to 'History',  				  		{ action: 'year' } %></li>
+	<li><%= link_to 'Logout', 					  		{ controller: 'access', action: 'logout' } %></li>
+</ul>

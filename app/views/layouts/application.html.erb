@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= yield(:title) || "MLB Database" %></title>
+    <%= stylesheet_link_tag 'application', media: 'all',
+    						'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+    <%= csrf_meta_tags %>
+  </head>
+<body>
+  <div class="container">
+    <%= yield %>
+  </div>
+  <div class="footer">
+    <p id="copyright">&copy; Michael Halioua </p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<% seasons = Season.greater_than(2014) %>
+<table class=<%= batter_class(predicted)%>>
+  <caption><%= caption %></caption>
+  <thead>
+    <tr>
+      <th></th>
+      <% seasons.each do |season| %>
+        <th colspan="9"><%= "#{season.year} vs #{handedness_header(left)}" %></th>
+        <% if season.year == Time.now.year%>
+          <th colspan="9">Last 14 Days</th>
+        <% end %>
+      <% end %>
+      <% seasons.each do |season| %>
+        <th colspan="2"><%= "#{season.year}" %></th>
+        <% if season.year == Time.now.year%>
+          <th colspan="2">Last 14 Days</th>
+        <% end %>
+      <% end %>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <% (seasons.size + 1).times do %>
+        <th>wOBA</th>
+        <th>OPS+</th>
+        <th>AB</th>
+        <th>SO</th>
+        <th>BB</th>
+        <th>FB%</th>
+        <th>GB%</th>
+        <th>LD%</th>
+        <th>TLD%</th>
+      <% end %>
+      <% (seasons.size + 1).times do %>
+        <th>Rank</th>
+        <th>AB</th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody class="batter">
+    <% batters.each do |batter| %>
+      <% stats = batter.view_stats(seasons, handedness(left)) %>
+      <tr>
+        <td class="name"><%= "#{batter.lineup}. #{batter.player.name} (#{batter.player.bathand})"%></td>
+        <% stats.each do |stat| %>
+          <%= render partial: "game/new/batter_stat", locals: { stat: stat } %>
+        <% end %>
+        <% stats.each do |stat| %>
+          <td><%= stat.wrc %></td>
+          <td><%= stat.ab %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+  <%= render partial: "game/new/sum_batter", locals: { batters: batters, left: handedness(left), seasons: seasons } %>
+</table>

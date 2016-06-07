@@ -1,0 +1,20 @@
+<div id="header">
+	<h2><%= Date::MONTHNAMES[params[:month].to_i] + ' ' + params[:year]  %></h2>
+</div>
+
+<%= link_to('Home Page', {controller: 'index', action: 'home'})%></br>
+<%= link_to(params[:year], {controller: 'index', action: 'month', year: params[:year], month: params[:month]})%>
+
+<div id="main">
+	<div id="content">
+		<p>
+			<h4>Days</h4>
+			<%= form_tag({controller: "index", action: "game"}, method: "get") do %>
+				<%= hidden_field_tag(:year, params[:year]) %>
+				<%= hidden_field_tag(:month, params[:month]) %>
+				<%= select_tag(:day, options_for_select(@days)) %>
+				<%= submit_tag("Submit") %>
+			<% end %>
+		</p>
+	</div>
+</div>

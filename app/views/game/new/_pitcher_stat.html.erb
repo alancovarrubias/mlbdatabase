@@ -1,0 +1,14 @@
+<% lefty = stat.where(handedness: "L").first %>
+<% righty = stat.where(handedness: "R").first %>
+<td><%= lefty.fip %></td>
+<td><%= lefty.siera %></td>
+<td class="blue"><%= lefty.ip %></td>
+<td><%= lefty.xfip %></td>
+<td><%= lefty.kbb %></td>
+<td><%= lefty.ops %></td>
+<td><%= lefty.woba %></td>
+<td class="blue"><%= righty.ip %></td>
+<td><%= righty.xfip %></td>
+<td><%= righty.kbb %></td>
+<td><%= righty.ops %></td>
+<td><%= righty.woba %></td>

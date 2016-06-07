@@ -1,0 +1,11 @@
+<td><%= pitcher.player.name %></td>
+<% lefty_stat = pitcher.stats("L") %>
+<% righty_stat = pitcher.stats("R") %>
+<% num_lefty, num_righty = pitcher.opposing_batters_handedness %>
+<td><%= mixed_statistic(lefty_stat.fip, righty_stat.fip, num_lefty, num_righty) %></td>
+<td><%= mixed_statistic(lefty_stat.xfip, righty_stat.xfip, num_lefty, num_righty) %></td>
+<td><%= mixed_statistic(lefty_stat.kbb, righty_stat.kbb, num_lefty, num_righty) %></td>
+<td><%= mixed_statistic(lefty_stat.ops, righty_stat.ops, num_lefty, num_righty) %></td>
+<td><%= mixed_statistic(lefty_stat.woba, righty_stat.woba, num_lefty, num_righty) %></td>
+<td><%= mixed_statistic(lefty_stat.gb, righty_stat.gb, num_lefty, num_righty) %></td>
+<td><%= mixed_statistic(lefty_stat.ld, righty_stat.ld, num_lefty, num_righty) %></td>
