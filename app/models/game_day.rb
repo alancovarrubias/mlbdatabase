@@ -1,7 +1,6 @@
 class GameDay < ActiveRecord::Base
   belongs_to :season
   has_many   :games,        dependent: :destroy
-  has_many   :transactions, dependent: :destroy
 
   def self.search(date)
     game_day = GameDay.find_by_date(date)
@@ -9,7 +8,7 @@ class GameDay < ActiveRecord::Base
       game_day = GameDay.create(season: Season.find_by_year(date.year), date: date, year: date.year, month: date.month, day: date.day)
       game_day.update(index: game_day.find_index)
     end
-    game_day
+    return game_day
   end
 
   def self.yesterday
@@ -25,10 +24,8 @@ class GameDay < ActiveRecord::Base
   end
 
   def create_matchups
-    # if today? || tomorrow?
-      Create::Matchups.new.create(self)
-      Create::Bullpen.new.create(self)
-    # end
+    Create::Matchups.new.create(self)
+    Create::Bullpen.new.create(self)
   end
 
   def update_games
