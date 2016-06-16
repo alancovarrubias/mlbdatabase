@@ -28,6 +28,10 @@ class Game < ActiveRecord::Base
     Update::WeatherSources.new.update(self)
   end
 
+  def update_hour_stadium_runs
+    Update::OtherHour.new.update(self)
+  end
+
   def away_pitcher
     lancers.find_by(starter: true, team: away_team)
   end

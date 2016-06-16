@@ -3,12 +3,19 @@ class GameDay < ActiveRecord::Base
   has_many   :games,        dependent: :destroy
 
   def self.search(date)
-    game_day = GameDay.find_by_date(date)
-    unless game_day
-      game_day = GameDay.create(season: Season.find_by_year(date.year), date: date, year: date.year, month: date.month, day: date.day)
-      game_day.update(index: game_day.find_index)
-    end
-    return game_day
+    return GameDay.find_or_create_by(season: Season.find_by_year(date.year), date: date)
+  end
+
+  def year
+    date.year
+  end
+
+  def month
+    date.month
+  end
+
+  def day
+    date.day
   end
 
   def self.yesterday
@@ -62,17 +69,13 @@ class GameDay < ActiveRecord::Base
     Time.new(year, month, day)
   end
 
-  def find_index
-    year * 366 + month * 31 + day 
-  end
-
   def previous_days(num_days)
     prev_date = date.prev_day(num_days)
   	GameDay.find_by_date(prev_date)
   end
 
   def date_string
-    "#{date.year}/#{date.month}/#{date.day}"
+    "#{year}/#{month}/#{day}"
   end
 
   def is_preseason?

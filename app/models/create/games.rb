@@ -1,73 +1,56 @@
 module Create
   class Games
+    include NewShare
 
     def create(season, team)
       url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{season.year}-schedule-scores.shtml"
       puts url
-      doc = Nokogiri::HTML(open(url))
-      year = season.year
-      month = day = num = away_team = home_team = home = href = nil
-      game_params = Hash.new
-      doc.css("#team_schedule td").each_with_index do |game, index|
-        case index%21
-        when 2
-          href = game.child['href']
-          break unless href
-          month, day, num = get_game_date(game)
-          game_day = GameDay.search(Date.new(year, month, day))
-          game_params[:game_day] = game_day
-          game_params[:num] = num
-        when 4
-          home_team = Team.find_by_abbr(game.text)
-        when 5
-          home = ishome?(game)
-        when 6
-          away_team = Team.find_by_abbr(game.text)
-          away_team, home_team = get_correct_teams(home, away_team, home_team)
-          game_params[:away_team_id] = away_team.id
-          game_params[:home_team_id] = home_team.id
-          if href
-            unless Game.find_by(game_params)
-              game = Game.create(game_params)
-              puts "#{game.url} created"
-            end
-          end
-        end
+      doc = download_document(url)
+      return unless doc
+      doc.css("#team_schedule td").each_slice(21) do |slice|
+        next if post_season?(slice[0])
+        break if slice[9].text.empty?
+        date = find_date(slice[2])
+        game_day = GameDay.find_or_create_by(date: date, season: season)
+        away_team, home_team = find_away_and_home_teams(slice[4], slice[5], slice[6])
+        num = find_game_num(slice[2])
+        game = Game.find_or_create_by(game_day: game_day, away_team: away_team, home_team: home_team, num: num)
+        puts game.url
       end
     end
 
-
     private
 
-      def ishome?(game)
-        if game.text.size == 1
-          false
+      def find_date(date_element)
+        href = date_element.child['href']
+        Date.parse(href[-10..-1])
+      end
+
+      def find_away_and_home_teams(team1, home_or_away, team2)
+        team1 = Team.find_by_abbr(convert_team_abbr(team1.text))
+        team2 = Team.find_by_abbr(convert_team_abbr(team2.text))
+        if home_or_away.text.empty?
+          return team2, team1
         else
-          true
+          return team1, team2
         end
       end
 
-      def get_game_date(game)
-        if game.children.size == 1
-          num = "0"
+      def find_game_num(date_element)
+        children = date_element.children
+        if children.size == 1
+          '0'
         else
-          num = game.text[-2]
+          children.last.to_s[-2]
         end
-        href = game.child['href']
-        if href
-          month = href[31..32].to_i
-          day = href[34..35].to_i
-        end
-        return month, day, num
       end
 
-      def get_correct_teams(home, away_team, home_team)
-        unless home
-          temp = away_team
-          away_team = home_team
-          home_team = temp
-        end
-        return away_team, home_team
+      def post_season?(element)
+        element.text.empty?
+      end
+
+      def convert_team_abbr(abbr)
+        abbr == "ANA" ? "LAA" : abbr
       end
 
   end

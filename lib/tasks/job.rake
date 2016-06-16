@@ -14,12 +14,16 @@ namespace :job do
     Team.create_teams
   end
 
+  task create_games: :environment do
+    Season.all.each { |season| season.create_games }
+  end
+
   task create_players: :environment do
-    Season.all.map { |season| season.create_players }
+    Season.all.each { |season| season.create_players }
   end
 
   task update_batters: :environment do
-    Season.where(year: 2016).map { |season| season.update_batters }
+    Season.all.each { |season| season.update_batters }
   end
 
   task update_pitchers: :environment do
@@ -27,7 +31,7 @@ namespace :job do
   end
 
   task create_matchups: :environment do
-    [GameDay.yesterday, GameDay.today, GameDay.tomorrow].map { |game_day| game_day.create_matchups }
+    [GameDay.yesterday, GameDay.today, GameDay.tomorrow].each { |game_day| game_day.create_matchups }
   end
 
   task update_games: :environment do
@@ -39,7 +43,7 @@ namespace :job do
   end
 
   task update_forecast: :environment do
-    [GameDay.today, GameDay.tomorrow].map { |game_day| game_day.update_forecast }
+    [GameDay.today, GameDay.tomorrow].each { |game_day| game_day.update_forecast }
   end
 
   task pitcher_box_score: :environment do
@@ -47,40 +51,28 @@ namespace :job do
   end
 
   task fix_weather: :environment do
-    GameDay.all.map { |game_day| game_day.update_weather }
-  end
-
-  task create_games: :environment do
-    season = Season.find_by_year(2013)
-    season.create_games
+    GameDay.all.each { |game_day| game_day.update_weather }
   end
 
   task delete_games: :environment do
-    GameDay.today.delete_games
-    GameDay.tomorrow.delete_games
-  end
-
-  task fix_game_day: :environment do
-    GameDay.all.each do |game_day|
-      game_day.update(date: Date.new(game_day.year, game_day.month, game_day.day))
-    end
+    [GameDay.today, GameDay.tomorrow].each { |game_day| game_day.delete_games }
   end
 
   task fix_pitcher_box_score: :environment do
-    GameDay.all.each do |game_day|
-      game_day.pitcher_box_score
-    end
+    GameDay.all.each { |game_day| game_day.pitcher_box_score }
   end
 
   task wunderground: :environment do
-    GameDay.all.each do |game_day|
-      game_day.update_weather
-    end
+    GameDay.all.each { |game_day| game_day.update_weather }
   end
 
   task update_local_hour: :environment do
-    GameDay.all.each do |game_day|
-      game_day.update_local_hour
+    Season.where("year >= 2010").each { |season| season.game_days.each{ |game_day| game_day.update_local_hour } }
+  end
+
+  task update_hour_stadium_runs: :environment do
+    Game.where(stadium: "").each do |game|
+      game.update_hour_stadium_runs
     end
   end
 

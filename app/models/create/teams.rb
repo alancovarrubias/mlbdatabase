@@ -3,10 +3,7 @@ module Create
 
   	def self.create
   	  @@team_attributes.each do |team_params|
-  	    unless team = Team.find_by_name(team_params[:name])
-  	  	  team = Team.create(name: team_params[:name])
-  	    end
-  	    team.update(team_params)
+        Team.find_or_create_by(team_params)
   	  end
     end
 
@@ -40,7 +37,11 @@ module Create
 			{ name: "Tigers",       abbr: "DET", game_abbr: "DET", fangraph_id: 6,  city: "Detroit",		   stadium: "Comerica Park", 			       league: "AL", division: "Central", zipcode: "48201",   timezone: 0 },
 			{ name: "Twins",        abbr: "MIN", game_abbr: "MIN", fangraph_id: 8,  city: "Minnesota", 	   stadium: "Target Field", 				     league: "AL", division: "Central", zipcode: "55403",   timezone: -1},
 			{ name: "White Sox",    abbr: "CHW", game_abbr: "CHA", fangraph_id: 4,  city: "Chicago", 	  	 stadium: "U.S. Cellular Field", 		   league: "AL", division: "Central", zipcode: "60616",   timezone: -1},
-			{ name: "Yankees",      abbr: "NYY", game_abbr: "NYA", fangraph_id: 9,  city: "New York",	  	 stadium: "Yankee Stadium", 			     league: "AL", division: "East",    zipcode: "10451",   timezone: 0 }
+			{ name: "Yankees",      abbr: "NYY", game_abbr: "NYA", fangraph_id: 9,  city: "New York",	  	 stadium: "Yankee Stadium", 			     league: "AL", division: "East",    zipcode: "10451",   timezone: 0 },
+      { name: "Marlins",      abbr: "FLA", game_abbr: "FLO", fangraph_id: 20, city: "Florida",       stadium: "Sun Life Stadium",          league: "NL", division: "East",    zipcode: "33056",   timezone: 0 },
+      { name: "Devil Rays",   abbr: "TBD", game_abbr: "TBA", fangraph_id: 12, city: "Tampa Bay",     stadium: "Tropicana Field",           league: "AL", division: "East",    zipcode: "33705",   timezone: 0 },
+      { name: "Expos",        abbr: "MON", game_abbr: "MON", fangraph_id: 24, city: "Montreal",      stadium: "Olympic Stadium",           league: "NL", division: "East",    zipcode: "H1V 3N7", timezone: 0 },
+      { name: "Angels",       abbr: "ANA", game_abbr: "ANA", fangraph_id: 1,  city: "Anaheim",       stadium: "Angels Stadium",            league: "AL", division: "West",    zipcode: "92806",   timezone: -3}
     ]
 
   end	

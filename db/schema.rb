@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160524235657) do
+ActiveRecord::Schema.define(version: 20160615232424) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,9 +57,6 @@ ActiveRecord::Schema.define(version: 20160524235657) do
 
   create_table "game_days", force: true do |t|
     t.integer  "season_id"
-    t.integer  "year"
-    t.integer  "month"
-    t.integer  "day"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "index",      default: 0
@@ -80,6 +77,9 @@ ActiveRecord::Schema.define(version: 20160524235657) do
     t.string   "home_total",      default: ""
     t.integer  "game_day_id"
     t.integer  "local_hour",      default: 0
+    t.string   "stadium",         default: ""
+    t.integer  "away_runs"
+    t.integer  "home_runs"
   end
 
   add_index "games", ["game_day_id"], name: "index_games_on_game_day_id", using: :btree
@@ -199,6 +199,14 @@ ActiveRecord::Schema.define(version: 20160524235657) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "seasons_teams", force: true do |t|
+    t.integer "season_id"
+    t.integer "team_id"
+  end
+
+  add_index "seasons_teams", ["season_id"], name: "index_seasons_teams_on_season_id", using: :btree
+  add_index "seasons_teams", ["team_id"], name: "index_seasons_teams_on_team_id", using: :btree
 
   create_table "teams", force: true do |t|
     t.string   "name",        default: ""
