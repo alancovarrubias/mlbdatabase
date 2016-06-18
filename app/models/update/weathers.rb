@@ -26,6 +26,7 @@ module Update
       puts url
     
       size = page.search("#obsTable th").size
+      return if size == 0
       elements = page.search("#obsTable td")
       weathers = game.weathers.where(station: "Actual")
       elements.each_slice(size) do |slice|
