@@ -51,7 +51,9 @@ namespace :job do
   end
 
   task fix_weather: :environment do
-    GameDay.all.each { |game_day| game_day.update_weather }
+    GameDay.all.each do |game_day|
+      game_day.update_weather
+    end
   end
 
   task delete_games: :environment do
@@ -62,10 +64,6 @@ namespace :job do
     GameDay.all.each { |game_day| game_day.pitcher_box_score }
   end
 
-  task wunderground: :environment do
-    GameDay.all.each { |game_day| game_day.update_weather }
-  end
-
   task update_local_hour: :environment do
     Season.where("year >= 2010").each { |season| season.game_days.each{ |game_day| game_day.update_local_hour } }
   end
@@ -74,6 +72,6 @@ namespace :job do
     Game.where(stadium: "").each do |game|
       game.update_hour_stadium_runs
     end
-  end
+  end 
 
 end
