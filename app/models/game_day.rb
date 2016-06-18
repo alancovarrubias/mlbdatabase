@@ -52,8 +52,8 @@ class GameDay < ActiveRecord::Base
 
   def update_forecast
     if today? || tomorrow?
-      games.map { |game| game.create_weather }
-      games.map { |game| game.update_forecast }
+      games.each { |game| game.create_weather }
+      games.each { |game| game.update_forecast }
     end
   end
 

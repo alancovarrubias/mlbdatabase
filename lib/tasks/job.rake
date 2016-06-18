@@ -74,4 +74,8 @@ namespace :job do
     end
   end 
 
+  task test_weather: :environment do
+    GameDay.find(59).update_weather
+  end
+
 end

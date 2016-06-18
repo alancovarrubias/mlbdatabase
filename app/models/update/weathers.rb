@@ -6,69 +6,72 @@ module Update
     def update(game)
     
       game_time = game.time
-      unless game_time.include?(":")
-        return
-      end
-
       game_day = game.game_day
       home_team = game.home_team
+      local_hour = game.local_hour
 
-      game_hour_1, game_period_1 = parse_time_string_get_hour_period(game_time)
+      puts game.url
+      puts "#{game_time} #{local_hour}"
+      if game_time.include?(":")
+        game_hour_1, game_period_1 = parse_time_string_get_hour_period(game_time)
+      else
+        game_hour_1, game_period_1 = local_hour_get_hour_period(local_hour)
+      end
+
       game_hour_2, game_period_2 = next_hour(game_hour_1, game_period_1)
       game_hour_3, game_period_3 = next_hour(game_hour_2, game_period_2)
 
-      url = @@urls[home_team.id-1]
-      find = "year/month/day"
-      replace = "#{game_day.year}/#{game_day.month}/#{game_day.day}"
-      url = url.gsub(/#{find}/, replace)
+      puts "Hour 1: #{game_hour_1} #{game_period_1}"
+      puts "Hour 2: #{game_hour_2} #{game_period_2}"
+      puts "Hour 3: #{game_hour_3} #{game_period_3}"
 
-      page = mechanize_page(url)
-
-      puts url
+      # url = get_url(home_team, game_day)
+      # page = mechanize_page(url)
+      # puts url
     
-      size = page.search("#obsTable th").size
-      elements = page.search("#obsTable td")
-      temp = humidity = pressure = rain = dir = speed  = dew = nil
-      weathers = game.weathers.where(station: "Actual")
-      weather = nil
-      elements.each_with_index do |stat, index|
-        case index%size
-        when 0
-          time = stat.text.strip
-          hour, period = parse_time_string_get_hour_period(time)
-          if hour == game_hour_1 && game_period_1 == period
-            weather = weathers.find_by(hour: 1)
-          elsif hour == game_hour_2 && game_period_2 == period
-            weather = weathers.find_by(hour: 2)
-          elsif hour == game_hour_3 && game_period_3 == period
-            weather = weathers.find_by(hour: 3)
-          else
-            weather = nil
-          end
-        when 1
-          temp = stat.text.strip
-        when 2
-          dew = stat.text.strip
-        when size - 9
-          humidity = stat.text.strip
-        when size - 8
-          pressure = stat.text.strip
-        when size - 6
-          dir = stat.text.strip
-        when size - 5
-          speed = stat.text.strip
-        when size - 3
-          rain = stat.text.strip
-          if weather
-            weather.update_attributes(wind: speed + " " + dir, speed: speed, dir: dir, dew: dew, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
-          end
-        end
-      end
+      # size = page.search("#obsTable th").size
+      # elements = page.search("#obsTable td")
+      # temp = humidity = pressure = rain = dir = speed  = dew = nil
+      # weathers = game.weathers.where(station: "Actual")
+      # weather = nil
+      # elements.each_with_index do |stat, index|
+      #   case index%size
+      #   when 0
+      #     time = stat.text.strip
+      #     hour, period = parse_time_string_get_hour_period(time)
+      #     if hour == game_hour_1 && game_period_1 == period
+      #       weather = weathers.find_by(hour: 1)
+      #     elsif hour == game_hour_2 && game_period_2 == period
+      #       weather = weathers.find_by(hour: 2)
+      #     elsif hour == game_hour_3 && game_period_3 == period
+      #       weather = weathers.find_by(hour: 3)
+      #     else
+      #       weather = nil
+      #     end
+      #   when 1
+      #     temp = stat.text.strip
+      #   when 2
+      #     dew = stat.text.strip
+      #   when size - 9
+      #     humidity = stat.text.strip
+      #   when size - 8
+      #     pressure = stat.text.strip
+      #   when size - 6
+      #     dir = stat.text.strip
+      #   when size - 5
+      #     speed = stat.text.strip
+      #   when size - 3
+      #     rain = stat.text.strip
+      #     if weather
+      #       weather.update_attributes(wind: speed + " " + dir, speed: speed, dir: dir, dew: dew, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
+      #     end
+      #   end
+      # end
     end
 
     private
 
-      def get_url
+      def get_url(home_team, game_day)
         url = @@urls[home_team.id-1]
         find = "year/month/day"
         replace = "#{game_day.year}/#{game_day.month}/#{game_day.day}"
@@ -77,7 +80,20 @@ module Update
 
       def parse_time_string_get_hour_period(time_string)
         index = time_string.index(":")
-        return time_string[0...index], time_string[-2..-1]
+        hour = time_string[0...index].to_i
+        period = time_string[-2..-1]
+        return hour, period
+      end
+
+      def local_hour_get_hour_period(local_hour)
+        if local_hour == 0
+          hour = 7
+          period = "PM"
+        else
+          period = local_hour < 13 ? "AM" : "PM"
+          hour = local_hour > 12 ? local_hour - 12 : local_hour
+        end
+        return hour, period
       end
 
       def next_hour(hour, period)
@@ -108,7 +124,8 @@ module Update
     	"https://www.wunderground.com/history/airport/KPNE/year/month/day/DailyHistory.html?req_city=Philadelphia&req_state=PA&req_statename=Pennsylvania&reqdb.zip=19019&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KAGC/year/month/day/DailyHistory.html?req_city=Pittsburgh&req_state=PA&req_statename=Pennsylvania&reqdb.zip=15122&reqdb.magic=2&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KGKY/year/month/day/DailyHistory.html?req_city=Arlington&req_statename=Texas",
     	"https://www.wunderground.com/history/airport/KSPG/year/month/day/DailyHistory.html?req_city=Saint+Petersburg&req_state=FL&req_statename=Florida&reqdb.zip=33701&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KBOS/year/month/day/DailyHistory.html?req_city=Boston&req_state=MA&req_statename=Massachusetts&reqdb.zip=02101&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KLUK/year/month/day/DailyHistory.html?req_city=Cincinnati&req_state=OH&req_statename=Ohio&reqdb.zip=45201&reqdb.magic=1&reqdb.wmo=99999",
     	"https://www.wunderground.com/history/airport/KAPA/year/month/day/DailyHistory.html?req_city=Denver&req_statename=Colorado", "https://www.wunderground.com/history/airport/KMKC/year/month/day/DailyHistory.html?req_city=Kansas+City&req_state=MO&req_statename=Missouri&reqdb.zip=64106&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KDET/year/month/day/DailyHistory.html?req_city=Detroit&req_state=MI&req_statename=Michigan&reqdb.zip=48201&reqdb.magic=1&reqdb.wmo=99999",
-    	"https://www.wunderground.com/history/airport/KMIC/year/month/day/DailyHistory.html?req_city=Minneapolis&req_state=MN&req_statename=Minnesota&reqdb.zip=55401&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KMDW/year/month/day/DailyHistory.html?req_city=Chicago&req_state=IL&req_statename=Illinois&reqdb.zip=60290&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KHPN/year/month/day/DailyHistory.html?req_city=Bronxville&req_state=NY&req_statename=New+York&reqdb.zip=10708&reqdb.magic=1&reqdb.wmo=99999"]
+    	"https://www.wunderground.com/history/airport/KMIC/year/month/day/DailyHistory.html?req_city=Minneapolis&req_state=MN&req_statename=Minnesota&reqdb.zip=55401&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KMDW/year/month/day/DailyHistory.html?req_city=Chicago&req_state=IL&req_statename=Illinois&reqdb.zip=60290&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/KHPN/year/month/day/DailyHistory.html?req_city=Bronxville&req_state=NY&req_statename=New+York&reqdb.zip=10708&reqdb.magic=1&reqdb.wmo=99999",
+      "https://www.wunderground.com/history/airport/KMIA/year/month/day/DailyHistory.html?req_city=Miami&req_statename=Florida", "https://www.wunderground.com/history/airport/KSPG/year/month/day/DailyHistory.html?req_city=Saint+Petersburg&req_state=FL&req_statename=Florida&reqdb.zip=33701&reqdb.magic=1&reqdb.wmo=99999", "https://www.wunderground.com/history/airport/CYHU/year/month/day/DailyHistory.html?req_city=Montreal%20/%20St-Hubert&req_statename=Quebec&reqdb.zip=00000&reqdb.magic=9&reqdb.wmo=71371", "https://www.wunderground.com/history/airport/KFUL/year/month/day/DailyHistory.html?req_city=Anaheim&req_state=CA&req_statename=California&reqdb.zip=92801&reqdb.magic=1&reqdb.wmo=99999"]
 
   end
 end
