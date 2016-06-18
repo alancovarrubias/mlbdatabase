@@ -12,10 +12,6 @@ class Game < ActiveRecord::Base
     "#{home_team.game_abbr}%d%02d%02d#{num}" % [game_day.date.year, game_day.date.month, game_day.date.day]
   end
 
-  def create_weather
-    Create::Weathers.new.create(self)
-  end
-
   def update_weather
     Update::Weathers.new.update(self)
   end

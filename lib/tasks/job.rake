@@ -72,10 +72,18 @@ namespace :job do
     Game.where(stadium: "").each do |game|
       game.update_hour_stadium_runs
     end
-  end 
+  end
+
+  task test: :environment do
+    Game.all.each do |game|
+      if game.weathers.size == 0
+        puts game.id
+      end
+    end
+  end
 
   task test_weather: :environment do
-    GameDay.find(59).update_weather
+    GameDay.find(5844).update_weather
   end
 
 end

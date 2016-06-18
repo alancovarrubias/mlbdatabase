@@ -4,72 +4,61 @@ module Update
   	include NewShare
 
     def update(game)
-    
+
+      create_weathers(game)
+
       game_time = game.time
       game_day = game.game_day
       home_team = game.home_team
       local_hour = game.local_hour
 
-      puts game.url
-      puts "#{game_time} #{local_hour}"
       if game_time.include?(":")
-        game_hour_1, game_period_1 = parse_time_string_get_hour_period(game_time)
+        @game_hour_1, @game_period_1 = parse_time_string_get_hour_period(game_time)
       else
-        game_hour_1, game_period_1 = local_hour_get_hour_period(local_hour)
+        @game_hour_1, @game_period_1 = local_hour_get_hour_period(local_hour)
       end
 
-      game_hour_2, game_period_2 = next_hour(game_hour_1, game_period_1)
-      game_hour_3, game_period_3 = next_hour(game_hour_2, game_period_2)
+      @game_hour_2, @game_period_2 = next_hour(@game_hour_1, @game_period_1)
+      @game_hour_3, @game_period_3 = next_hour(@game_hour_2, @game_period_2)
 
-      puts "Hour 1: #{game_hour_1} #{game_period_1}"
-      puts "Hour 2: #{game_hour_2} #{game_period_2}"
-      puts "Hour 3: #{game_hour_3} #{game_period_3}"
-
-      # url = get_url(home_team, game_day)
-      # page = mechanize_page(url)
-      # puts url
+      url = get_url(home_team, game_day)
+      page = mechanize_page(url)
+      puts url
     
-      # size = page.search("#obsTable th").size
-      # elements = page.search("#obsTable td")
-      # temp = humidity = pressure = rain = dir = speed  = dew = nil
-      # weathers = game.weathers.where(station: "Actual")
-      # weather = nil
-      # elements.each_with_index do |stat, index|
-      #   case index%size
-      #   when 0
-      #     time = stat.text.strip
-      #     hour, period = parse_time_string_get_hour_period(time)
-      #     if hour == game_hour_1 && game_period_1 == period
-      #       weather = weathers.find_by(hour: 1)
-      #     elsif hour == game_hour_2 && game_period_2 == period
-      #       weather = weathers.find_by(hour: 2)
-      #     elsif hour == game_hour_3 && game_period_3 == period
-      #       weather = weathers.find_by(hour: 3)
-      #     else
-      #       weather = nil
-      #     end
-      #   when 1
-      #     temp = stat.text.strip
-      #   when 2
-      #     dew = stat.text.strip
-      #   when size - 9
-      #     humidity = stat.text.strip
-      #   when size - 8
-      #     pressure = stat.text.strip
-      #   when size - 6
-      #     dir = stat.text.strip
-      #   when size - 5
-      #     speed = stat.text.strip
-      #   when size - 3
-      #     rain = stat.text.strip
-      #     if weather
-      #       weather.update_attributes(wind: speed + " " + dir, speed: speed, dir: dir, dew: dew, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
-      #     end
-      #   end
-      # end
+      size = page.search("#obsTable th").size
+      elements = page.search("#obsTable td")
+      weathers = game.weathers.where(station: "Actual")
+      elements.each_slice(size) do |slice|
+        weather = get_weather(slice[0], weathers)
+        next unless weather
+        temp = slice[1].text.strip
+        dew = slice[size - 10].text.strip
+        humidity = slice[size - 9].text.strip
+        pressure = slice[size - 8].text.strip
+        dir = slice[size - 6].text.strip
+        speed = slice[size - 5].text.strip
+        rain = slice[size - 3].text.strip
+        puts dew
+        weather.update_attributes(wind: speed + " " + dir, speed: speed, dir: dir, dew: dew, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
+      end
+
     end
 
     private
+
+      def get_weather(element, weathers)
+        time = element.text.strip
+        hour, period = parse_time_string_get_hour_period(time)
+        if hour == @game_hour_1 && @game_period_1 == period
+          weathers.find_by(hour: 1)
+        elsif hour == @game_hour_2 && @game_period_2 == period
+          weathers.find_by(hour: 2)
+        elsif hour == @game_hour_3 && @game_period_3 == period
+          weathers.find_by(hour: 3)
+        else
+          nil
+        end
+      end
 
       def get_url(home_team, game_day)
         url = @@urls[home_team.id-1]
@@ -97,7 +86,7 @@ module Update
       end
 
       def next_hour(hour, period)
-        if hour.to_i == 11
+        if hour == 11
           if period == "AM"
             period = "PM"
           else
@@ -105,13 +94,22 @@ module Update
           end
         end
 
-        if hour.to_i == 12
-          hour = "1"
+        if hour == 12
+          hour = 1
         else
-          hour = (hour.to_i + 1).to_s
+          hour = hour + 1
         end
 
         return hour, period
+      end
+
+      def create_weathers(game)
+        if game.weathers.size == 0
+          (1..3).each do |i|
+            Weather.create(game: game, station: "Forecast", hour: i)
+            Weather.create(game: game, station: "Actual", hour: i)
+          end
+        end
       end
 
 

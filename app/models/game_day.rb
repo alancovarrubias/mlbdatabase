@@ -46,7 +46,6 @@ class GameDay < ActiveRecord::Base
   end
 
   def update_weather
-    games.each { |game| game.create_weather }
     games.each { |game| game.update_weather }
   end
 
