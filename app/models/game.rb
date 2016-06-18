@@ -13,7 +13,9 @@ class Game < ActiveRecord::Base
   end
 
   def update_weather
-    Update::Weathers.new.update(self)
+    if self.weathers.size == 0
+      Update::Weathers.new.update(self)
+    end
   end
 
   def update_forecast
