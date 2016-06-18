@@ -134,8 +134,7 @@ class Player < ActiveRecord::Base
     "Christopher Devenski" => "Chris Devenski",
     "Matthew Buschmann" => "Matt Buschmann",
     "Melvin Upton Jr." => "Melvin Upton",
-    "Jackie Bradley Jr." => "Jackie Bradley",
-    "John Barbato" => "Johnny Barbato"
+    "Jackie Bradley Jr." => "Jackie Bradley"
   }
 
 end
