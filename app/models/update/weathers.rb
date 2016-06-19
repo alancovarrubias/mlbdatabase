@@ -24,6 +24,8 @@ module Update
       url = get_url(home_team, game_day)
       page = mechanize_page(url)
       puts url
+
+      return unless page
     
       size = page.search("#obsTable th").size
       return if size == 0
