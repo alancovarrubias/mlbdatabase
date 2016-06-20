@@ -51,7 +51,6 @@ class GameDay < ActiveRecord::Base
 
   def update_forecast
     if today? || tomorrow?
-      games.each { |game| game.create_weather }
       games.each { |game| game.update_forecast }
     end
   end

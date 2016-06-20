@@ -4,11 +4,19 @@ module Update
     include NewShare
 
     def update(game)
+      create_weather(game)
       update_pressure(game)
       update_forecast(game)
     end
 
     private
+      def create_weather(game)
+        if game.weathers.where(station: "Forecast").size == 0
+          (1..3).each do |i|
+            Weather.create(game: game, station: "Forecast", hour: i)
+          end
+        end          
+      end
 
       def update_pressure(game)
         game_day = game.game_day
@@ -46,6 +54,7 @@ module Update
     	  url = @@urls[home_team.id-1]
         url += "?hour=#{game_hour}"
         doc = download_document(url)
+        return unless doc
         puts url
         initialize_arrays
         var = row = 0

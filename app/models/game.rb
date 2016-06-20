@@ -9,11 +9,11 @@ class Game < ActiveRecord::Base
   has_many :weather_sources, dependent: :destroy
 
   def url
-    "#{home_team.game_abbr}%d%02d%02d#{num}" % [game_day.date.year, game_day.date.month, game_day.date.day]
+    "#{home_team.game_abbr}%d%02d%02d#{num}" % [game_day.year, game_day.month, game_day.day]
   end
 
   def update_weather
-    if self.weathers.size == 0
+    if self.weathers.where(station: "Actual").size == 0
       Update::Weathers.new.update(self)
     end
   end

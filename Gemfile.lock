@@ -146,9 +146,11 @@ DEPENDENCIES
   open_uri_redirections
   pg
   rails (= 4.1.6)
-  rake (= 11.1.2)
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
   spring
   turbolinks
   uglifier (>= 1.3.0)
+
+BUNDLED WITH
+   1.12.5
