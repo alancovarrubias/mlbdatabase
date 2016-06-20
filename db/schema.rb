@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160615232424) do
+ActiveRecord::Schema.define(version: 20160620214533) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -260,19 +260,20 @@ ActiveRecord::Schema.define(version: 20160615232424) do
 
   create_table "weathers", force: true do |t|
     t.integer  "game_id"
-    t.string   "station",    default: ""
-    t.integer  "hour",       default: 0
-    t.string   "wind",       default: ""
-    t.string   "humidity",   default: ""
-    t.string   "pressure",   default: ""
-    t.string   "temp",       default: ""
-    t.string   "rain",       default: ""
+    t.string   "station",     default: ""
+    t.integer  "hour",        default: 0
+    t.string   "wind",        default: ""
+    t.string   "humidity",    default: ""
+    t.string   "pressure",    default: ""
+    t.string   "temp",        default: ""
+    t.string   "rain",        default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "dew",        default: ""
-    t.string   "feel",       default: ""
-    t.string   "speed",      default: ""
-    t.string   "dir",        default: ""
+    t.string   "dew",         default: ""
+    t.string   "feel",        default: ""
+    t.string   "speed",       default: ""
+    t.string   "dir",         default: ""
+    t.float    "air_density", default: 0.0
   end
 
   add_index "weathers", ["game_id"], name: "index_weathers_on_game_id", using: :btree

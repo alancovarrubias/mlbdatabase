@@ -84,12 +84,7 @@ namespace :job do
   end
 
   task test: :environment do
-    Game.all.each do |game|
-      weather = game.true_weather
-      if weather
-        weather.weather.air_density
-      end
-    end
+    
   end
 
 end

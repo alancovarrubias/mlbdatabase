@@ -18,6 +18,8 @@ class Weather < ActiveRecord::Base
   def air_density
     unless baro_num == 0.0 || dew_num == 0.0 || temp_num == 0.0
       Create::AirDensity.new.run(baro_num, temp_num, dew_num)
+    else
+      0.0
     end
   end
 end
