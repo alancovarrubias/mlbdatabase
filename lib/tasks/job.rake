@@ -50,12 +50,6 @@ namespace :job do
     GameDay.yesterday.pitcher_box_score
   end
 
-  task fix_weather: :environment do
-    GameDay.all.each do |game_day|
-      game_day.update_weather
-    end
-  end
-
   task delete_games: :environment do
     [GameDay.today, GameDay.tomorrow].each { |game_day| game_day.delete_games }
   end
@@ -65,7 +59,7 @@ namespace :job do
   end
 
   task update_local_hour: :environment do
-    Season.where("year >= 2010").each { |season| season.game_days.each{ |game_day| game_day.update_local_hour } }
+    Season.all.each { |season| season.game_days.each{ |game_day| game_day.update_local_hour } }
   end
 
   task update_hour_stadium_runs: :environment do
@@ -79,8 +73,23 @@ namespace :job do
     GameDay.yesterday.update_games
   end
 
-  task test_weather: :environment do
-    GameDay.find(5844).update_weather
+  task fix_weather: :environment do
+    GameDay.all.each do |game_day|
+      game_day.update_weather
+    end
+  end
+
+  task whoo: :environment do
+    index = 1 ? index : 0
+  end
+
+  task test: :environment do
+    Game.all.each do |game|
+      weather = game.true_weather
+      if weather
+        weather.weather.air_density
+      end
+    end
   end
 
 end

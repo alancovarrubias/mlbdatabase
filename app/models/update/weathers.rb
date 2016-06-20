@@ -42,7 +42,8 @@ module Update
         dir = slice[size - 6].text.strip
         speed = slice[size - 5].text.strip
         rain = slice[size - 3].text.strip
-        weather.update_attributes(wind: speed + " " + dir, speed: speed, dir: dir, dew: dew, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
+        weather.update(wind: speed + " " + dir, speed: speed, dir: dir, dew: dew, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
+        weather.update(air_density: weather.air_density)
       end
 
     end
