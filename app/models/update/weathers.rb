@@ -107,7 +107,7 @@ module Update
       end
 
       def create_weathers(game)
-        if game.weathers.where(local_hour: 0).size == 0
+        if game.weathers.where(station: "Actual").size == 0
           (1..3).each do |i|
             Weather.create(game: game, station: "Actual", hour: i)
           end
