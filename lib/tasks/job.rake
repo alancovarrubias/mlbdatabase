@@ -74,12 +74,9 @@ namespace :job do
     end
   end
 
-  task test: :environment do
-    Game.all.each do |game|
-      if game.weathers.size == 0
-        puts game.id
-      end
-    end
+  task fix: :environment do
+    GameDay.yesterday.update_weather
+    GameDay.yesterday.update_games
   end
 
   task test_weather: :environment do

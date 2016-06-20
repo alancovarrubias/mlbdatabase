@@ -5,10 +5,9 @@ module Update
 
   	def update(game_day)
   		closingline(game_day)
-	  	unless game_day == GameDay.search(Time.now)
-	  		return
+	  	if game_day == GameDay.search(Time.now)
+	  		umpire(game_day)
 	  	end
-	  	umpire(game_day)
   	end
 
   	private
