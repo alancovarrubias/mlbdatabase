@@ -46,6 +46,11 @@ module Update
         weather.update(air_density: weather.air_density)
       end
 
+      weather = game.true_weather
+      if weather
+        game.update(temp: weather.temp_num, dew: weather.dew_num, baro: weather.baro_num, humid: weather.humid_num)
+      end
+
     end
 
     private

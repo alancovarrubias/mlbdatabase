@@ -2,13 +2,20 @@ class Weather < ActiveRecord::Base
   belongs_to :game
 
   def temp_num
+    return 0.0 if temp.size == 0
     index = temp.index(".")
-    index ? temp[0..temp.index(".")+1].to_f : 0.0
+    index ? temp[0..index+1].to_f : temp[0..1].to_f
   end
 
   def dew_num
+    return 0.0 if temp.size == 0
     index = dew.index(".")
-    index ? dew[0..dew.index(".")+1].to_f : 0.0
+    index ? dew[0..index+1].to_f : dew[0..1].to_f
+  end
+
+  def humid_num
+    return 0.0 if humidity.size == 0
+    humidity[0..1].to_f
   end
 
   def baro_num

@@ -68,23 +68,24 @@ namespace :job do
     end
   end
 
-  task fix: :environment do
-    GameDay.yesterday.update_weather
-    GameDay.yesterday.update_games
-  end
-
   task fix_weather: :environment do
     GameDay.all.each do |game_day|
       game_day.update_weather
     end
   end
 
-  task whoo: :environment do
-    index = 1 ? index : 0
-  end
-
   task test: :environment do
-    
+    Weather.all.each do |weather|
+      puts weather.id.to_s + " weather"
+      weather.update(air_density: weather.air_density)
+    end
+    Game.all.each do |game|
+      puts game.id.to_s + " weather"
+      weather = game.true_weather
+      if weather
+        game.update(temp: weather.temp_num, dew: weather.dew_num, baro: weather.baro_num, humid: weather.humid_num)
+      end
+    end
   end
 
 end
