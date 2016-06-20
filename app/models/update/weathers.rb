@@ -11,6 +11,7 @@ module Update
       game_day = game.game_day
       home_team = game.home_team
       local_hour = game.local_hour
+      local_hour = 18 if local_hour == 0
 
       if game_time.include?(":")
         @game_hour_1, @game_period_1 = parse_time_string_get_hour_period(game_time)
@@ -26,9 +27,9 @@ module Update
       puts url
 
       return unless page
-    
       size = page.search("#obsTable th").size
       return if size == 0
+
       elements = page.search("#obsTable td")
       weathers = game.weathers.where(station: "Actual")
       elements.each_slice(size) do |slice|
@@ -41,7 +42,6 @@ module Update
         dir = slice[size - 6].text.strip
         speed = slice[size - 5].text.strip
         rain = slice[size - 3].text.strip
-        puts dew
         weather.update_attributes(wind: speed + " " + dir, speed: speed, dir: dir, dew: dew, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
       end
 
