@@ -13,7 +13,8 @@ class Game < ActiveRecord::Base
   end
 
   def update_weather
-    if weathers.where(station: "Actual").size == 0
+    unless weathers.where(station: "Actual").size == 3
+      weathers.where(station: "Actual").destroy_all
       Update::Weathers.new.update(self)
     end
   end

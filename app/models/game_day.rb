@@ -36,9 +36,7 @@ class GameDay < ActiveRecord::Base
   end
 
   def update_games
-    # if today?
-      Update::Games.new.update(self)
-    # end
+    Update::Games.new.update(self)
   end
 
   def delete_games
