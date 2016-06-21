@@ -13,7 +13,9 @@ class Game < ActiveRecord::Base
   end
 
   def update_weather
+    puts "#{id}"
     unless weathers.where(station: "Actual").size == 3
+      puts "update #{id}"
       weathers.where(station: "Actual").destroy_all
       Update::Weathers.new.update(self)
     end
