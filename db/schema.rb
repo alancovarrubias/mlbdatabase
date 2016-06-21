@@ -80,10 +80,10 @@ ActiveRecord::Schema.define(version: 20160620214533) do
     t.string   "stadium",         default: ""
     t.integer  "away_runs"
     t.integer  "home_runs"
-    t.float    "temp_num",        default: 0.0
-    t.float    "dew_num",         default: 0.0
-    t.float    "baro_num",        default: 0.0
-    t.float    "humid_num",       default: 0.0
+    t.float    "temp",            default: 0.0
+    t.float    "dew",             default: 0.0
+    t.float    "baro",            default: 0.0
+    t.float    "humid",           default: 0.0
   end
 
   add_index "games", ["game_day_id"], name: "index_games_on_game_day_id", using: :btree

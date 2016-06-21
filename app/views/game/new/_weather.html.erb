@@ -9,6 +9,7 @@
   	  <th>Pressure</th>
   	  <th>Humidity</th>
   	  <th>Precipitation</th>
+      <th>Air Density</th>
   	</tr>
   </thead>
   <tbody>
@@ -21,6 +22,7 @@
         <td><%= weather.pressure %></td>
         <td><%= weather.humidity %></td>
         <td><%= weather.rain %></td>
+        <td><%= weather.air_density unless weather.air_density == 0.0 %></td>
     	</tr>
     <% end %>
   </tbody>

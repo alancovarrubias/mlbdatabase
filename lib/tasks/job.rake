@@ -80,7 +80,7 @@ namespace :job do
       weather.update(air_density: weather.air_density)
     end
     Game.all.each do |game|
-      puts game.id.to_s + " weather"
+      puts game.id.to_s + " game"
       weather = game.true_weather
       if weather
         game.update(temp: weather.temp_num, dew: weather.dew_num, baro: weather.baro_num, humid: weather.humid_num)
