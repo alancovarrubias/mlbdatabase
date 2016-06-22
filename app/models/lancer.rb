@@ -171,31 +171,12 @@ class Lancer < ActiveRecord::Base
     
   end
 
-  def sort_pitchers
-    game.game_day.index
-  end
-
-  # Find previous starting games
   def prev_pitchers
-    unless game
-      return nil
-    end
-    index = game.game_day.index
-    lancers = Lancer.where.not(game: nil).where(starter: true, player: self.player).find_all { |lancer| lancer.game.game_day.index < index }
-    lancers = lancers.find_all { |lancer| !lancer.game.game_day.is_preseason? }
-    return lancers.sort_by(&:sort_pitchers).reverse
-  end
-
-  def test_prev_pitchers
     Lancer.includes(game: :game_day)
     .where.not(game: nil)
-    .where(player: player)
+    .where(player: player, starter: true)
     .where("game_days.date < ?", game.game_day.date)
     .order("game_days.date DESC")
-    # player_lancers = player.lancers
-    # prev_game_days = GameDay.includes(games: :lancers).where("date < ?", game_day.date).order("date DESC")
-    # prev_game_days.first.games.first.lancers
-    # prev_game_days.map { |game_day| player_lancers.find_by(game_id: game_day.games.map { |game| game.id}) 
   end
 
   def self.add_innings
