@@ -1,6 +1,6 @@
 namespace :job do
 
-  task daily: [:create_players, :update_batters, :update_pitchers, :update_hour_stadium_runs]
+  task daily: [:create_players, :update_batters, :update_pitchers, :update_hour_stadium_runs, :pitcher_box_score]
 
   task hourly: [:update_weather, :update_forecast, :update_games]
 
