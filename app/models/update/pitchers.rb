@@ -154,6 +154,7 @@ module Update
 		    url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
 		    puts url
 		    doc = download_document(url)
+		    return unless doc
 		    team_pitchers(doc, game, game.away_team)
 		    team_pitchers(doc, game, game.home_team)
 		    game.lancers.where(starter: true).each do |lancer|
