@@ -55,7 +55,9 @@ namespace :job do
   end
 
   task fix_pitcher_box_score: :environment do
-    GameDay.all.each { |game_day| game_day.pitcher_box_score }
+    GameDay.all.each do |game_day|
+      game_day.pitcher_box_score if game_day.date.year == 2016
+    end
   end
 
   task update_local_hour: :environment do
