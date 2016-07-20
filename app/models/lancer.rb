@@ -90,9 +90,12 @@ class Lancer < ActiveRecord::Base
           if game.home_team.league == "NL"
             lineup = lineup[0...-1]
             puts game.id
-            batter = game.lancers.find_by(starter: true, team: opp_team).player.create_batter(game_day.season)
-            batter.lineup = 9
-            lineup << batter
+            lancer = game.lancers.find_by(starter: true, team: opp_team)
+            if lancer
+              batter = lancer.player.create_batter(game_day.season)
+              batter.lineup = 9
+              lineup << batter
+            end
           end
           return lineup
         end
@@ -119,6 +122,8 @@ class Lancer < ActiveRecord::Base
     unless game
       return nil
     end
+
+
 
     opp_lineup = self.opposing_lineup
     opp_lineup = self.predict_opposing_lineup if opp_lineup.size == 0
