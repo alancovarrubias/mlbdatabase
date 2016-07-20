@@ -1,8 +1,8 @@
 namespace :job do
 
-  task daily: [:create_players, :update_batters, :update_pitchers, :update_hour_stadium_runs, :pitcher_box_score]
+  task daily: [:create_players, :update_batters, :update_pitchers, :update_hour_stadium_runs]
 
-  task hourly: [:update_weather, :update_forecast, :update_games]
+  task hourly: [:update_weather, :update_forecast, :update_games, :pitcher_box_score]
 
   task ten: [:create_matchups]
 
@@ -77,16 +77,8 @@ namespace :job do
   end
 
   task test: :environment do
-    Weather.all.each do |weather|
-      puts weather.id.to_s + " weather"
-      weather.update(air_density: weather.air_density)
-    end
-    Game.all.each do |game|
-      puts game.id.to_s + " game"
-      weather = game.true_weather
-      if weather
-        game.update(temp: weather.temp_num, dew: weather.dew_num, baro: weather.baro_num, humid: weather.humid_num)
-      end
+    GameDay.where("date > ?", Date.new(2016, 7, 1)).each do |game_day|
+      game_day.pitcher_box_score
     end
   end
 
