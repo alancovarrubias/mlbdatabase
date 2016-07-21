@@ -2,7 +2,7 @@ namespace :job do
 
   task daily: [:create_players, :update_batters, :update_pitchers, :update_hour_stadium_runs]
 
-  task hourly: [:update_weather, :update_forecast, :update_games, :pitcher_box_score]
+  task hourly: [:update_weather, :update_forecast, :update_games, :pitcher_box_score, :test_bullpen]
 
   task ten: [:create_matchups]
 
@@ -71,16 +71,8 @@ namespace :job do
     end
   end
 
-  task test: :environment do
-    GameDay.where("date > ?", Date.new(2016, 7, 1)).each do |game_day|
-      game_day.pitcher_box_score
-    end
-  end
-
-  task delete_bullpen: :environment do
-    GameDay.yesterday.games.each do |game|
-      game.lancers.where(bullpen: true).destroy_all
-    end
+  task test_bullpen: :environment do
+    Test::Bullpen.new.run
   end
 
 end
