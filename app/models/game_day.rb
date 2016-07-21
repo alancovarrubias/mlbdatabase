@@ -35,6 +35,10 @@ class GameDay < ActiveRecord::Base
     Create::Bullpen.new.create(self)
   end
 
+  def create_bullpen
+    Create::Bullpen.new.create(self)
+  end
+
   def update_games
     Update::Games.new.update(self)
   end
