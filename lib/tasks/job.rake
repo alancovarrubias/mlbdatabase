@@ -51,13 +51,8 @@ namespace :job do
   end
 
   task delete_games: :environment do
-    [GameDay.today, GameDay.tomorrow].each { |game_day| game_day.delete_games }
-  end
-
-  task fix_pitcher_box_score: :environment do
-    GameDay.all.each do |game_day|
-      game_day.pitcher_box_score if game_day.date.year == 2016
-    end
+    GameDay.yesterday.delete_games
+    # [GameDay.today, GameDay.tomorrow].each { |game_day| game_day.delete_games }
   end
 
   task update_local_hour: :environment do
@@ -79,6 +74,12 @@ namespace :job do
   task test: :environment do
     GameDay.where("date > ?", Date.new(2016, 7, 1)).each do |game_day|
       game_day.pitcher_box_score
+    end
+  end
+
+  task delete_bullpen: :environment do
+    GameDay.yesterday.games.each do |game|
+      game.lancers.where(bullpen: true).destroy_all
     end
   end
 

@@ -44,7 +44,7 @@ module Create
 		  end
 
 		  def create_game(game_day, home_team, away_team, num)
-		  	Game.create(game_day_id: game_day.id, home_team_id: home_team.id, away_team_id: away_team.id, num: num)
+		  	Game.create(game_day: game_day, home_team: home_team, away_team: away_team, num: num)
 		  end
 
 		  def convert_to_local_time(game, time)
