@@ -50,17 +50,18 @@ namespace :setup do
 
 	task test: :environment do
 
-    game_day = GameDay.today
-    bullpen_hash = get_bullpen_hash(game_day)
-    bullpens_valid = true
-    game_day.games.each do |game|
-      unless bullpen_valid?(game, bullpen_hash)
-        puts game.id
-        bullpens_valid = false
-        # game.lancers.where(bullpen: true).destroy_all
+    [GameDay.yesterday, GameDay.today, GameDay.tomorrow].each do |game_day|
+      bullpen_hash = get_bullpen_hash(game_day)
+      bullpens_valid = true
+      game_day.games.each do |game|
+        unless bullpen_valid?(game, bullpen_hash)
+          puts game.id
+          bullpens_valid = false
+          game.lancers.where(bullpen: true).destroy_all
+        end
       end
+      game_day.create_bullpen unless bullpens_valid
     end
-    # game_day.create_bullpen unless bullpens_valid
 
   end
 
