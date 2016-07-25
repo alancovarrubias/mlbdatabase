@@ -61,6 +61,35 @@ module Test
         if game_away_bullpen.size != away_bullpen.size || game_home_bullpen.size != home_bullpen.size
           return false
         end
+
+        away_bullpen_names = away_bullpen.map { |bullpen| bullpen[0] }
+        away_bullpen_identities = away_bullpen.map { |bullpen| bullpen[1] }
+
+        game_away_bullpen.each do |bullpen|
+          unless away_bullpen_names.include?(bullpen.name)
+            puts bullpen.name
+            return false
+          end
+          unless away_bullpen_identities.include?(bullpen.identity)
+            puts bullpen.identity
+            return false
+          end
+        end
+
+        home_bullpen_names = home_bullpen.map { |bullpen| bullpen[0] }
+        home_bullpen_identities = home_bullpen.map { |bullpen| bullpen[1] }
+
+        game_home_bullpen.each do |bullpen|
+          unless home_bullpen_names.include?(bullpen.name)
+            puts bullpen.name
+            return false
+          end
+          unless home_bullpen_identities.include?(bullpen.identity)
+            puts bullpen.identity
+            return false
+          end
+        end
+
         return true
       end
 

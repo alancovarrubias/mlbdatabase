@@ -17,6 +17,10 @@ class Lancer < ActiveRecord::Base
     player.name
   end
 
+  def identity
+    player.identity
+  end
+
   def stats(handedness=nil)
   	if pitcher_stats.size == 0
   	  PitcherStat.create(lancer: self, range: "Season", handedness: "L")

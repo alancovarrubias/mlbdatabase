@@ -39,7 +39,7 @@ namespace :job do
   end
 
   task update_weather: :environment do
-    GameDay.today.update_weather
+    GameDay.all.each do {|game_day| game_day.update_weather}
   end
 
   task update_forecast: :environment do

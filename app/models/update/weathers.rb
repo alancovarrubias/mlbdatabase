@@ -28,20 +28,21 @@ module Update
 
       return unless page
       size = page.search("#obsTable th").size
-      return if size == 0
-
+      return if size == 0 || size == 13
+      index_hash = {temp: 1, dew: 2, humidity: 3, pressure: 4, wind_dir: 6, wind_speed: 7, precip: 9}
+      update_index_hash(index_hash, size)
       elements = page.search("#obsTable td")
       weathers = game.weathers.where(station: "Actual")
       elements.each_slice(size) do |slice|
         weather = get_weather(slice[0], weathers)
         next unless weather
-        temp = slice[1].text.strip
-        dew = slice[size - 10].text.strip
-        humidity = slice[size - 9].text.strip
-        pressure = slice[size - 8].text.strip
-        dir = slice[size - 6].text.strip
-        speed = slice[size - 5].text.strip
-        rain = slice[size - 3].text.strip
+        temp = slice[index_hash[:temp]].text.strip
+        dew = slice[index_hash[:dew]].text.strip
+        humidity = slice[index_hash[:humidity]].text.strip
+        pressure = slice[index_hash[:pressure]].text.strip
+        dir = slice[index_hash[:wind_dir]].text.strip
+        speed = slice[index_hash[:wind_speed]].text.strip
+        rain = slice[index_hash[:precip]].text.strip
         weather.update(wind: speed + " " + dir, speed: speed, dir: dir, dew: dew, humidity: humidity, pressure: pressure, temp: temp, rain: rain)
         weather.update(air_density: weather.air_density)
       end
@@ -54,6 +55,14 @@ module Update
     end
 
     private
+
+      def update_index_hash(index_hash, size)
+        if size == 13
+          index_hash.each do |k, v|
+            index_hash[k] += 1 unless k == :temp
+          end
+        end
+      end
 
       def get_weather(element, weathers)
         time = element.text.strip
