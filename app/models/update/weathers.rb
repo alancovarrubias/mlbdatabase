@@ -28,7 +28,7 @@ module Update
 
       return unless page
       size = page.search("#obsTable th").size
-      return if size == 0 || size == 13
+      return if size == 0
       index_hash = {temp: 1, dew: 2, humidity: 3, pressure: 4, wind_dir: 6, wind_speed: 7, precip: 9}
       update_index_hash(index_hash, size)
       elements = page.search("#obsTable td")
