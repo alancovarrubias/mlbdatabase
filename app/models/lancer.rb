@@ -90,7 +90,10 @@ class Lancer < ActiveRecord::Base
         end
 
         if opp_pitcher && opp_pitcher.player.throwhand == throwhand
+          puts game.id
+          puts "WHOOO"
           lineup = game.batters.where(team: opp_team, starter: true).order("lineup ASC")
+          next unless lineup.size == 9
           if game.home_team.league == "NL"
             lineup = lineup[0...-1]
             puts game.id
