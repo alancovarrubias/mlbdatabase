@@ -51,8 +51,7 @@ namespace :job do
   end
 
   task delete_games: :environment do
-    GameDay.yesterday.delete_games
-    # [GameDay.today, GameDay.tomorrow].each { |game_day| game_day.delete_games }
+    GameDay.today.delete_games
   end
 
   task update_local_hour: :environment do
@@ -73,6 +72,14 @@ namespace :job do
 
   task test_bullpen: :environment do
     Test::Bullpen.new.run
+  end
+
+  task fix_game_lancers: :environment do
+    Game.all.each do |game|
+      away_id = game.away_team_id
+      home_id = game.home_team_id
+      game.lancers.where.not("team_id = #{away_id} OR team_id = #{home_id}").destroy_all
+    end
   end
 
 end
