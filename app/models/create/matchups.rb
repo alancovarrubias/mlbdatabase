@@ -145,7 +145,6 @@ module Create
 				season = Season.find_by_year(game_day.year)
 				teams = Set.new
 				elements.each_with_index do |element, index|
-					puts element.text
 			  	type = element_type(element)
 		  		case type
 		  		when 'time'
@@ -210,6 +209,7 @@ module Create
 		  	  if type == 'pitcher'
 		  	  	lancer = player.create_lancer(season)
 		  	  	lancer.update_attributes(starter: true)
+		  	  	puts "#{lancer.name} #{game.id}"
 				    game_lancer = player.create_lancer(season, team, game)
 				    game_lancer.update(starter: true)
 				  elsif type == 'batter'
