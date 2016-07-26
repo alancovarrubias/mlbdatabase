@@ -150,12 +150,12 @@ module Create
 		  		when 'time'
 						game_index += 1
 						batter_index = 0
+						teams << away_team if away_team
 						next
 		  		when 'lineup'
 						if team_index%2 == 0
 			  			away_team = Team.find_by_name(element.text)
 			  			away_lineup = true
-			  			teams << away_team
 						else
 			  			home_team = Team.find_by_name(element.text)
 			  			home_lineup = true
@@ -166,7 +166,6 @@ module Create
 						if team_index%2 == 0
 						  away_team = Team.find_by_name(element.text)
 						  away_lineup = false
-						  teams << away_team
 						else
 						  home_team = Team.find_by_name(element.text)
 						  home_lineup = false
@@ -209,7 +208,7 @@ module Create
 		  	  if type == 'pitcher'
 		  	  	lancer = player.create_lancer(season)
 		  	  	lancer.update_attributes(starter: true)
-		  	  	puts "#{lancer.name} #{game.id}"
+		  	  	puts "#{lancer.name} #{game.id} #{teams.include?(away_team)}"
 				    game_lancer = player.create_lancer(season, team, game)
 				    game_lancer.update(starter: true)
 				  elsif type == 'batter'
