@@ -14,4 +14,15 @@ namespace :setup do
     
   end
 
+  task whoo: :environment do
+    year = 2016
+    player = Player.find_by_name("Carlos Martinez")
+    url = "http://www.baseball-reference.com/teams/STL/2016-roster.shtml"
+    doc = Nokogiri::HTML(open(url))
+    doc.css("#appearances td").each_slice(28) do |slice|
+      puts slice[0]
+    end
+    # puts url
+  end
+
 end

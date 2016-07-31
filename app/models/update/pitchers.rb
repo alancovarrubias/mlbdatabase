@@ -7,114 +7,86 @@ module Update
   		year = season.year
   		puts "Update #{team.name} #{year} Pitchers"
 
-	  	url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=1&season=#{year}&month=0&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
-	  	doc = download_document(url)
-	  	player = name = fip = siera = nil
-	  	doc.css(".grid_line_regular").each_with_index do |element, index|
-	  	  text = element.text
-	  	  case index%16
-	  	  when 1
-	  	  	name = text
-	  	    fangraph_id = parse_fangraph_id(element)
-	  	    player = Player.search(name, nil, fangraph_id)
-	  	    unless player
-	  	      puts "Player " + name + " not found" 
-	  	    end
-	  	  when 11
-	  	  	fip = text.to_f
-	  	  when 15
-	  	  	siera = text.to_f
-	  	  	if player
+  		(0..1).each do |rost|
+		  	url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=1&season=#{year}&month=0&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=#{rost}&age=0&filter=&players=0&page=1_50"
+		  	doc = download_document(url)
+		  	puts url
+		  	index = { name: 1, fip: 11+rost, siera: 15+rost }
+		  	doc.css(".grid_line_regular").each_slice(16+rost) do |slice|
+		  		name = slice[index[:name]].text
+		  		fangraph_id = parse_fangraph_id(slice[index[:name]])
+		  		player = Player.search(name, nil, fangraph_id)
+		  		puts "Player " + name + " not found" unless player
+		  		fip = slice[index[:fip]].text.to_f
+		  		siera = slice[index[:siera]].text.to_f
+		  		if player
 	  	  	  lancer = player.create_lancer(season)
 	  	  	  lancer.stats.each_with_index do |pitcher_stat|
 	  	  	  	if pitcher_stat.handedness.size > 0
-	  	  	  	  pitcher_stat.update_attributes(fip: fip, siera: siera)
+	  	  	  	  pitcher_stat.update(fip: fip, siera: siera)
 	  	  	  	end
 	  	  	  end
-	  	  	end
-	  	  end
-	  	end
+		  		end
+		  	end
 
-	  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
-			url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
-			urls = [url_l, url_r]
-			player = name = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = gb = nil
-			urls.each_with_index do |url, url_index|
-			  doc = download_document(url)
-			  doc.css(".grid_line_regular").each_with_index do |element, index|
-			    text = element.text
-			    case index%13
-			    when 1
-				  	name = text
-			  	  fangraph_id = parse_fangraph_id(element)
-			  	  player = Player.search(name, nil, fangraph_id)
-			  	  unless player
-			  	    puts "Player " + name + " not found" 
-			  	  end
-			  	when 2
-			  	  ld = text[0...-2].to_f
-					when 3
-					  whip = text.to_f
-					when 4
-					  ip = text.to_f
-					when 5
-					  so = text.to_i
-					when 6
-					  bb = text.to_i
-					when 7
-					  era = text.to_f
-					when 8
-					  fb = text[0...-2].to_f
-					when 9
-					  xfip = text.to_i
-					when 10
-					  kbb = text.to_f
-					when 11
-					  woba = (text.to_f*1000).to_i
-					when 12
-					  gb = text[0...-2].to_f
-					  if player
-					  	handedness = get_handedness(url_index)
-					  	lancer = player.create_lancer(season)
-					  	pitcher_stat = lancer.stats.where(handedness: handedness).first
-					  	pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, era: era, fb: fb, xfip: xfip, kbb: kbb, woba: woba, gb: gb)
-					  end
-					end
-			  end
-			end
 
-			# No handedness
-			url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,47,42,13,24,19,122&season=#{year}&month=3&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=0&age=0&filter=&players=0&page=1_50"
-			doc = download_document(url)
-			name = ld = whip = ip = so = bb = siera = nil
-			doc.css(".grid_line_regular").each_with_index do |element, index|
-			  text = element.text
-			  case index%8
-			  when 1
-					name = text
-			  	fangraph_id = parse_fangraph_id(element)
-			  	player = Player.search(name, nil, fangraph_id)
-			  	unless player
-			  	  puts "Player " + name + " not found" 
-			  	end
-			  when 2
-					ld = text[0...-2].to_f
-			  when 3
-					whip = text.to_f
-			  when 4
-					ip = text.to_f
-			  when 5
-					so = text.to_i
-			  when 6
-					bb = text.to_i
-				when 7
-					siera = text.to_f
-					if player
-					  lancer = player.create_lancer(season)
-					  pitcher_stat = lancer.stats.where(handedness: "").first
-					  pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, siera: siera)
+		  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=#{rost}&age=0&filter=&players=0&page=1_50"
+				url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=#{rost}&age=0&filter=&players=0&page=1_50"
+				urls = [url_l, url_r]
+				player = name = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = gb = nil
+				urls.each_with_index do |url, url_index|
+					doc = download_document(url)
+					index = { name: 1, ld: 2 + rost, whip: 3 + rost, ip: 4 + rost, so: 5 + rost, bb: 6 + rost, era: 7 + rost, fb: 8 + rost, xfip: 9 + rost,
+						kbb: 10 + rost, woba: 11 + rost, gb: 12 + rost }
+					doc.css(".grid_line_regular").each_slice(13+rost) do |slice|
+						name = slice[index[:name]].text
+						fangraph_id = parse_fangraph_id(slice[index[:name]])
+						player = Player.search(name, nil, fangraph_id)
+						unless player
+							puts "Player " + name + " not found"
+							next
+						end
+						ld = slice[index[:ld]].text[0...-2].to_f
+						whip = slice[index[:whip]].text.to_f
+						ip = slice[index[:ip]].text.to_f
+						so = slice[index[:so]].text.to_f
+						bb = slice[index[:bb]].text.to_f
+						era = slice[index[:era]].text.to_f
+						fb = slice[index[:fb]].text[0...-2].to_f
+						xfip = slice[index[:xfip]].text.to_f
+						kbb = slice[index[:kbb]].text.to_f
+						woba = (slice[index[:woba]].text.to_f*1000).to_i
+						gb = slice[index[:gb]].text[0...-2].to_f
+				  	handedness = get_handedness(url_index)
+				  	lancer = player.create_lancer(season)
+				  	pitcher_stat = lancer.stats.where(handedness: handedness).first
+				  	pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, era: era, fb: fb, xfip: xfip, kbb: kbb, woba: woba, gb: gb)
 					end
-			  end
+				end
+
+				# No handedness
+				url = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,47,42,13,24,19,122&season=#{year}&month=3&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=#{rost}&age=0&filter=&players=0&page=1_50"
+				doc = download_document(url)
+				name = ld = whip = ip = so = bb = siera = nil
+				index = { name: 1, ld: 2 + rost, whip: 3 + rost, ip: 4 + rost, so: 5 + rost, bb: 6 + rost, siera: 7 + rost }
+				doc.css(".grid_line_regular").each_slice(8+rost) do |slice|
+					name = slice[index[:name]].text
+					fangraph_id = parse_fangraph_id(slice[index[:name]])
+					player = Player.search(name, nil, fangraph_id)
+					unless player
+						puts "Player " + name + " not found" 
+						next
+					end
+					ld = slice[index[:ld]].text[0...-2].to_f
+					whip = slice[index[:whip]].text.to_f
+					ip = slice[index[:ip]].text.to_f
+					so = slice[index[:so]].text.to_i
+					bb = slice[index[:bb]].text.to_i
+					siera = slice[index[:siera]].text.to_f
+				  lancer = player.create_lancer(season)
+				  pitcher_stat = lancer.stats.where(handedness: "").first
+				  pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, siera: siera)
+				end
 			end
 
 			team.players.each do |player|
@@ -128,21 +100,16 @@ module Update
 	  	  	next
 	  	  end
 	  	  row = 0
-	  	  doc.css("#plato td").each_with_index do |element, index|
-	  	  	case index%28
-	  	  	when 27
-	  	  	  ops = element.text.to_i
-	  	  	  case row
-	  	  	  when 0
-	  	  	  	player.create_lancer(season).stats.find_by(handedness: "R").update_attributes(ops: ops)
-	  	  	  when 1
-	  	  	  	player.create_lancer(season).stats.find_by(handedness: "L").update_attributes(ops: ops)
-	  	  	  end
-	  	  	  row += 1
+	  	  doc.css("#plato td").each_slice(28) do |slice|
+	  	  	ops = slice[27].text.to_i
+	  	  	if row == 0
+	  	  		player.create_lancer(season).stats.find_by(handedness: "R").update_attributes(ops: ops)
+	  	  	elsif row == 1
+	  	  		player.create_lancer(season).stats.find_by(handedness: "L").update_attributes(ops: ops)
+	  	  	else
+	  	  		break
 	  	  	end
-	  	  	if row == 2
-	  	  	  break
-	  	  	end
+	  	  	row += 1
 	  	  end
 	  	end
 	  end

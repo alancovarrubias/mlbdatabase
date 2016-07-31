@@ -34,6 +34,7 @@ module Create
 				  check_exceptions(player)
 				end
 		  end
+		  
 		end
 
     def fangraphs(team)
