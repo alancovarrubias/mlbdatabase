@@ -32,6 +32,7 @@ module Update
 		  	url_14 = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=c,5,21,14,16,38,37,50,61,43,44,45&season=#{year}&month=2&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=#{rost}&age=0&filter=&players=0&page=1_50"
 		  	urls = [url_l, url_r, url_14]
 		  	urls.each_with_index do |url, url_index|
+		  		puts url
 		  	  doc = download_document(url)
 		  	  index = { name: 1, ab: 2 + rost, sb: 3 + rost, bb: 4 + rost, so: 5 + rost, slg: 6 + rost, obp: 7 + rost, woba: 8 + rost,
 		  	  	wrc: 9 + rost, ld: 10 + rost, gb: 11 + rost, fb: 12 + rost }
