@@ -30,15 +30,15 @@ module Update
 		  	end
 
 
-		  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=#{rost}&age=0&filter=&players=0&page=1_50"
-				url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=#{rost}&age=0&filter=&players=0&page=1_50"
+		  	url_l = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37,7&season=#{year}&month=13&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=#{rost}&age=0&filter=&players=0&page=1_50"
+				url_r = "http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=0&type=c,36,31,4,14,11,5,38,43,27,47,37,7&season=#{year}&month=14&season1=#{year}&ind=0&team=#{team.fangraph_id}&rost=#{rost}&age=0&filter=&players=0&page=1_50"
 				urls = [url_l, url_r]
 				player = name = ld = whip = ip = so = bb = era = fb = xfip = kbb = woba = gb = nil
 				urls.each_with_index do |url, url_index|
 					doc = download_document(url)
 					index = { name: 1, ld: 2 + rost, whip: 3 + rost, ip: 4 + rost, so: 5 + rost, bb: 6 + rost, era: 7 + rost, fb: 8 + rost, xfip: 9 + rost,
-						kbb: 10 + rost, woba: 11 + rost, gb: 12 + rost }
-					doc.css(".grid_line_regular").each_slice(13+rost) do |slice|
+						kbb: 10 + rost, woba: 11 + rost, gb: 12 + rost, h: 13 + rost }
+					doc.css(".grid_line_regular").each_slice(14+rost) do |slice|
 						name = slice[index[:name]].text
 						fangraph_id = parse_fangraph_id(slice[index[:name]])
 						player = Player.search(name, nil, fangraph_id)
@@ -57,10 +57,11 @@ module Update
 						kbb = slice[index[:kbb]].text.to_f
 						woba = (slice[index[:woba]].text.to_f*1000).to_i
 						gb = slice[index[:gb]].text[0...-2].to_f
+						h = slice[index[:h]].text.to_i
 				  	handedness = get_handedness(url_index)
 				  	lancer = player.create_lancer(season)
 				  	pitcher_stat = lancer.stats.where(handedness: handedness).first
-				  	pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, era: era, fb: fb, xfip: xfip, kbb: kbb, woba: woba, gb: gb)
+				  	pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, era: era, fb: fb, xfip: xfip, kbb: kbb, woba: woba, gb: gb, h: h)
 					end
 				end
 
