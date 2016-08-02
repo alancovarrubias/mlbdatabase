@@ -208,7 +208,6 @@ module Create
 		  	  if type == 'pitcher'
 		  	  	lancer = player.create_lancer(season)
 		  	  	lancer.update_attributes(starter: true)
-		  	  	puts "#{lancer.name} #{game.id} #{teams.include?(away_team)}"
 				    game_lancer = player.create_lancer(season, team, game)
 				    game_lancer.update(starter: true)
 				  elsif type == 'batter'

@@ -10,9 +10,10 @@ class PitcherStat < ActiveRecord::Base
   end
 
   def tld
-  	line_drives = ((outs+h)*ld/100).to_i + bb
-  	all = (outs + h + bb)
-  	tld = ((line_drives.to_f/all.to_f).round(3) * 100).round(1)
+    a = outs + h - so
+    z = (a*ld/100).to_i
+  	true_line_drives = z + bb
+    tld = ((true_line_drives.to_f/(outs + h + bb).to_f).round(3) * 100).round(1)
   	tld.nan? ? 0.0 : tld
   end
 

@@ -15,14 +15,12 @@ namespace :setup do
   end
 
   task whoo: :environment do
-    year = 2016
-    player = Player.find_by_name("Carlos Martinez")
-    url = "http://www.baseball-reference.com/teams/STL/2016-roster.shtml"
-    doc = Nokogiri::HTML(open(url))
-    doc.css("#appearances td").each_slice(28) do |slice|
-      puts slice[0]
+    Game.find(42939).lancers.where(starter: true).each do |lancer|
+      season_lancer = Player.create_lancer(Season.find_by_year(2016))
+      ld = season_lancer
+      pitcher_stat = lancer.stats.where(handedness: "").first
+      pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, siera: siera)
     end
-    # puts url
   end
 
 end
