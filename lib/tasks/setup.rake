@@ -15,11 +15,14 @@ namespace :setup do
   end
 
   task whoo: :environment do
-    Game.find(42939).lancers.where(starter: true).each do |lancer|
-      season_lancer = Player.create_lancer(Season.find_by_year(2016))
-      ld = season_lancer
-      pitcher_stat = lancer.stats.where(handedness: "").first
-      pitcher_stat.update_attributes(ld: ld, whip: whip, ip: ip, so: so, bb: bb, siera: siera)
+    [GameDay.yesterday, GameDay.today, GameDay.tomorrow].each do |game_day|
+      season = game_day.season
+      game_day.games.each do |game|
+        game.lancers.each do |lancer|
+          season_lancer = lancer.player.create_lancer(season)
+          lancer.update(h: season_lancer.h)
+        end
+      end
     end
   end
 
