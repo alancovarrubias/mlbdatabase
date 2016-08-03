@@ -21,7 +21,7 @@ namespace :setup do
         game.lancers.each do |lancer|
           season_lancer = lancer.player.create_lancer(season)
           season_pitcher_stats = season_lancer.pitcher_stats
-          lancer.player_stats.each do |pitcher_stat|
+          lancer.pitcher_stats.each do |pitcher_stat|
             pitcher_stat.update(h: season_pitcher_stats.find_by(handedness: pitcher_stat.handedness).h)
           end
         end
