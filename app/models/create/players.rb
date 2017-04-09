@@ -7,13 +7,18 @@ module Create
 
 		  puts "Create #{team.name} #{season.year} Players"
 		  url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{season.year}-roster.shtml"
+      puts url
 		  doc = download_document(url)
 		  modulus = get_modulus(season)
-		  name = identity = bathand = throwhand = nil
-		  doc.css("#appearances td").each_with_index do |element, index|
+		  rows = doc.css(".right , tbody .left")# .map{|elem| puts elem.text}
+      puts rows.size%modulus
+      name = identity = bathand = throwhand = nil
+		  doc.css(".right , tbody .left").each_with_index do |element, index|
 				text = element.text
+        # puts text
 				case index%modulus
 				when 0
+          puts text
 				  name = text
 				  identity = parse_identity(element)
 				when 3
