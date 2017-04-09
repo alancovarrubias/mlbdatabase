@@ -10,8 +10,8 @@ module Update
 	    puts url
 	    doc = download_document(url)
 	    name = identity = nil
-	    index = { name: 2, identity: 21}
-	    doc.css("#team_batting tbody td").each_slice(28) do |slice|
+	    index = { name: 1, identity: 20}
+	    doc.css("#team_batting tbody td").each_slice(27) do |slice|
 	    	name = slice[index[:name]].child.child.text
 	    	identity = parse_identity(slice[index[:name]])
 	    	ops = slice[index[:identity]].text.to_i

@@ -19,15 +19,15 @@ namespace :job do
   end
 
   task create_players: :environment do
-    Season.where("year > 2013").each { |season| season.create_players }
+    Season.where("year > 2014").each { |season| season.create_players }
   end
 
   task update_batters: :environment do
-    Season.where("year > 2013").each { |season| season.update_batters }
+    Season.where("year > 2014").each { |season| season.update_batters }
   end
 
   task update_pitchers: :environment do
-    Season.where("year > 2013").map { |season| season.update_pitchers }
+    Season.where("year > 2014").map { |season| season.update_pitchers }
   end
 
   task create_matchups: :environment do

@@ -37,7 +37,7 @@ namespace :transaction do
     end
 
   	include NewShare
-    Season.where(year: 2016).each do |season|
+    Season.where(year: 2017).each do |season|
       game_days = season.game_days
       (1..4).each do |month|
         Team.all.each do |team|
