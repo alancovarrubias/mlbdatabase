@@ -23,7 +23,7 @@ namespace :job do
   end
 
   task update_batters: :environment do
-    Season.where("year > 2014").each { |season| season.update_batters }
+    Season.where("year > 2014").order("year DESC").each { |season| season.update_batters }
   end
 
   task update_pitchers: :environment do

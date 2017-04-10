@@ -2,7 +2,7 @@ module Create
   class Seasons
 
     def create
-      2016.downto(2001) do |year|
+      2017.downto(2001) do |year|
         season = Season.find_or_create_by(year: year)
         add_teams_to_season(season)
       end
