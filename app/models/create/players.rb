@@ -9,11 +9,13 @@ module Create
 		  url = "http://www.baseball-reference.com/teams/#{team.abbr}/#{season.year}-roster.shtml"
       puts url
 		  doc = download_document(url)
-		  modulus = get_modulus(season)
-		  rows = doc.css(".right , tbody .left")# .map{|elem| puts elem.text}
+		  modulus = 29 # get_modulus(season)
+      # css = ".right , tbody .left"
+      css = "#appearances tbody .left , #appearances .right"
+		  rows = doc.css(css)# .map{|elem| puts elem.text}
       puts rows.size%modulus
       name = identity = bathand = throwhand = nil
-		  doc.css(".right , tbody .left").each_with_index do |element, index|
+		  doc.css(css).each_with_index do |element, index|
 				text = element.text
         # puts text
 				case index%modulus
