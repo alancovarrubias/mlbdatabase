@@ -80,7 +80,7 @@ ActiveRecord::Schema.define(version: 20160620214533) do
     t.string   "stadium",         default: ""
     t.integer  "away_runs"
     t.integer  "home_runs"
-    t.float    "temps",           default: 0.0
+    t.float    "temp",            default: 0.0
     t.float    "dew",             default: 0.0
     t.float    "baro",            default: 0.0
     t.float    "humid",           default: 0.0
@@ -233,17 +233,9 @@ ActiveRecord::Schema.define(version: 20160620214533) do
   add_index "teams", ["name"], name: "index_teams_on_name", using: :btree
 
   create_table "transactions", force: true do |t|
-    t.integer  "game_day_id"
-    t.integer  "player_id"
-    t.integer  "team_id"
-    t.text     "desc",        default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "transactions", ["game_day_id"], name: "index_transactions_on_game_day_id", using: :btree
-  add_index "transactions", ["player_id"], name: "index_transactions_on_player_id", using: :btree
-  add_index "transactions", ["team_id"], name: "index_transactions_on_team_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "username",        default: ""
@@ -259,8 +251,7 @@ ActiveRecord::Schema.define(version: 20160620214533) do
     t.float    "temp"
     t.float    "precip"
     t.float    "windSpd"
-    t.float    "cldCvr"
-    t.float    "dewPt"
+    t.integer  "dewPt"
     t.float    "feelsLike"
     t.float    "relHum"
     t.float    "sfcPres"

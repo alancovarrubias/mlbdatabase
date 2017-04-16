@@ -43,8 +43,8 @@ module Create
         return home, away, gametime, duplicates
       end
 
-      def create_game(game_day, home_team, away_team, num)
-        Game.create(game_day: game_day, home_team: home_team, away_team: away_team, num: num)
+      def create_game(game_day, home_team, away_team, num, time_order)
+        Game.create(game_day: game_day, home_team: home_team, away_team: away_team, num: num, time_order: time_order)
       end
 
       def convert_to_local_time(game, time)
@@ -75,16 +75,16 @@ module Create
           games = ball_games.where(home_team: home[i], away_team: away[i])
           if game_day.is_preseason?
             if games.empty?
-              new_game = create_game(game_day, home[i], away[i], '0')
+              new_game = create_game(game_day, home[i], away[i], '0', i)
             end
           else
             size = games.size
             if size == 1 && duplicates.include?(home[i])
-              new_game = create_game(game_day, home[i], away[i], '2')
+              new_game = create_game(game_day, home[i], away[i], '2', i)
             elsif size == 0 && duplicates.include?(home[i])
-              new_game = create_game(game_day, home[i], away[i], '1')
+              new_game = create_game(game_day, home[i], away[i], '1', i)
             elsif size == 0
-              new_game = create_game(game_day, home[i], away[i], '0')
+              new_game = create_game(game_day, home[i], away[i], '0', i)
             end
           end
 
