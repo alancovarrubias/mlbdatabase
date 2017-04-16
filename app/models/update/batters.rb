@@ -11,7 +11,8 @@ module Update
 	    doc = download_document(url)
 	    name = identity = nil
 	    index = { name: 1, identity: 20}
-	    doc.css("#team_batting tbody td").each_slice(27) do |slice|
+      elements = doc.css("#team_batting tbody td")
+	    elements.each_slice(27) do |slice|
 	    	name = slice[index[:name]].child.child.text
 	    	identity = parse_identity(slice[index[:name]])
 	    	ops = slice[index[:identity]].text.to_i

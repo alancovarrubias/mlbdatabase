@@ -122,15 +122,9 @@ module Update
 		    url = "http://www.baseball-reference.com/boxes/#{game.home_team.game_abbr}/#{game.url}.shtml"
 		    puts url
 		    doc = download_document(url)
-		    return unless doc
+		    next unless doc
 		    team_pitchers(doc, game, game.away_team)
 		    team_pitchers(doc, game, game.home_team)
-		    game.lancers.where(starter: true).each do |lancer|
-		      unless @pitcher_ids.include? lancer.player_id
-		      	puts "#{lancer.player.name} destroyed"
-		      	lancer.destroy
-		      end
-		    end
 		  end
 		end
 
@@ -146,7 +140,10 @@ module Update
 
 			def team_pitchers(doc, game, team)
 			  name = identity = ip = h = r = bb = nil
-			  doc.css("##{team.css}pitching tbody td").each_with_index do |element, index|
+        css = "##{team.css}pitching tbody .right , ##{team.css}pitching tbody .left"
+        elements = doc.css(css)
+			  elements.each_with_index do |element, index|
+          puts element.text
 					case index
 					when 0
 					  name = element.child.text
