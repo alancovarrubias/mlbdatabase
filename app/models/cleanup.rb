@@ -29,6 +29,7 @@ module Cleanup
         puts url
         doc = download_document(url)
         css = "td tr:nth-child(1) .rgMasterTable .grid_line_regular"
+        next unless doc
         elements = doc.css(css)
         elements.each_slice(9) do |slice|
           id_str = slice[0].child["href"]
