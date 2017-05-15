@@ -28,6 +28,8 @@ namespace :job do
 
   task update_pitchers: :environment do
     Season.where("year > 2014").map { |season| season.update_pitchers }
+    Cleanup.prev_pitchers(GameDay.today)
+    Cleanup.prev_pitchers(GameDay.tomorrow)
   end
 
   task create_matchups: :environment do
