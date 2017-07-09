@@ -3,6 +3,16 @@ module Update
 
   	include NewShare
 
+    def adhoc_update
+      games = []
+      names = ["Braves", "Orioles", "Rockies", "Rangers", "Giants", "Brewers", "Cardinals"]
+      names.each do |name|
+        team = Team.find_by_name(name)
+        games += Game.where("away_team_id = #{team.id} OR home_team_id = #{team.id}")
+      end
+      games.each {|game| update(game)}
+    end
+
     def update(game)
 
       create_weathers(game)
