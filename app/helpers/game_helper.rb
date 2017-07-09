@@ -21,6 +21,7 @@ module GameHelper
   end
   
   def weather_time(game_time, weather_hour)
+    return if game_time.length == 0
   	weather_hour -= 1
 
   	colon_index = game_time.index(":")

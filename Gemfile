@@ -15,3 +15,6 @@ gem 'spring',                    group: :development
 gem 'bcrypt', '~> 3.1.7'
 gem 'mechanize', '~> 2.6.0'
 gem 'activejob_backport' 
+gem 'nokogiri'
+gem 'httparty'
+gem 'pry'

@@ -1,5 +1,15 @@
 namespace :job do
 
+  task test: :environment do
+    include NewShare
+    url = "http://www.baseball-reference.com/players/split.fcgi?id=achteaj01&year=Career&t=p"
+    doc = download_document(url)
+    doc.css("#plato tbody .left , #plato .right").each do |elem|
+      puts elem.text
+    end
+
+  end
+
   task daily: [:create_players, :update_batters, :update_pitchers, :update_hour_stadium_runs]
 
   task hourly: [:update_weather, :update_forecast, :update_games, :pitcher_box_score, :test_bullpen]
