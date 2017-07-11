@@ -6,9 +6,9 @@ module Update
     def adhoc_update
       games = []
       names = ["Braves", "Orioles", "Rockies", "Rangers", "Giants", "Brewers", "Cardinals"]
-      names.each do |name|
-        team = Team.find_by_name(name)
-        games += Game.where("away_team_id = #{team.id} OR home_team_id = #{team.id}")
+      Team.all.each do |team|
+        next if names.include?(team.name)
+        games += Game.where("home_team_id = #{team.id}")
       end
       games.each {|game| update(game)}
     end
@@ -141,40 +141,40 @@ module Update
 
 
     	@@urls = [
-        "https://www.wunderground.com/history/airport/KFUL/year/month/day/DailyHistory.html?req_city=Anaheim&req_state=CA&req_statename=California&reqdb.zip=92801&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KHOU/year/month/day/DailyHistory.html?req_city=Houston&req_statename=Texas",
-        "https://www.wunderground.com/history/airport/KOAK/year/month/day/DailyHistory.html?req_city=Oakland&req_statename=California",
-        "https://www.wunderground.com/history/airport/CYTZ/year/month/day/DailyHistory.html?req_city=Toronto&req_statename=Ontario",
+        "https://www.wunderground.com/history/airport/KFUL/2017/07/10/DailyHistory.html?req_city=Anaheim&req_state=CA&reqdb.zip=92806&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KMCJ/2017/07/10/DailyHistory.html?req_city=Houston&req_state=TX&reqdb.zip=77002&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KOAK/2017/07/10/DailyHistory.html?req_city=Oakland&req_state=CA&reqdb.zip=94621&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/CXTO/2017/07/10/DailyHistory.html?req_city=Toronto&req_statename=Ontario&reqdb.zip=00000&reqdb.magic=233&reqdb.wmo=71508",
         "https://www.wunderground.com/history/airport/KATL/year/month/day/DailyHistory.html?req_city=Atlanta&req_state=GA&reqdb.zip=30315&reqdb.magic=1&reqdb.wmo=99999&MR=1",
         "https://www.wunderground.com/history/airport/KMWC/year/month/day/DailyHistory.html?req_city=Milwaukee&req_state=WI&reqdb.zip=53214&reqdb.magic=1&reqdb.wmo=99999",
         "https://www.wunderground.com/history/airport/KCPS/year/month/day/DailyHistory.html?req_city=Saint%20Louis&req_state=MO&reqdb.zip=63102&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KMDW/year/month/day/DailyHistory.html?req_city=Chicago&req_state=IL&req_statename=Illinois&reqdb.zip=60290&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KPHX/year/month/day/DailyHistory.html?req_city=Phoenix&req_statename=Arizona",
-        "https://www.wunderground.com/history/airport/KCQT/year/month/day/DailyHistory.html?req_city=Los%20Angeles&req_statename=California",
+        "https://www.wunderground.com/history/airport/KMDW/2017/07/10/DailyHistory.html?req_city=Chicago&req_state=IL&reqdb.zip=60613&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KPHX/2017/07/10/DailyHistory.html?req_city=Phoenix&req_state=AZ&reqdb.zip=85004&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KCQT/2017/07/10/DailyHistory.html?req_city=Los%20Angeles&req_state=CA&reqdb.zip=90012&reqdb.magic=1&reqdb.wmo=99999",
         "https://www.wunderground.com/history/airport/KOAK/year/month/day/DailyHistory.html?req_city=San%20Francisco&req_state=CA&reqdb.zip=94107&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KBKL/year/month/day/DailyHistory.html?req_city=Cleveland&req_statename=Ohio",
-        "https://www.wunderground.com/history/airport/KBFI/year/month/day/DailyHistory.html?req_city=Seattle&req_state=WA&req_statename=Washington&reqdb.zip=98101&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KMIA/year/month/day/DailyHistory.html?req_city=Miami&req_statename=Florida",
-        "https://www.wunderground.com/history/airport/KJFK/year/month/day/DailyHistory.html?req_city=Queens&req_state=NY&req_statename=New+York&reqdb.zip=11427&reqdb.magic=4&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KDCA/year/month/day/DailyHistory.html?req_city=Washington&req_state=DC&req_statename=District+of+Columbia&reqdb.zip=20001&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KBKL/2017/07/10/DailyHistory.html?req_city=Cleveland&req_state=OH&reqdb.zip=44115&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KBFI/2017/07/10/DailyHistory.html?req_city=Seattle&req_state=WA&reqdb.zip=98134&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KMIA/2017/07/10/DailyHistory.html?req_city=Miami&req_state=FL&reqdb.zip=33125&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KLGA/2017/07/10/DailyHistory.html?req_city=Corona&req_state=NY&reqdb.zip=11368&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KDCA/2017/07/10/DailyHistory.html?req_city=Washington&req_state=DC&reqdb.zip=20003&reqdb.magic=1&reqdb.wmo=99999",
         "https://www.wunderground.com/history/airport/KDMH/year/month/day/DailyHistory.html?req_city=Baltimore&req_state=MD&req_statename=&reqdb.zip=21201&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KSAN/year/month/day/DailyHistory.html?req_city=San%20Diego&req_statename=California",
-        "https://www.wunderground.com/history/airport/KPNE/year/month/day/DailyHistory.html?req_city=Philadelphia&req_state=PA&req_statename=Pennsylvania&reqdb.zip=19019&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KAGC/year/month/day/DailyHistory.html?req_city=Pittsburgh&req_state=PA&req_statename=Pennsylvania&reqdb.zip=15122&reqdb.magic=2&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KGPM/2017/07/08/DailyHistory.html?req_city=Arlington&req_state=TX&reqdb.zip=76011&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KSPG/year/month/day/DailyHistory.html?req_city=Saint+Petersburg&req_state=FL&req_statename=Florida&reqdb.zip=33701&reqdb.magic=1&reqdb.wmo=99999",
-          "https://www.wunderground.com/history/airport/KBOS/year/month/day/DailyHistory.html?req_city=Boston&req_state=MA&req_statename=Massachusetts&reqdb.zip=02101&reqdb.magic=1&reqdb.wmo=99999",
-          "https://www.wunderground.com/history/airport/KLUK/year/month/day/DailyHistory.html?req_city=Cincinnati&req_state=OH&req_statename=Ohio&reqdb.zip=45201&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KBKF/year/month/day/DailyHistory.html?req_city=Denver&req_state=CO&reqdb.zip=80205&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KMKC/year/month/day/DailyHistory.html?req_city=Kansas+City&req_state=MO&req_statename=Missouri&reqdb.zip=64106&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KDET/year/month/day/DailyHistory.html?req_city=Detroit&req_state=MI&req_statename=Michigan&reqdb.zip=48201&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KMIC/year/month/day/DailyHistory.html?req_city=Minneapolis&req_state=MN&req_statename=Minnesota&reqdb.zip=55401&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KMDW/year/month/day/DailyHistory.html?req_city=Chicago&req_state=IL&req_statename=Illinois&reqdb.zip=60290&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KHPN/year/month/day/DailyHistory.html?req_city=Bronxville&req_state=NY&req_statename=New+York&reqdb.zip=10708&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/KMIA/year/month/day/DailyHistory.html?req_city=Miami&req_statename=Florida",
-        "https://www.wunderground.com/history/airport/KSPG/year/month/day/DailyHistory.html?req_city=Saint+Petersburg&req_state=FL&req_statename=Florida&reqdb.zip=33701&reqdb.magic=1&reqdb.wmo=99999",
-        "https://www.wunderground.com/history/airport/CYHU/year/month/day/DailyHistory.html?req_city=Montreal%20/%20St-Hubert&req_statename=Quebec&reqdb.zip=00000&reqdb.magic=9&reqdb.wmo=71371",
-        "https://www.wunderground.com/history/airport/KFUL/year/month/day/DailyHistory.html?req_city=Anaheim&req_state=CA&req_statename=California&reqdb.zip=92801&reqdb.magic=1&reqdb.wmo=99999"
+        "https://www.wunderground.com/history/airport/KSAN/2017/07/10/DailyHistory.html?req_city=San%20Diego&req_state=CA&reqdb.zip=92101&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KPHL/2017/07/10/DailyHistory.html?req_city=Philadelphia&req_state=PA&reqdb.zip=19148&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KAGC/2017/07/10/DailyHistory.html?req_city=Pittsburgh&req_state=PA&reqdb.zip=15212&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KGPM/2017/07/10/DailyHistory.html?req_city=Arlington&req_state=TX&reqdb.zip=76011&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KSPG/2017/07/10/DailyHistory.html?req_city=Saint%20Petersburg&req_state=FL&reqdb.zip=33705&reqdb.magic=1&reqdb.wmo=99999",
+          "https://www.wunderground.com/history/airport/KBOS/2017/07/10/DailyHistory.html?req_city=Boston&req_state=MA&reqdb.zip=02215&reqdb.magic=1&reqdb.wmo=99999",
+          "https://www.wunderground.com/history/airport/KLUK/2017/07/10/DailyHistory.html?req_city=Cincinnati&req_state=OH&reqdb.zip=45202&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KBKF/2017/07/10/DailyHistory.html?req_city=Denver&req_state=CO&reqdb.zip=80205&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KMKC/2017/07/10/DailyHistory.html?req_city=Kansas%20City&req_state=MO&reqdb.zip=64129&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KDET/2017/07/10/DailyHistory.html?req_city=Detroit&req_state=MI&reqdb.zip=48201&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KMSP/2017/07/10/DailyHistory.html?req_city=Minneapolis&req_state=MN&reqdb.zip=55403&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KMDW/2017/07/10/DailyHistory.html?req_city=Chicago&req_state=IL&reqdb.zip=60616&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KLGA/2017/07/10/DailyHistory.html?req_city=Bronx&req_state=NY&reqdb.zip=10451&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KOPF/2017/07/10/DailyHistory.html?req_city=Opa-locka&req_state=FL&reqdb.zip=33056&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/KSPG/2017/07/10/DailyHistory.html?req_city=Saint%20Petersburg&req_state=FL&reqdb.zip=33705&reqdb.magic=1&reqdb.wmo=99999",
+        "https://www.wunderground.com/history/airport/CWTA/2017/07/10/DailyHistory.html?req_city=Montreal&req_statename=Quebec&reqdb.zip=00000&reqdb.magic=119&reqdb.wmo=71612",
+        "https://www.wunderground.com/history/airport/KFUL/2017/07/10/DailyHistory.html?req_city=Anaheim&req_state=CA&reqdb.zip=92806&reqdb.magic=1&reqdb.wmo=99999"
         ]
 
   end
