@@ -8,6 +8,7 @@ module Update
       names = ["Braves", "Orioles", "Rockies", "Rangers", "Giants", "Brewers", "Cardinals"]
       Team.all.each do |team|
         next if names.include?(team.name)
+        next if team.id < 8
         games += Game.where("home_team_id = #{team.id}")
       end
       games.each {|game| update(game)}
